@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "linear_algebra.h"
+
+main()
+{
+    double matrix[LA_TAM][LA_TAM];
+	int rows, cols;
+	int i,j,k;
+
+	la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+	puts("Linear System:");
+	for (i=0; i < rows; i++, putchar('\n'))
+		for (j=0; j < cols; j++)
+			printf("%f ", matrix[i][j]);
+	for (k=0; k < rows; k++) {
+		for (i=k+1; i < cols; i++)
+			matrix[k][i] /= matrix[k][k];
+		matrix[k][k] = 1.f;
+		for (i=k+1; i < rows; i++) {
+			for (j=k+1; j < cols; j++)
+				matrix[i][j] -= matrix[k][j]*matrix[i][k];
+			matrix[i][k] = 0;
+		}
+		printf("Step %0d:\n", k+1);
+		la_show_pointer_matrix_d(matrix, rows, cols);
+	}
+	if (rows+1==cols)
+		for (k=rows-2; k >= 0; k--)
+			for (i=k; i < rows-1; i++) {
+				matrix[k][cols-1] -= matrix[i+1][cols-1]*matrix[k][i+1];
+				matrix[k][i+1] = 0;
+			}
+	else
+		for (k=rows-1; k > 0; k--)	
+			for (i=k-1; i >= 0; i--) {
+				for (j=k+1; j < cols; j++)
+					matrix[i][j] -= matrix[i][k]*matrix[k][j];
+				matrix[i][k] = 0;
+			}
+	puts("Solution");
+	la_show_pointer_matrix_d(matrix, rows, cols);
+}

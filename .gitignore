@@ -1,0 +1,7 @@
+.mypy_cache
+python/build
+build
+*.so
+TODO.txt
+cemiterio
+generate_header
