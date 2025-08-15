@@ -35,4 +35,6 @@ double powd_mathfn(double a, positive_int_mathfn n);
 int compar_double_mathfn(const void *x, const void *y);
 int compar_float_mathfn(const void *x, const void *y);
 
+double roundd_mathfn(double x);
+
 #endif

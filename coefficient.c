@@ -1,9 +1,27 @@
+/*
+    Computes the Pearson's correlation coefficient (r) and fits a line by
+    linear regression.
+    Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "getop.c"
-
-/*gcc coefficient.c getch.c atof.c round.c -lm*/
+#include "external/arrays/array_typed.c"
 
 #define TRUE 1
 #define FALSE 0
@@ -12,10 +30,9 @@
 #define DELIMITER ';'
 #define STEP 2
 
-struct vector {
-        double (*v)[2];
-        int size, end;
-} v;
+typedef double point[2];
+
+GENERATE_ARRAYTYPED(point, STEP, 0)
 
 int columns = FALSE;
 
@@ -23,113 +40,108 @@ int main(argc, argv)
 int argc;
 char *argv[];
 {
-	void read_nums();
-	FILE *fp;
-	
-	v.v = (double (*)[2]) malloc(sizeof(double)*2);
-	v.size = 1;
-	
-	if (argc >= 2)
-		if (argv[1][0] == '-') {
-			argc--;
-			if ((*++argv)[1] == 'c')
-				columns = TRUE;
-			else
-				fprintf(stderr, "coefficient: parâmetro inválido %c\n", argv[1][1]);
-		}
-	if (argc <= 1)
-		read_nums(stdin);
-	else
-		while (--argc > 0)
-			if ((fp = fopen(*++argv, "r")) == NULL) {
-				fprintf(stderr, "coefficient: arquivo não encontrado: %s\n", *argv);
-				exit(1);
-			} else {
-				read_nums(fp);
-				fclose(fp);
-			}
-	exit(0);
+    void read_nums();
+    FILE *fp;
+    array_arraytyped_point points;
+    
+    allocate_arraytyped(point, points, 1);
+    if (argc >= 2)
+        if (argv[1][0] == '-') {
+            argc--;
+            if ((*++argv)[1] == 'c')
+                columns = TRUE;
+            else
+                fprintf(stderr, "coefficient: invalid parameter (%c)\n", argv[1][1]);
+        }
+    if (argc <= 1)
+        read_nums(stdin, &points);
+    else
+        while (--argc > 0) {
+            if ((fp = fopen(*++argv, "r")) == NULL) {
+                fprintf(stderr, "coefficient: file not found (%s)\n", *argv);
+                return 1;
+            }
+            read_nums(fp, &points);
+            fclose(fp);
+        }
 }
 
-static int one;
+static first;
 
-void read_nums(fp)
+void read_nums(fp, arr)
 FILE *fp;
+array_arraytyped_point *arr;
 {
-        extern double atof();
-        void insert_tuple(), estatistics();
-        char s[MAXOP];
-        int type, side = LEFT;
+    extern double atof_torfnum();
+    void insert_tuple(), estatistics();
+    char s[MAXOP];
+    int type, side = LEFT;
 
-	v.end = 0;
-	one = FALSE;
-	while ((type = getop(s, MAXOP, fp)) != EOF)
-		if (type == NUMBER) {
-			insert_tuple(atof(s), &v, side);
-			if (columns == FALSE)
-				side = !side;
-		} else if (type == DELIMITER && columns)
-			side = RIGHT;
-        estatistics(v.v, v.end);
-        putchar('\n');
+    arr->nmemb = 0;
+    first = FALSE;
+    while ((type = getop(s, MAXOP, fp)) != EOF)
+        if (type == NUMBER) {
+            insert_tuple(atof(s), arr, side);
+            if (columns == FALSE)
+                side = !side;
+        } else if (type == DELIMITER && columns)
+            side = RIGHT;
+    estatistics(arr);
+    putchar('\n');
 }
 
-void insert_tuple(x, v, i)
+void insert_tuple(x, arr, side)
 double x;
-struct vector *v;
-int i;
+array_arraytyped_point *arr;
 {
-
-	if (i == RIGHT && columns && one == FALSE) {
-		v->end = 0;
-		one = TRUE;
-	}
-	if (v->end == v->size)
-                v->v = (double (*)[2]) realloc(v->v, sizeof(double)*2 * (v->size *= STEP));
-        v->v[v->end][i] = x;
-	if ((columns==FALSE && i==RIGHT) || columns)
-		v->end++;
+    if (side == RIGHT && columns && first == FALSE) {
+        arr->nmemb = 0;
+        first = TRUE;
+    }
+    expand_arraytyped_point(arr);
+    (*LAST_SPACE_PTR_ARRAYTYPED(arr))[side] = x;
+    if ((columns==FALSE && side==RIGHT) || columns)
+        arr->nmemb++;
 }
 
-void estatistics(v, n)
-double (*v)[2];
-int n;
+void estatistics(v)
+array_arraytyped_point *v;
 {
-	extern double round_d();
-	double (*ptr)[2];
-	double sumx, sumy, sumx2, sumy2, sumxy;
-	double r, a, b, nume, deno;
-	char *correlation;
+    double (*ptr)[2];
+    double sumx, sumy, sumx2, sumy2, sumxy;
+    double r, a, b, nume, deno;
+    int n = v->nmemb;
+    char *correlation;
+    
+    sumx = sumy = sumx2 = sumy2 = sumxy = .0;
+    for (ptr=v->base; ptr < v->base + n; ptr++) {
+        sumx += (*ptr)[LEFT];
+        sumy += (*ptr)[RIGHT];
+        sumx2 += pow((*ptr)[LEFT], 2);
+        sumy2 += pow((*ptr)[RIGHT], 2);
+        sumxy += (*ptr)[LEFT] * (*ptr)[RIGHT];
+    }
+    nume = n*sumxy-sumx*sumy;
+    deno = n*sumx2-pow(sumx,2);
+    printf("%.3lf %.3lf %.3lf %.3lf %.3lf %.3lf %.3lf\n", nume, deno, sumx, sumx2, sumy, sumy2, sumxy);
 
-	sumx = sumy = sumx2 = sumy2 = sumxy = .0;
-	for (ptr=v; ptr<v+n; ptr++) {
-		sumx += (*ptr)[LEFT];
-		sumy += (*ptr)[RIGHT];
-		sumx2 += pow((*ptr)[LEFT], 2);
-		sumy2 += pow((*ptr)[RIGHT], 2);
-		sumxy += (*ptr)[LEFT] * (*ptr)[RIGHT];
-	}
-	nume = n*sumxy-sumx*sumy;
-	deno = n*sumx2-pow(sumx,2);
-	printf("%.3lf %.3lf %.3lf %.3lf %.3lf %.3lf %.3lf\n", nume, deno, sumx, sumx2, sumy, sumy2, sumxy);
+    b = nume/deno;
+    a = sumy/n - b*(sumx/n);
+    r = nume/sqrt(deno*(n*sumy2-pow(sumy,2)));
+    printf("r: %.4lf\na: %.2lf\tb: %.2lf\n", trunc(r*10000)/10000, a, b);
 
-	b = nume/deno;
-	a = sumy/n - b*(sumx/n);
-	r = nume/sqrt(deno*(n*sumy2-pow(sumy,2)));
-	printf("r: %.4lf\na: %.2lf\tb: %.2lf\n", trunc(r*10000)/10000, a, b);
-
-	r = fabs(r);
-	if (r == .0)
-		correlation = "nula";
-	else if (r < .3)
-		correlation = "fraca";
-	else if (r < .6)
-		correlation = "regular";
-	else if (r < .9)
-		correlation = "forte";
-	else if (r < 1.0)
-		correlation = "muito forte";
-	else if (r == 1.0)
-		correlation = "perfeita (plena)";
-	printf("A correlação é %s.", correlation);
+    r = fabs(r);
+    if (r == .0)
+        correlation = "nula";
+    else if (r < .3)
+        correlation = "fraca";
+    else if (r < .6)
+        correlation = "regular";
+    else if (r < .9)
+        correlation = "forte";
+    else if (r < 1.0)
+        correlation = "muito forte";
+    else if (r == 1.0)
+        correlation = "perfeita (plena)";
+    printf("A correlação é %s.", correlation);
 }

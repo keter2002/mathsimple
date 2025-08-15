@@ -89,14 +89,14 @@ char *argv[];
     if (argc <= 1)
         read_attr(stdin, &U);
     else
-        while (--argc > 0)
+        while (--argc > 0) {
             if ((fp = fopen(*++argv, "r")) == NULL) {
                 fprintf(stderr, "contingency_table: file not found (%s)\n", *argv);
-                exit(1);
-            } else {
-                read_attr(fp, &U);
-                fclose(fp);
+                return 1;
             }
+            read_attr(fp, &U);
+            fclose(fp);
+        }
 }
 
 compar_f(x, y)

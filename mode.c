@@ -173,7 +173,7 @@ double *v;
 int size;
 {
     double avg = 0.0, dev = 0.0, q1, q3;
-    extern double round_d();
+    extern double roundd_mathfn();
     double *aux;
     
     printf("Valores: ");
@@ -181,16 +181,16 @@ int size;
         printf("%.2lf%c", *aux, (aux==v+size-1)? '\n' : ' ');
         avg += *aux;
     }
-    printf("Média aritmética: %.2lf\n", avg=round_d(avg/=size));
+    printf("Média aritmética: %.2lf\n", avg=roundd_mathfn(avg/=size));
     for (aux=v; aux < v+size; aux++)
-        dev += round_d(powd_mathfn(*aux-avg, 2));
-    printf("Desvio padrão: %.2lf\n", dev=round_d(sqrt(round_d(dev/(size-1)))));
-    printf("Amplitude total: %.2lf\n", round_d(v[size-1]-v[0]));
-    printf("Variância: %.2lf\n", round_d(powd_mathfn(dev, 2)));
-    printf("Coeficiente de variação: %.2lf%%\n", round_d(dev*100/avg));
-    printf("Mediana: %.2lf\n", (size%2==0)? round_d((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
-    printf("Primeiro quartil: %.2lf\n", q1 = size%4==0? round_d((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
-    printf("Terceiro quartil: %.2lf\n", q3 = size*3%4==0? round_d((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
+        dev += roundd_mathfn(powd_mathfn(*aux-avg, 2));
+    printf("Desvio padrão: %.2lf\n", dev=roundd_mathfn(sqrt(roundd_mathfn(dev/(size-1)))));
+    printf("Amplitude total: %.2lf\n", roundd_mathfn(v[size-1]-v[0]));
+    printf("Variância: %.2lf\n", roundd_mathfn(powd_mathfn(dev, 2)));
+    printf("Coeficiente de variação: %.2lf%%\n", roundd_mathfn(dev*100/avg));
+    printf("Mediana: %.2lf\n", (size%2==0)? roundd_mathfn((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
+    printf("Primeiro quartil: %.2lf\n", q1 = size%4==0? roundd_mathfn((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
+    printf("Terceiro quartil: %.2lf\n", q3 = size*3%4==0? roundd_mathfn((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
     printf("Desvio interquartílico da distribuição: %.2lf\n", q3-q1);
 }
 

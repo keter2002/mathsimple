@@ -1,12 +1,12 @@
 BUILD_DIR := ./build
 
-simple_progs := print_series series_convergence integral_aprox contingency_table
+simple_progs := print_series series_convergence integral_aprox contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
@@ -26,7 +26,7 @@ $(BUILD_DIR)/integral_aprox: integral_aprox.c
 	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -g -Wno-implicit-int
+	$(CC) $^ -o $@ -Wno-implicit-int
 
 $(mathfn_lib): mathfn.c
 	mkdir -p $(BUILD_DIR)/lib
@@ -36,6 +36,9 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
+$(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -Wno-implicit-int
@@ -51,7 +54,7 @@ $(BUILD_DIR)/gcd: gcd.c $(torfnum_lib) $(mathfn_lib)
 $(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -Wno-implicit-int
-$(BUILD_DIR)/mode: mode.c getch.c round.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/mode: mode.c getch.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/logarithm: logarithm.c $(torfnum_lib) $(mathfn_lib)
@@ -101,9 +104,16 @@ test:
 	cat tests/mode/t01.in | ./build/mode | diff - tests/mode/t01.out
 	cat tests/mode/t02.in | ./build/mode | diff - tests/mode/t02.out
 	cat tests/mode/t03.in | ./build/mode | diff - tests/mode/t03.out
+	
 	./build/contingency_table tests/contingency_table/t01.in | diff - tests/contingency_table/t01.out
 	./build/contingency_table tests/contingency_table/t02.in | diff - tests/contingency_table/t02.out
+	
 	cat tests/logarithm/t01.in | xargs ./build/logarithm | diff - tests/logarithm/t01.out 
 	cat tests/logarithm/t02.in | xargs ./build/logarithm | diff - tests/logarithm/t02.out 
 	cat tests/logarithm/t03.in | xargs ./build/logarithm | diff - tests/logarithm/t03.out 
+	
 	cat tests/bhaskara/t01.in | xargs ./build/bhaskara | diff - tests/bhaskara/t01.out
+	
+	cat tests/coefficient/t01.in | ./build/coefficient | diff - tests/coefficient/t01.out
+	cat tests/coefficient/t02.in | ./build/coefficient | diff - tests/coefficient/t02.out
+	cat tests/coefficient/t03.in | ./build/coefficient | diff - tests/coefficient/t03.out

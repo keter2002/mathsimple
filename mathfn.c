@@ -111,3 +111,9 @@ const void *x, *y;
         return 0;
     return d > 0? 1 : -1;
 }
+
+double roundd_mathfn(x)
+double x;
+{
+	return (x > 0? (int)(100*x+0.5)/100.0 : (int)(100*x-0.5)/100.0);
+}
