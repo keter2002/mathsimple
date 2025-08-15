@@ -1,12 +1,12 @@
 BUILD_DIR := ./build
 
-simple_progs := factorizer print_series series_convergence bhaskara integral_aprox contingency_table
+simple_progs := print_series series_convergence integral_aprox contingency_table
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := lcm gcd find_know_number mode logarithm binomial_series
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
@@ -15,18 +15,12 @@ LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
 all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS)
 
-$(BUILD_DIR)/factorizer: factorizer.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -Wno-implicit-int
 $(BUILD_DIR)/print_series: print_series.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/series_convergence: series_convergence.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ -lm  -Wno-implicit-int
-$(BUILD_DIR)/bhaskara: bhaskara.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/integral_aprox: integral_aprox.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ -lm -Wno-implicit-int
@@ -42,6 +36,12 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
+$(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm -Wno-implicit-int
+$(BUILD_DIR)/factorizer: factorizer.c $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -Wno-implicit-int
 $(BUILD_DIR)/lcm: lcm.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
@@ -106,3 +106,4 @@ test:
 	cat tests/logarithm/t01.in | xargs ./build/logarithm | diff - tests/logarithm/t01.out 
 	cat tests/logarithm/t02.in | xargs ./build/logarithm | diff - tests/logarithm/t02.out 
 	cat tests/logarithm/t03.in | xargs ./build/logarithm | diff - tests/logarithm/t03.out 
+	cat tests/bhaskara/t01.in | xargs ./build/bhaskara | diff - tests/bhaskara/t01.out
