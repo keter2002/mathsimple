@@ -1,3 +1,21 @@
+/*
+    Find the determinant of a matrix.
+    Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
 #include "linear_algebra.h"
 
@@ -6,16 +24,16 @@ double m[][LA_TAM];
 {
 	int p[LA_TAM+1];
 	int k_indexes[LA_TAM];
-	int i, j, k, aux;
+	int i, j, k;
 
 	double det = 0, prod;
 	int sig = -1;
-	// Realiza a primeira iteração do somatório:
+	/* Do first iteration of the summation */
 	for (prod=m[0][0], k=1; k < cols; k++)
 		prod *= m[k][k];
 	det += prod;
 	
-	// QuickPerm Regressivo
+	/* Regressive QuickPerm */
 	for (i=0; i < cols; i++) {
 		k_indexes[i] = i;
 		p[i] = i;
@@ -26,12 +44,12 @@ double m[][LA_TAM];
 		p[i]--;
 		j = i%2? p[i] : 0;
 		
-		// Troca
-		aux = k_indexes[i];
-		k_indexes[i] = k_indexes[j];
-		k_indexes[j] = aux;
+		/* Swap */
+		k_indexes[i] ^= k_indexes[j];
+		k_indexes[j] ^= k_indexes[i];
+		k_indexes[i] ^= k_indexes[j];
 		
-		// Realiza uma iteração do somatório.
+		/* Do one iteration of the summation */
 		for (prod=m[0][k_indexes[0]], k=1; k < cols; k++)
 			prod *= m[k][k_indexes[k]];
 		det += sig*prod;

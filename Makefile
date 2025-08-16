@@ -1,12 +1,12 @@
 BUILD_DIR := ./build
 
-simple_progs := print_series series_convergence integral_aprox contingency_table 
+simple_progs := series_convergence integral_aprox contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient print_series
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
@@ -15,9 +15,6 @@ LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
 all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS)
 
-$(BUILD_DIR)/print_series: print_series.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/series_convergence: series_convergence.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ -lm  -Wno-implicit-int
@@ -36,6 +33,9 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
+$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -Wno-implicit-int
@@ -72,9 +72,10 @@ $(la_lib): linear_algebra.c linear_algebra.h generate_header
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
-$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib)
+$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -lcblas -Wno-implicit-int
+
 $(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
@@ -117,3 +118,5 @@ test:
 	cat tests/coefficient/t01.in | ./build/coefficient | diff - tests/coefficient/t01.out
 	cat tests/coefficient/t02.in | ./build/coefficient | diff - tests/coefficient/t02.out
 	cat tests/coefficient/t03.in | ./build/coefficient | diff - tests/coefficient/t03.out
+	
+	cat tests/determinant/t01.in | ./build/determinant | diff - tests/determinant/t01.out

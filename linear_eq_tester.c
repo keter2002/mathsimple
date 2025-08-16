@@ -1,3 +1,21 @@
+/*
+    Tests if a solution to a linear system is correct.
+    Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,34 +27,21 @@ double values[LA_TAM];
 
 main()
 {
-	char *line, *p;
-	size_t size;
-	int rows, cols;
-	int i,j,k;
-	double sum;
+    int rows, cols;
+    int i,j,k;
+    double sum;
 
-	cols = rows = size = 0;
-	line = NULL;
-	while (getline(&line, &size, stdin) != EOF) {
-		if (!strcmp(line, "e\n"))
-			break;
-		cols = 0;
-		for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-			matrix[rows][cols++] = atof(p);
-		rows++;
-	}
-	puts("Linear System:");
-	for (i=0; i < rows; i++, putchar('\n'))
-		for (j=0; j < cols; j++)
-			printf("%f ", matrix[i][j]);
-	for (i=0; i < cols-1; i++) {
-		printf("Variable %02d: ", i+1);
-		scanf("%lf", &values[i]);
-	}
-	for (k=0; k < rows; k++) {
-		for (sum=j=0; j < cols-1; j++)
-			sum += matrix[k][j]*values[j];
-		printf("%lf ", sum);
-		puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < LA_EPS? "Equal" : "Not equal");
-	}
+    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+    puts("Linear System:");
+    la_show_pointer_matrix_d(matrix, rows, cols);
+    for (i=0; i < cols-1; i++) {
+        printf("Variable %02d: ", i+1);
+        scanf("%lf", &values[i]);
+    }
+    for (k=0; k < rows; k++) {
+        for (sum=j=0; j < cols-1; j++)
+            sum += matrix[k][j]*values[j];
+        printf("%lf ", sum);
+        puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < LA_EPS? "Equal" : "Not equal");
+    }
 }

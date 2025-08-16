@@ -60,6 +60,8 @@ int *rows, *cols;
 	*rows = size = 0;
 	line = NULL;
 	while (getline(&line, &size, stdin) != EOF) {
+		if (!strcmp(line, "e\n"))
+			break;
 		*cols = 0;
 		for (p=strtok(line, " "); p; p = strtok(NULL, " "))
 			a[*rows][(*cols)++] = atof(p);
@@ -78,6 +80,8 @@ int *rows, *cols;
 	*rows = size = 0;
 	line = NULL;
 	while (getline(&line, &size, stdin) != EOF) {
+		if (!strcmp(line, "e\n"))
+			break;
 		*cols = 0;
 		for (p=strtok(line, " "); p; p = strtok(NULL, " "))
 			a[*rows][(*cols)++] = atof(p);
