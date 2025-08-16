@@ -22,42 +22,42 @@
 #include <assert.h>
 
 
-void destroy_avl(t, r)
-avl_tree *t;
-avl_node *r;
+void avl_destroy(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     if (!r)
         return;
-    destroy_avl(t, r->child[0]);
-    destroy_avl(t, r->child[1]);
+    avl_destroy(t, r->child[0]);
+    avl_destroy(t, r->child[1]);
     free(r->key);
     if (r->has_value) free(r->value);
     free(r);
 }
 
-avl_node *find_max_avl(t, r)
-avl_tree *t;
-avl_node *r;
+avltree_node *avl_find_max(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     if (!r) return NULL;
     if (r->child[1])
-        return find_max_avl(t, r->child[1]);
+        return avl_find_max(t, r->child[1]);
     return r;
 }
 
-avl_node *find_min_avl(t, r)
-avl_tree *t;
-avl_node *r;
+avltree_node *avl_find_min(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     if (!r) return NULL;
     if (r->child[0])
-        return find_min_avl(t, r->child[0]);
+        return avl_find_min(t, r->child[0]);
     return r;
 }
 
-static avl_node *find_leaf_avl(t, r, key)
-avl_tree *t;
-avl_node *r;
+static avltree_node *find_leaf_avl(t, r, key)
+avltree_tree *t;
+avltree_node *r;
 void *key;
 {
     int gt;
@@ -69,9 +69,9 @@ void *key;
     return find_leaf_avl(t, r->child[gt], key);
 }
 
-avl_node *find_node_avl(t, r, key, parent)
-avl_tree *t;
-avl_node *r, **parent;
+avltree_node *avl_find_node(t, r, key, parent)
+avltree_tree *t;
+avltree_node *r, **parent;
 void *key;
 {
     int cmp;
@@ -81,18 +81,18 @@ void *key;
         return r;
     if (parent)
         *parent = r;
-    return find_node_avl(t, r->child[cmp > 0], key, parent);
+    return avl_find_node(t, r->child[cmp > 0], key, parent);
 }
 
 /* Least mirroed alg. */
 static void retrace(t, x, z, inc, removed)
-avl_tree *t;
-avl_node *x, *z;
+avltree_tree *t;
+avltree_node *x, *z;
 unsigned char removed;
 {
     int orig_bf, bf_z0, bf_y0;
     unsigned char side_x;
-    avl_node *y;
+    avltree_node *y;
 
     if (!x)
         return;
@@ -219,16 +219,16 @@ unsigned char removed;
     }
 }
 
-avl_node *insert_avltree(t, key, value)
-avl_tree *t;
+avltree_node *avltree_insert(t, key, value)
+avltree_tree *t;
 void *key, *value;
 {
-    avl_node *node, *parent, *new;
+    avltree_node *node, *parent, *new;
     int gt;
     
     /* Commom insert in bst. **** */
     parent = NULL;
-    if ((node = find_node_avl(t, t->root, key, &parent)) && t->inplace) {
+    if ((node = avl_find_node(t, t->root, key, &parent)) && t->inplace) {
         if (node->has_value) {
             node->has_value = 0;
             free(node->value);
@@ -243,9 +243,9 @@ void *key, *value;
         parent = find_leaf_avl(t, node? node : t->root, key);
     if (parent) {
         gt = t->compar(key, parent->key) > 0;
-        new = parent->child[gt] = malloc(sizeof(avl_node));
+        new = parent->child[gt] = malloc(sizeof(avltree_node));
     } else
-        new = t->root = malloc(sizeof(avl_node));
+        new = t->root = malloc(sizeof(avltree_node));
     new->parent = parent;
     new->key = key;
     if (value) {
@@ -262,11 +262,11 @@ void *key, *value;
     return new;
 }
 
-void remove_avl(t, z)
-avl_tree *t;
-avl_node *z;
+void avl_remove(t, z)
+avltree_tree *t;
+avltree_node *z;
 {
-    avl_node *y, *q, *parenty;
+    avltree_node *y, *q, *parenty;
     unsigned char side_z, two;
     int inc;
 
@@ -274,7 +274,7 @@ avl_node *z;
     q = z->parent;
     two = 0;
     if (z->child[0] && z->child[1]) {
-        y = find_max_avl(t, z->child[0]);
+        y = avl_find_max(t, z->child[0]);
         parenty = y->parent;
         if (parenty != z) {
             parenty->child[1] = y->child[0];
@@ -318,39 +318,39 @@ avl_node *z;
                 side_z? -1 : 1, 1);
 }
 
-remove_avltree(t, key)
-avl_tree *t;
+avltree_remove(t, key)
+avltree_tree *t;
 void *key;
 {
-    avl_node *z;
+    avltree_node *z;
     
-    if (!(z = find_node_avl(t, t->root, key, NULL)))
+    if (!(z = avl_find_node(t, t->root, key, NULL)))
         return 1;
-    remove_avl(t, z);
+    avl_remove(t, z);
     return 0;
 }
 
 /* Printing test routines, from BEE 1201: */
 
-void infix_avl(t, r, last)
-avl_tree *t;
-avl_node *r, *last;
+void avl_infix(t, r, last)
+avltree_tree *t;
+avltree_node *r, *last;
 {
     if (!r)
         return;
-    infix_avl(t, r->child[0], last);
+    avl_infix(t, r->child[0], last);
     printf("%p ", r);
     if (t->print_node)
         t->print_node(stdout, r->key, r->value);
     printf(" [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
     if (last != r)
         putchar('\n');
-    infix_avl(t, r->child[1], last);
+    avl_infix(t, r->child[1], last);
 }
 
-void prefix_avl(t, r)
-avl_tree *t;
-avl_node *r;
+void avl_prefix(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     if (!r)
         return;
@@ -360,18 +360,18 @@ avl_node *r;
     if (t->print_node)
         t->print_node(stdout, r->key, r->value);
     printf(" [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
-    prefix_avl(t, r->child[0]);
-    prefix_avl(t, r->child[1]);
+    avl_prefix(t, r->child[0]);
+    avl_prefix(t, r->child[1]);
 }
 
-void posfix_avl(t, r)
-avl_tree *t;
-avl_node *r;
+void avl_posfix(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     if (!r)
         return;
-    posfix_avl(t, r->child[0]);
-    posfix_avl(t, r->child[1]);
+    avl_posfix(t, r->child[0]);
+    avl_posfix(t, r->child[1]);
     printf("%p ", r);
     if (t->print_node)
         t->print_node(stdout, r->key, r->value);
@@ -381,33 +381,33 @@ avl_node *r;
 }
 
 /* Assumes that arr has sufficient capacity. */
-void keys_to_array_avl(t, r, arr, size, nmemb, capacity)
-avl_tree *t;
-avl_node *r;
+void avl_keys_to_array(t, r, arr, size, nmemb, capacity)
+avltree_tree *t;
+avltree_node *r;
 unsigned char *arr;
 size_t size;
 int *nmemb;
 {
     if (!r)
         return;
-    keys_to_array_avl(t, r->child[0], arr, size, nmemb, capacity);
+    avl_keys_to_array(t, r->child[0], arr, size, nmemb, capacity);
     assert(*nmemb < capacity);
     memcpy(&arr[size**nmemb], r->key, size);
     ++*nmemb;
-    keys_to_array_avl(t, r->child[1], arr, size, nmemb, capacity);
+    avl_keys_to_array(t, r->child[1], arr, size, nmemb, capacity);
 }
 
 /* Debug functions: */
 
-height_avl(t, r)
-avl_tree *t;
-avl_node *r;
+avl_height(t, r)
+avltree_tree *t;
+avltree_node *r;
 {
     int lh, rh;
     if (!r)
         return 0;
-    lh = height_avl(t, r->child[0])+1;
-    rh = height_avl(t, r->child[1])+1;
+    lh = avl_height(t, r->child[0])+1;
+    rh = avl_height(t, r->child[1])+1;
     if (r->bf != rh - lh || abs(r->bf) >= 2) {
         fprintf(stderr, "Node ");
         if (t->print_node)

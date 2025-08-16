@@ -16,25 +16,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef H_MATHFN
-#define H_MATHFN
+#ifndef MATHFN_H
+#define MATHFN_H
 
 
-typedef unsigned long positive_int_mathfn;
+typedef unsigned long mathfn_positive_int;
 
-positive_int_mathfn greatest_common_divisor_mathfn(positive_int_mathfn x, positive_int_mathfn y);
+mathfn_positive_int mathfn_greatest_common_divisor(mathfn_positive_int x, mathfn_positive_int y);
 
-#define MMC_MATHFN(X,Y) ((X) * (Y) / greatest_common_divisor_mathfn(x,y))
+#define MATHFN_LCM(X,Y) ((X) * (Y) / mathfn_greatest_common_divisor(x,y))
 
-unsigned brent_mathfn(long *f, int end, unsigned *mu);
+unsigned mathfn_brent(long *f, int end, unsigned *mu);
 
 /* Only for n >= 0 and integer. */
-positive_int_mathfn powi_mathfn(positive_int_mathfn a, positive_int_mathfn n);
-double powd_mathfn(double a, positive_int_mathfn n);
+mathfn_positive_int mathfn_powi(mathfn_positive_int a, mathfn_positive_int n);
+double mathfn_powd(double a, mathfn_positive_int n);
 
-int compar_double_mathfn(const void *x, const void *y);
-int compar_float_mathfn(const void *x, const void *y);
+int mathfn_compar_double(const void *x, const void *y);
+int mathfn_compar_float(const void *x, const void *y);
 
-double roundd_mathfn(double x);
+double mathfn_roundd(double x);
 
 #endif

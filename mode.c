@@ -29,10 +29,10 @@
 #define FALSE 0
 #define STEP 2
 
-GENERATE_ARRAYTYPED(double, 2, 0)
-GENERATE_SORT_ARRAYTYPED(double, compar_double_mathfn)
+ARRAYTYPED_GENERATE(double, 2, 0)
+ARRAYTYPED_GENERATE_SORT(double, mathfn_compar_double)
 
-array_arraytyped_double v;
+arraytyped_array_double v;
 
 typedef struct {
 	double value;
@@ -45,40 +45,40 @@ void *x, *y;
     return ((frequencie*)x)->count - ((frequencie*)y)->count;
 }
 
-GENERATE_MINMAXH(frequencie, compar_frequencie)
+MINMAXH_GENERATE(frequencie, compar_frequencie)
 
 void read_nums(fp)
 FILE *fp;
 {
-    extern double atof_torfnum();
-    heap_minmaxh_frequencie *construct_heap();
+    extern double torfnum_atof();
+    minmaxh_heap_frequencie *construct_heap();
     void estatistics(), dsc_print();
     char s[MAXOP];
     int type, *count;
     double *x;
-    avl_tree tree;
-    avl_node *found;
+    avltree_tree tree;
+    avltree_node *found;
 
-    create_avltree(tree, 1, compar_double_mathfn, NULL);
+    avltree_create(tree, 1, mathfn_compar_double, NULL);
     v.nmemb = 0;
     while ((type = getop(s, MAXOP, fp)) != EOF)
         if (type == NUMBER) {
             x = malloc(sizeof(double));
-            *x = atof_torfnum(s);
-            if ((found = find_node_avltree(tree, x)))
+            *x = torfnum_atof(s);
+            if ((found = avltree_find_node(tree, x)))
                 *(int*)(found->value) += 1;
             else {
                 count = malloc(sizeof(int));
                 *count = 1;
-                insert_avltree(&tree, x, count);
+                avltree_insert(&tree, x, count);
             }
-            APPEND_TO_IDX_ARRAYTYPED(double, v, v.nmemb-1, x);
+            ARRAYTYPED_APPEND_TO_IDX(double, v, v.nmemb-1, x);
         }
-    quick_sort_arraytyped_double(v.base, 0, v.nmemb);
+    arraytyped_quick_sort_double(v.base, 0, v.nmemb);
     estatistics(v.base, v.nmemb);
 
     dsc_print(construct_heap(&tree));
-    destroy_avltree(tree);
+    avltree_destroy(tree);
     putchar('\n');
 }
 
@@ -86,7 +86,7 @@ int main(argc, argv)
 int argc;
 char *argv[];
 {
-    allocate_arraytyped(double, v, 1);
+    arraytyped_allocate(double, v, 1);
     FILE *fp;
 
     if (argc == 1)
@@ -104,7 +104,7 @@ char *argv[];
 }
 
 struct qnode {
-    avl_node *n;
+    avltree_node *n;
     struct qnode *next;
 };
 
@@ -115,7 +115,7 @@ struct queue {
 
 static void push(q, p)
 struct queue *q;
-avl_node *p;
+avltree_node *p;
 {
     struct qnode *new = malloc(sizeof(struct qnode));
         
@@ -141,16 +141,16 @@ struct queue *q;
     return (p);
 }
 
-heap_minmaxh_frequencie *construct_heap(p)
-avl_tree *p;
+minmaxh_heap_frequencie *construct_heap(p)
+avltree_tree *p;
 {
     struct qnode *qn;
     struct queue q;
-    heap_minmaxh_frequencie *h;
+    minmaxh_heap_frequencie *h;
     frequencie newf;
     
-    h = malloc(sizeof(heap_minmaxh_frequencie));
-    allocate_ptr_minmaxh(frequencie, h, p->nmemb);
+    h = malloc(sizeof(minmaxh_heap_frequencie));
+    minmaxh_allocate_ptr(frequencie, h, p->nmemb);
     q.qtt = 0;
     push(&q, p->root);
     while (q.qtt) {
@@ -161,7 +161,7 @@ avl_tree *p;
             push(&q, qn->n->child[1]);
         newf.value = *(double*)(qn->n->key);
         newf.count = *(int*)(qn->n->value);
-        insert_minmaxh_frequencie(h, &newf);
+        minmaxh_insert_frequencie(h, &newf);
         free(qn);
     }
     return h;
@@ -172,7 +172,7 @@ double *v;
 int size;
 {
     double avg = 0.0, dev = 0.0, q1, q3;
-    extern double roundd_mathfn();
+    extern double mathfn_roundd();
     double *aux;
     
     printf("Valores: ");
@@ -180,34 +180,34 @@ int size;
         printf("%.2lf%c", *aux, (aux==v+size-1)? '\n' : ' ');
         avg += *aux;
     }
-    printf("Média aritmética: %.2lf\n", avg=roundd_mathfn(avg/=size));
+    printf("Média aritmética: %.2lf\n", avg=mathfn_roundd(avg/=size));
     for (aux=v; aux < v+size; aux++)
-        dev += roundd_mathfn(powd_mathfn(*aux-avg, 2));
-    printf("Desvio padrão: %.2lf\n", dev=roundd_mathfn(sqrt(roundd_mathfn(dev/(size-1)))));
-    printf("Amplitude total: %.2lf\n", roundd_mathfn(v[size-1]-v[0]));
-    printf("Variância: %.2lf\n", roundd_mathfn(powd_mathfn(dev, 2)));
-    printf("Coeficiente de variação: %.2lf%%\n", roundd_mathfn(dev*100/avg));
-    printf("Mediana: %.2lf\n", (size%2==0)? roundd_mathfn((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
-    printf("Primeiro quartil: %.2lf\n", q1 = size%4==0? roundd_mathfn((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
-    printf("Terceiro quartil: %.2lf\n", q3 = size*3%4==0? roundd_mathfn((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
+        dev += mathfn_roundd(mathfn_powd(*aux-avg, 2));
+    printf("Desvio padrão: %.2lf\n", dev=mathfn_roundd(sqrt(mathfn_roundd(dev/(size-1)))));
+    printf("Amplitude total: %.2lf\n", mathfn_roundd(v[size-1]-v[0]));
+    printf("Variância: %.2lf\n", mathfn_roundd(mathfn_powd(dev, 2)));
+    printf("Coeficiente de variação: %.2lf%%\n", mathfn_roundd(dev*100/avg));
+    printf("Mediana: %.2lf\n", (size%2==0)? mathfn_roundd((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
+    printf("Primeiro quartil: %.2lf\n", q1 = size%4==0? mathfn_roundd((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
+    printf("Terceiro quartil: %.2lf\n", q3 = size*3%4==0? mathfn_roundd((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
     printf("Desvio interquartílico da distribuição: %.2lf\n", q3-q1);
 }
 
 void dsc_print(h)
-heap_minmaxh_frequencie *h;
+minmaxh_heap_frequencie *h;
 {
     frequencie p;
     double last;
     int amodal = TRUE;
 
-    remove_max_minmaxh_frequencie(h, &p);
-    /*minmaxh_remove_min(h, &p);*/
+    minmaxh_remove_max_frequencie(h, &p);
+    /*minmaxh_remove_min_frequencie(h, &p);*/
     while (p.count > 1) {
         amodal = FALSE; 
         printf("%4d %lf\n", p.count, p.value);
         last = p.count;
-        remove_max_minmaxh_frequencie(h, &p);
-        /*remove_min_minmaxh_frequencie(h, &p);*/
+        minmaxh_remove_max_frequencie(h, &p);
+        /*minmaxh_remove_min_frequencie(h, &p);*/
         if (last != p.count)
             break;
     }

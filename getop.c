@@ -30,8 +30,8 @@
 extern int ch();
 extern void unch();
 
-extern int ftoa_torfnum(), atoi_torfnum();
-extern double atof_torfnum();
+extern int torfnum_ftoa(), torfnum_atoi();
+extern double torfnum_atof();
 
 getop(s, lim, fp)
 char *s;
@@ -72,9 +72,9 @@ FILE *fp;
         *aux = *e = '\0';
         
         if (neg)
-            err = ftoa_torfnum(atof_torfnum(s) / powi_mathfn(10, atoi_torfnum(exp)), exp, lim);
+            err = torfnum_ftoa(torfnum_atof(s) / mathfn_powi(10, torfnum_atoi(exp)), exp, lim);
         else
-            err = ftoa_torfnum(atof_torfnum(s) * powi_mathfn(10, atoi_torfnum(exp)), exp, lim);
+            err = torfnum_ftoa(torfnum_atof(s) * mathfn_powi(10, torfnum_atoi(exp)), exp, lim);
         if (!err) {
             strcpy(s, exp);
             return(NUMBER);

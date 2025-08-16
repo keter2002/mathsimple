@@ -23,7 +23,7 @@
 main(argc, argv)
 char *argv[];
 {
-    extern double atof_torfnum();
+    extern double torfnum_atof();
     float a, b, c;
     float delta;
 
@@ -31,9 +31,9 @@ char *argv[];
         puts("Usage: bhaskara a b c");
         return 2;
     }
-    a = atof_torfnum(argv[1]);
-    b = -atof_torfnum(argv[2]);
-    c = atof_torfnum(argv[3]);
+    a = torfnum_atof(argv[1]);
+    b = -torfnum_atof(argv[2]);
+    c = torfnum_atof(argv[3]);
     if ((delta = b*b - 4*a*c) < 0) {
         puts("No real solutions.");
         return 0;

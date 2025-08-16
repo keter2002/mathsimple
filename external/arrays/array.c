@@ -16,8 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef H_ARRAY
-#define H_ARRAY
+#ifndef ARRAY_H
+#define ARRAY_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,9 +26,9 @@
 typedef struct {
     void *base;
     size_t size, nmemb, capacity;
-} dynamic_array;
+} array_dynamic;
 
-#define allocate_ptr_array(ARR, SIZE, CAP) \
+#define array_allocate_ptr(ARR, SIZE, CAP) \
     do {\
         (ARR)->size = SIZE; \
         (ARR)->capacity = CAP; \
@@ -39,15 +39,15 @@ typedef struct {
         } \
         (ARR)->nmemb = 0;\
     } while (0)
-#define allocate_array(ARR, SIZE, CAP) allocate_ptr_array(&(ARR), SIZE, CAP)
+#define array_allocate(ARR, SIZE, CAP) array_allocate_ptr(&(ARR), SIZE, CAP)
 
-#define LAST_SPACE_PTR_ARRAY(ARR) ((ARR)->base + (ARR)->size * (ARR)->nmemb)
-#define LAST_SPACE_ARRAY(ARR) LAST_SPACE_PTR_ARRAY(&(ARR))
+#define ARRAY_LAST_SPACE_PTR(ARR) ((ARR)->base + (ARR)->size * (ARR)->nmemb)
+#define ARRAY_LAST_SPACE(ARR) ARRAY_LAST_SPACE_PTR(&(ARR))
 
-#define AT_PTR_ARRAY(ARR, I) ((ARR)->base + (I) * (ARR)->size)
-#define AT_ARRAY(ARR, I) AT_PTR_ARRAY(&(ARR), I)
+#define ARRAY_AT_PTR(ARR, I) ((ARR)->base + (I) * (ARR)->size)
+#define ARRAY_AT(ARR, I) ARRAY_AT_PTR(&(ARR), I)
 
-#define expand_ptr_array(ARR, FAC, INC) \
+#define array_expand_ptr(ARR, FAC, INC) \
     do { \
         void *tmp; \
         \
@@ -61,5 +61,5 @@ typedef struct {
             } \
         } \
     } while (0)
-#define expand_array(ARR, FAC, INC) expand_ptr_array(&(ARR), FAC, INC)
+#define array_expand(ARR, FAC, INC) array_expand_ptr(&(ARR), FAC, INC)
 #endif

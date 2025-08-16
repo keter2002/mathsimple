@@ -1,12 +1,12 @@
 BUILD_DIR := ./build
 
-simple_progs := series_convergence integral_aprox contingency_table 
+simple_progs := series_convergence contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient print_series
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient print_series integral_aprox
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
@@ -18,12 +18,9 @@ all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_B
 $(BUILD_DIR)/series_convergence: series_convergence.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ -lm  -Wno-implicit-int
-$(BUILD_DIR)/integral_aprox: integral_aprox.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ -Wno-implicit-int -g
 
 $(mathfn_lib): mathfn.c
 	mkdir -p $(BUILD_DIR)/lib
@@ -33,6 +30,9 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -Wno-implicit-int
@@ -68,7 +68,7 @@ generate_header: generate_header.c $(mathfn_lib)
 	$(CC) $< -o $@ $(mathfn_lib) -lm -Wno-implicit-int
 
 $(la_lib): linear_algebra.c linear_algebra.h generate_header
-	./generate_header > print_know_constant_la.h
+	./generate_header > la_print_know_constant.h
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 

@@ -26,7 +26,7 @@ main()
     int rows, cols;
     int i,j;
     
-    read_one_pointer_matrix_s_la(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_s(matrix, &rows, &cols);
     puts("Inverted:");
     for (i=0; i < rows; i++, putchar('\n'))
         for (j=cols-1; j >= 0; j--)

@@ -27,9 +27,9 @@ main()
     int rows, cols;
     int i,j,k;
 
-    read_one_pointer_matrix_d_la(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
     puts("Linear System:");
-    show_pointer_matrix_d_la(matrix, rows, cols);
+    la_show_pointer_matrix_d(matrix, rows, cols);
     for (k=0; k < rows; k++) {
         for (i=k+1; i < cols; i++)
             matrix[k][i] /= matrix[k][k];
@@ -40,7 +40,7 @@ main()
             matrix[i][k] = 0;
         }
         printf("Step %0d:\n", k+1);
-        show_pointer_matrix_d_la(matrix, rows, cols);
+        la_show_pointer_matrix_d(matrix, rows, cols);
     }
     if (rows+1==cols)
         for (k=rows-2; k >= 0; k--)
@@ -56,5 +56,5 @@ main()
                 matrix[i][k] = 0;
             }
     puts("Solution");
-    show_pointer_matrix_d_la(matrix, rows, cols);
+    la_show_pointer_matrix_d(matrix, rows, cols);
 }

@@ -22,7 +22,7 @@
 #include "torfnum.h"
 
 
-int signal_torfnum(s, i)
+int torfnum_signal(s, i)
 char s[];
 int *i;
 {
@@ -31,7 +31,7 @@ int *i;
     return 1;
 }
 
-double value_torfnum(s, i)
+double torfnum_value(s, i)
 char s[];
 int *i;
 {
@@ -42,26 +42,26 @@ int *i;
     return val;
 }
 
-positive_int_mathfn valuei_torfnum(s, i)
+mathfn_positive_int valuei_torfnum(s, i)
 char s[];
 int *i;
 {
-    positive_int_mathfn val;
+    mathfn_positive_int val;
 
     for (val = 0; s[*i] >= '0' && s[*i] <= '9'; ++*i)
         val = 10 * val + s[*i] - '0';
     return val;
 }
 
-double atof_torfnum(s)
+double torfnum_atof(s)
 char s[];
 {
     double val, power;
     int i, sign, ex;
 
     for (i=0; s[i]==' ' || s[i]=='\n' || s[i]=='\t'; i++);
-    sign = signal_torfnum(s, &i);
-    val = value_torfnum(s, &i);
+    sign = torfnum_signal(s, &i);
+    val = torfnum_value(s, &i);
     if (s[i] == '.' || s[i] == ',')
         i++;
     for (power = 1; s[i] >= '0' && s[i] <= '9'; i++) {
@@ -72,57 +72,57 @@ char s[];
     val /= power * sign;
     if (s[i] == 'e' || s[i] == 'E') {
         i++;
-        sign = signal_torfnum(s, &i);
-        ex = value_torfnum(s, &i);
-        val = (sign==1) ? val * powi_mathfn(10, ex) : val / powi_mathfn(10, ex);
+        sign = torfnum_signal(s, &i);
+        ex = torfnum_value(s, &i);
+        val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
     }
     return(val);
 }
 
-atoi_torfnum(s)
+torfnum_atoi(s)
 char s[];
 {
     int val;
     int i, sign, ex;
 
     for (i=0; s[i]==' ' || s[i]=='\n' || s[i]=='\t'; i++);
-    sign = signal_torfnum(s, &i);
-    val = sign * value_torfnum(s, &i);
+    sign = torfnum_signal(s, &i);
+    val = sign * torfnum_value(s, &i);
     if (s[i] == 'e' || s[i] == 'E') {
         i++;
-        sign = signal_torfnum(s, &i);
-        ex = value_torfnum(s, &i);
-        val = (sign==1) ? val * powi_mathfn(10, ex) : val / powi_mathfn(10, ex);
+        sign = torfnum_signal(s, &i);
+        ex = torfnum_value(s, &i);
+        val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
     }
     return val;
 }
 
-positive_int_mathfn atopi_torfnum(s)
+mathfn_positive_int torfnum_atopi(s)
 char s[];
 {
-    positive_int_mathfn val, ex;
+    mathfn_positive_int val, ex;
     int i, sign;
 
     for (i=0; s[i]==' ' || s[i]=='\n' || s[i]=='\t'; i++);
-    sign = signal_torfnum(s, &i);
+    sign = torfnum_signal(s, &i);
     val = sign * valuei_torfnum(s, &i);
     if (s[i] == 'e' || s[i] == 'E') {
         i++;
-        sign = signal_torfnum(s, &i);
+        sign = torfnum_signal(s, &i);
         ex = valuei_torfnum(s, &i);
-        val = (sign==1) ? val * powi_mathfn(10, ex) : val / powi_mathfn(10, ex);
+        val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
     }
     return val;
 }
 
-ftoa_torfnum(n, s, lim)
+torfnum_ftoa(n, s, lim)
 double n;
 char s[];
 {
     int nI, i;
     
     nI = (int)n;
-    if (itoa_torfnum(nI, s, lim))
+    if (torfnum_itoa(nI, s, lim))
         return(-1);
     
     for (i = 0; s[i] != '\0'; i++);
@@ -143,7 +143,7 @@ char s[];
     return(0);
 }
 
-void reverse_torfnum(s)
+void torfnum_reverse(s)
 char *s;
 {
     char c;
@@ -156,7 +156,7 @@ char *s;
     }    
 }
 
-itoa_torfnum(n, s, l)
+torfnum_itoa(n, s, l)
 char *s;
 {
     int i, sign;
@@ -181,5 +181,5 @@ char *s;
     for (i = s-aux; i < l; *s++ = ' ', i++);
     
     *s = '\0';
-    reverse_torfnum(aux);
+    torfnum_reverse(aux);
 }

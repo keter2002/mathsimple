@@ -22,9 +22,9 @@
 main(argc, argv)
 char *argv[];
 {
-    extern double atof_torfnum();
-    extern double powd_mathfn();
-    extern atoi_torfnum(); 
+    extern double torfnum_atof();
+    extern double mathfn_powd();
+    extern torfnum_atoi(); 
     double num, x, rt, numerator, m, aux, exp;
     int i, j, k, fat, it;
 
@@ -32,21 +32,21 @@ char *argv[];
         fputs("Usage: binomial_series number exponent iterations\n", stderr);
         return 2;
     }
-    num = atof_torfnum(argv[1]);
-    exp = atof_torfnum(argv[2]);
-    it = argc > 3? atoi_torfnum(argv[3]) : 0;
+    num = torfnum_atof(argv[1]);
+    exp = torfnum_atof(argv[2]);
+    it = argc > 3? torfnum_atoi(argv[3]) : 0;
     if (num > 1.0) {
         i = 0;
         do {
             i++;
-            aux = powd_mathfn((double)i, exp);
+            aux = mathfn_powd((double)i, exp);
         } while (aux < num);
         if (!i) {
             fputs("Very small number.", stderr);
             return 1;
         }
         i -= 1;
-        x = (num-powd_mathfn((double)i, exp))/powd_mathfn((double)i, exp);
+        x = (num-mathfn_powd((double)i, exp))/mathfn_powd((double)i, exp);
     } else
         x = num;    
     rt = 1;
@@ -58,8 +58,8 @@ char *argv[];
             fat *= k+1;
         }
         m = numerator/fat;
-        rt += m*powd_mathfn(x, j);
-        printf("%f %f %f\n", rt, m, powd_mathfn(x,j));
+        rt += m*mathfn_powd(x, j);
+        printf("%f %f %f\n", rt, m, mathfn_powd(x,j));
     }
     printf("%.5lf\n", num > 1.0? rt*i : rt);
 }

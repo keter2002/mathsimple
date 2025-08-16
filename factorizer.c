@@ -22,14 +22,14 @@
 main(argc, argv)
 char *argv[];
 {
-    extern atoi_torfnum();
+    extern torfnum_atoi();
     int num, factor;
 
     if (argc < 2) {
         puts("Usage: factorizer x");
         return 2;
     }
-    num = atoi_torfnum(argv[1]);
+    num = torfnum_atoi(argv[1]);
     factor = 2;
     puts("1");
     while (num != 1)

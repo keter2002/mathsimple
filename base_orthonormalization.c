@@ -44,7 +44,7 @@ float *basis;
 
 main()
 {
-    extern double atof_torfnum();
+    extern double torfnum_atof();
     float basis[SIZE_LA*SIZE_LA] = { 0 };
     int n, len, m;
     char *line, *p;
@@ -55,11 +55,11 @@ main()
     while (getline(&line, &size, stdin) != EOF) {
         len = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            basis[n * SIZE_LA + len++] = atof_torfnum(p);
+            basis[n * SIZE_LA + len++] = torfnum_atof(p);
         if (len > m)
             m = len;
         n++;
     }
     orthonormalization(basis, n, m);
-    show_matrix_s_la(basis, n, m, SIZE_LA);
+    la_show_matrix_s(basis, n, m, SIZE_LA);
 }

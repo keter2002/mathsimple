@@ -30,7 +30,7 @@ char *argv[];
 		fputs("lcm: x y\n", stderr);
 		return 2;
 	}
-	x = atoi_torfnum(argv[1]);
-	y = atoi_torfnum(argv[2]);
-	printf("%ld\n", MMC_MATHFN(x,y));
+	x = torfnum_atoi(argv[1]);
+	y = torfnum_atoi(argv[2]);
+	printf("%ld\n", MATHFN_LCM(x,y));
 }

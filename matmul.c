@@ -25,9 +25,9 @@ main()
     double a[SIZE_LA*SIZE_LA], b[SIZE_LA*SIZE_LA], c[SIZE_LA*SIZE_LA];
     int rows_a, cols_a, rows_b, cols_b;
 
-    read_matrices_d_la(a, &rows_a, &cols_a);
-    read_matrices_d_la(b, &rows_b, &cols_b);
+    la_read_matrices_d(a, &rows_a, &cols_a);
+    la_read_matrices_d(b, &rows_b, &cols_b);
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, rows_a, cols_b,
                 cols_a, 1.f, a, SIZE_LA, b, SIZE_LA, 1.f, c, SIZE_LA);
-    show_matrix_d_la(c, rows_a, cols_b, SIZE_LA);
+    la_show_matrix_d(c, rows_a, cols_b, SIZE_LA);
 }

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "linear_algebra.h"
 
-void show_matrix_s_la(a, rows, cols, lda)
+void la_show_matrix_s(a, rows, cols, lda)
 float *a;
 {
     int i, j;
@@ -11,22 +11,22 @@ float *a;
     for (i=0; i < rows; i++, putchar('\n'))
         for (j=0; j < cols; j++) {
             aij = a[i * lda + j];
-                PRINT_KNOW_CONSTANT_LA(aij)
+                LA_PRINT_KNOW_CONSTANT(aij)
             else
                 printf("%f ", aij);
         }
 }
 
-void show_pointer_matrix_s_la(a, rows, cols)
+void la_show_pointer_matrix_s(a, rows, cols)
 float a[][SIZE_LA];
 {
     int i;
 
     for (i=0; i < rows; i++)
-        show_matrix_s_la(a[i], 1, cols, SIZE_LA);
+        la_show_matrix_s(a[i], 1, cols, SIZE_LA);
 }
 
-void show_matrix_d_la(a, rows, cols, lda)
+void la_show_matrix_d(a, rows, cols, lda)
 double *a;
 {
     int i, j;
@@ -35,24 +35,24 @@ double *a;
     for (i=0; i < rows; i++, putchar('\n'))
         for (j=0; j < cols; j++) {
             aij = a[i * lda + j];
-                PRINT_KNOW_CONSTANT_LA(aij)
+                LA_PRINT_KNOW_CONSTANT(aij)
             else
                 printf("%lf ", aij);
         }
 }
 
-void show_pointer_matrix_d_la(a, rows, cols)
+void la_show_pointer_matrix_d(a, rows, cols)
 double a[][SIZE_LA];
 {
     int i;
 
     for (i=0; i < rows; i++)
-        show_matrix_d_la(a[i], 1, cols, SIZE_LA);
+        la_show_matrix_d(a[i], 1, cols, SIZE_LA);
 }
 
-extern double atof_torfnum();
+extern double torfnum_atof();
 
-void read_one_pointer_matrix_s_la(a, rows, cols)
+void la_read_one_pointer_matrix_s(a, rows, cols)
 float a[][SIZE_LA];
 int *rows, *cols;
 {
@@ -66,13 +66,13 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows][(*cols)++] = atof_torfnum(p);
+            a[*rows][(*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);
 }
 
-void read_one_pointer_matrix_d_la(a, rows, cols)
+void la_read_one_pointer_matrix_d(a, rows, cols)
 double a[][SIZE_LA];
 int *rows, *cols;
 {
@@ -86,13 +86,13 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows][(*cols)++] = atof_torfnum(p);
+            a[*rows][(*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);
 }
 
-void read_matrices_s_la(a, rows, cols)
+void la_read_matrices_s(a, rows, cols)
 float *a;
 int *rows, *cols;
 {
@@ -105,13 +105,13 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * SIZE_LA + (*cols)++] = atof_torfnum(p);
+            a[*rows * SIZE_LA + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);
 }
 
-void read_matrices_d_la(a, rows, cols)
+void la_read_matrices_d(a, rows, cols)
 double *a;
 int *rows, *cols;
 {
@@ -124,7 +124,7 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * SIZE_LA + (*cols)++] = atof_torfnum(p);
+            a[*rows * SIZE_LA + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);

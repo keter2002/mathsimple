@@ -16,27 +16,27 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef H_AVLTREE
-#define H_AVLTREE
+#ifndef AVLTREE_H
+#define AVLTREE_H
 #include <stdio.h>
 
-typedef struct avl_node {
+typedef struct avltree_node {
     short bf;
-    struct avl_node *parent, *child[2];
+    struct avltree_node *parent, *child[2];
     void *key, *value;
     unsigned char has_value;
-} avl_node;
+} avltree_node;
 
 typedef struct {
-    struct avl_node *root;
+    avltree_node *root;
     int nmemb;
     int (*compar)(const void *, const void *);
     void (*print_node)(FILE*, void *, void *);
     /* If true, the insertion replaces values with the same key */
     unsigned char inplace;
-} avl_tree;
+} avltree_tree;
 
-#define create_avltree(T, INPLACE, CMP_FN, PRINT_FN) \
+#define avltree_create(T, INPLACE, CMP_FN, PRINT_FN) \
     do { \
          T.root = NULL; \
          T.nmemb = 0; \
@@ -45,71 +45,71 @@ typedef struct {
          T.print_node = PRINT_FN; \
     } while (0)
 
-void destroy_avl(avl_tree *t, avl_node *r);
-#define destroy_avltree(T) \
+void avl_destroy(avltree_tree *t, avltree_node *r);
+#define avltree_destroy(T) \
     do { \
         if (T.nmemb) { \
-            destroy_avl(&T, T.root); \
+            avl_destroy(&T, T.root); \
             T.nmemb = 0; \
             T.root = NULL; \
         } \
     } while (0)
-#define destroy_avltree_ptr(T) \
+#define avltree_destroy_ptr(T) \
     do { \
         if (T->nmemb) { \
-            destroy_avl(T, T->root); \
+            avl_destroy(T, T->root); \
             T->nmemb = 0; \
             T->root = NULL; \
         } \
     } while (0)
 
-avl_node *find_max_avl(avl_tree *t, avl_node *r);
-#define find_max_avltree(T) \
-    find_max_avl(&T, T.root)
-avl_node *find_min_avl(avl_tree *t, avl_node *r);
-#define find_min_avltree(T) \
-    find_min_avl(&T, T.root)
+avltree_node *avl_find_max(avltree_tree *t, avltree_node *r);
+#define avltree_find_max(T) \
+    avl_find_max(&T, T.root)
+avltree_node *avl_find_min(avltree_tree *t, avltree_node *r);
+#define avltree_find_min(T) \
+    avl_find_min(&T, T.root)
 
-avl_node *find_node_avl(avl_tree *t, avl_node *r, void *key, avl_node **parent);
-#define find_node_avltree(T, KEY) \
-    find_node_avl(&T, T.root, KEY, NULL)
-#define find_node_avltree_ptr(T, KEY) \
-    find_node_avl(T, T->root, KEY, NULL)
+avltree_node *avl_find_node(avltree_tree *t, avltree_node *r, void *key, avltree_node **parent);
+#define avltree_find_node(T, KEY) \
+    avl_find_node(&T, T.root, KEY, NULL)
+#define avltree_find_node_ptr(T, KEY) \
+    avl_find_node(T, T->root, KEY, NULL)
 
-avl_node *insert_avltree(avl_tree *t, void *key, void *value);
-#define insert_key_avltree(T, KEY) \
-    insert_avltree(&T, KEY, NULL)
-#define insert_key_avltree_ptr(T, KEY) \
-    insert_avltree(T, KEY, NULL)
+avltree_node *avltree_insert(avltree_tree *t, void *key, void *value);
+#define avltree_insert_key(T, KEY) \
+    avltree_insert(&T, KEY, NULL)
+#define avltree_insert_key_ptr(T, KEY) \
+    avltree_insert(T, KEY, NULL)
 
-void remove_avl(avl_tree *t, avl_node *z);
+void avl_remove(avltree_tree *t, avltree_node *z);
 
-int remove_avltree(avl_tree *t, void *key);
-#define remove_node_avltree(T, KEY) \
-    remove_avltree(&T, KEY)
-#define remove_node_avltree_ptr(T, KEY) \
-    remove_avltree(T, KEY)
+int avltree_remove(avltree_tree *t, void *key);
+#define avltree_remove_node(T, KEY) \
+    avltree_remove(&T, KEY)
+#define avltree_remove_node_ptr(T, KEY) \
+    avltree_remove(T, KEY)
 
-int height_avl(avl_tree *t, avl_node *r);
-#define height_avltree(T) \
-    height_avl(&T, T.root)
+int avl_height(avltree_tree *t, avltree_node *r);
+#define avltree_height(T) \
+    avl_height(&T, T.root)
 
-void infix_avl(avl_tree *t, avl_node *r, avl_node *last);
-#define infix_avltree(T) \
-    infix_avl(&T, T.root, find_max_avltree(&T, T.root))
+void avl_infix(avltree_tree *t, avltree_node *r, avltree_node *last);
+#define avltree_infix(T) \
+    avl_infix(&T, T.root, avltree_find_max(&T, T.root))
 
-void prefix_avl(avl_tree *t, avl_node *r);
-#define prefix_avltree(T) \
-    prefix_avl(&T, T.root)
-#define prefix_avltree_ptr(T) \
-    prefix_avl(T, T->root)
+void avl_prefix(avltree_tree *t, avltree_node *r);
+#define avltree_prefix(T) \
+    avl_prefix(&T, T.root)
+#define avltree_prefix_ptr(T) \
+    avl_prefix(T, T->root)
 
-void posfix_avl(avl_tree *t, avl_node *r);
-#define posfix_avltree(T) \
-    posfix_avl(&T, T.root)
+void avl_posfix(avltree_tree *t, avltree_node *r);
+#define avltree_posfix(T) \
+    avl_posfix(&T, T.root)
 
-void keys_to_array_avl(avl_tree *t, avl_node *r, unsigned char *arr, size_t size, int *nmemb, int capacity);
-#define keys_to_array_avltree(T, ARR, SIZE, NMEMB, CAP) \
-    keys_to_array_avl(&T, T.root, ARR, SIZE, NMEMB, CAP)
+void avl_keys_to_array(avltree_tree *t, avltree_node *r, unsigned char *arr, size_t size, int *nmemb, int capacity);
+#define avltree_keys_to_array(T, ARR, SIZE, NMEMB, CAP) \
+    avl_keys_to_array(&T, T.root, ARR, SIZE, NMEMB, CAP)
 
 #endif

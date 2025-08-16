@@ -17,13 +17,13 @@
 */
 
 #include <assert.h>
-#include "eps_la.h"
+#include "la_eps.h"
 #include "mathfn.h"
 #include <math.h>
 
 
-positive_int_mathfn greatest_common_divisor_mathfn(x, y)
-positive_int_mathfn x, y;
+mathfn_positive_int mathfn_greatest_common_divisor(x, y)
+mathfn_positive_int x, y;
 {
 	while (x && y)
 		if (x > y)
@@ -33,7 +33,7 @@ positive_int_mathfn x, y;
 	return x? x : y;
 }
 
-unsigned brent_mathfn(f, end, mu)
+unsigned mathfn_brent(f, end, mu)
 long *f;
 unsigned *mu;
 {
@@ -71,18 +71,18 @@ unsigned *mu;
 }
 
 /* Only for n >= 0 and integer. */
-positive_int_mathfn powi_mathfn(a, n)
-positive_int_mathfn a, n;
+mathfn_positive_int mathfn_powi(a, n)
+mathfn_positive_int a, n;
 {
-	positive_int_mathfn b = 1;
+	mathfn_positive_int b = 1;
 
 	while (n--)
 		b *= a;
 	return b;
 }
-double powd_mathfn(a, n)
+double mathfn_powd(a, n)
 double a;
-positive_int_mathfn n;
+mathfn_positive_int n;
 {
 	double b = 1;
 	
@@ -91,28 +91,28 @@ positive_int_mathfn n;
 	return b;
 }
 
-compar_double_mathfn(x, y)
+mathfn_compar_double(x, y)
 const void *x, *y;
 {
     double d;
     
     d = *(double*)x-*(double*)y;
-    if (fabs(d) <= EPS_LA)
+    if (fabs(d) <= LA_EPS)
         return 0;
     return d > 0? 1 : -1;
 }
-compar_float_mathfn(x, y)
+mathfn_compar_float(x, y)
 const void *x, *y;
 {
     float d;
     
     d = *(float*)x-*(float*)y;
-    if (fabsf(d) <= EPS_LA)
+    if (fabsf(d) <= LA_EPS)
         return 0;
     return d > 0? 1 : -1;
 }
 
-double roundd_mathfn(x)
+double mathfn_roundd(x)
 double x;
 {
 	return (x > 0? (int)(100*x+0.5)/100.0 : (int)(100*x-0.5)/100.0);

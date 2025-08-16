@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "eps_la.h"
+#include "la_eps.h"
 #include "torfnum.h"
 #include "mathfn.h"
 
@@ -33,43 +33,43 @@ char *argv[];
 	double sqrt_i;
 	double x, c;
 	
-	x = atof_torfnum(argv[1]);
+	x = torfnum_atof(argv[1]);
 
 	for (i=1; i <= RANGE; i++) {
 		ilf = i;
 		sqrt_i = sqrt(ilf);
 		if (ceil(sqrt_i) != sqrt_i) {
 			c = sqrt(ilf);
-			if (c - EPS_LA < x && c + EPS_LA > x) {
+			if (c - LA_EPS < x && c + LA_EPS > x) {
 				printf("%d^(1/2)\n", i);
 				return 0;
 			}
 		}
 		for (j=2; j <= RANGE; j++) {
 			jlf = j;
-			if (greatest_common_divisor_mathfn(i, j) == 1) {
+			if (mathfn_greatest_common_divisor(i, j) == 1) {
 				c = i / jlf;
-				if (c - EPS_LA < x && c + EPS_LA > x) {
+				if (c - LA_EPS < x && c + LA_EPS > x) {
 					printf("%d/%d\n", i, j);
 					return 0;
 				}
 			}
 			if (ceil(sqrt_i) != sqrt_i) {
 				c = sqrt(ilf) * j;
-				if (c - EPS_LA < x && c + EPS_LA > x) {
+				if (c - LA_EPS < x && c + LA_EPS > x) {
 					printf("%d.%d^(1/2)\n", j, i);
 					return 0;
 				}
 				c = sqrt(ilf) / jlf;
-				if (c - EPS_LA < x && c + EPS_LA > x) {
+				if (c - LA_EPS < x && c + LA_EPS > x) {
 					printf("%d^(1/2)/%d\n", i, j);
 					return 0;
 				}
 				for (k=2; k <= RANGE; k++)
-					if (greatest_common_divisor_mathfn(j, k) == 1) {
+					if (mathfn_greatest_common_divisor(j, k) == 1) {
 						klf = k;
 						c = sqrt(ilf)*j/klf;
-						if (c - EPS_LA < x && c + EPS_LA > x) {
+						if (c - LA_EPS < x && c + LA_EPS > x) {
 							printf("%d.%d^(1/2)/%d\n", j, i, k);
 							return 0;
 						}

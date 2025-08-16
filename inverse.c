@@ -62,7 +62,7 @@ main()
 			matrix[LDA * i + k] = 0;
 		}
 		printf("Step %0d:\n", k+1);
-		show_matrix_d_la(matrix, rows, cols, LDA);
+		la_show_matrix_d(matrix, rows, cols, LDA);
 	}
 	/* From the bottom up, subtract row akj times aik. */
 	for (k=rows-1; k > 0; k--)	
@@ -73,7 +73,7 @@ main()
 			matrix[LDA * i + k] = 0;
 		}
 	puts("M:");
-	show_matrix_d_la(matrix, rows, cols, LDA);
+	la_show_matrix_d(matrix, rows, cols, LDA);
 	puts("M^-1:");
-	show_matrix_d_la(&matrix[cols], rows, cols, LDA);
+	la_show_matrix_d(&matrix[cols], rows, cols, LDA);
 }

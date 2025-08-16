@@ -22,7 +22,7 @@
 main(argc, argv)
 char *argv[];
 {
-    dynamic_array fullexp;
+    array_dynamic fullexp;
     int i,next;
     double sum;
 

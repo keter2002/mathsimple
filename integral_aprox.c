@@ -1,12 +1,32 @@
-#include "expression.c"
+/*
+    Computes a definite integral by right, left, middle, trapezoid and Simpson
+    methods.
+    Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
+#include "expression.c"
 
-dynamic_array fullexp;
+array_dynamic fullexp;
 
 main(argc,argv)
 char *argv[];
 {
+    extern double torfnum_atof();
 	void infix_posfix();
 	double right_integral(), left_integral(), middle_integral(), trapezoid(), simpson();
 	double a,b,n;
@@ -17,7 +37,7 @@ char *argv[];
 	}
 	infix_posfix(&fullexp, argv[1]);
 	show_expr(&fullexp);
-	a = atof(argv[2]); b = atof(argv[3]); n = atof(argv[4]);
+	a = torfnum_atof(argv[2]); b = torfnum_atof(argv[3]); n = torfnum_atof(argv[4]);
 	printf("RI: %lf\n", right_integral(a, b, n));
 	printf("LI: %lf\n", left_integral(a, b, n));
 	printf("MI: %lf\n", middle_integral(a, b, n));

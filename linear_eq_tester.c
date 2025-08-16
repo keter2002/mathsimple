@@ -31,9 +31,9 @@ main()
     int i,j,k;
     double sum;
 
-    read_one_pointer_matrix_d_la(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
     puts("Linear System:");
-    show_pointer_matrix_d_la(matrix, rows, cols);
+    la_show_pointer_matrix_d(matrix, rows, cols);
     for (i=0; i < cols-1; i++) {
         printf("Variable %02d: ", i+1);
         scanf("%lf", &values[i]);
@@ -42,6 +42,6 @@ main()
         for (sum=j=0; j < cols-1; j++)
             sum += matrix[k][j]*values[j];
         printf("%lf ", sum);
-        puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < EPS_LA? "Equal" : "Not equal");
+        puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < LA_EPS? "Equal" : "Not equal");
     }
 }

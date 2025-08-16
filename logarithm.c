@@ -31,7 +31,7 @@ double log_e(x)
 	for (convergence=0, x--; x; x--)
 		for (aux = 2*x+1, i=0; i < ITERATIONS; i++) {
 			odd = i*2+1;
-			convergence += 2 * (1.0/odd) * (1.0/powd_mathfn(aux, odd));
+			convergence += 2 * (1.0/odd) * (1.0/mathfn_powd(aux, odd));
 		}
 	return convergence;
 }
@@ -43,7 +43,7 @@ char *argv[];
 {
 	int x;
 
-	x = atoi_torfnum(argv[1]);
+	x = torfnum_atoi(argv[1]);
 	if (x < 2) {
 		fputs("Number must be greater than 1.\n", stderr);
 		return 2;

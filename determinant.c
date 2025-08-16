@@ -69,6 +69,6 @@ main()
 	double matrix[SIZE_LA][SIZE_LA];
 	int rows, cols;
 
-	read_one_pointer_matrix_d_la(matrix, &rows, &cols);
+	la_read_one_pointer_matrix_d(matrix, &rows, &cols);
 	printf("%lf\n", determinant(matrix, rows, cols));
 }

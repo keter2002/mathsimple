@@ -24,19 +24,19 @@
 main(argc, argv)
 char *argv[];
 {
-    positive_int_mathfn *nums, gcd;
+    mathfn_positive_int *nums, gcd;
     int i;
 
     if (argc == 1) {
 		puts("Usage: gcd a b c ...");
 		return 2;
     }
-    nums = malloc(sizeof(positive_int_mathfn) * (argc-1));
+    nums = malloc(sizeof(mathfn_positive_int) * (argc-1));
     for (i=1; i < argc; i++)
-        nums[i-1] = atopi_torfnum(argv[i]);
+        nums[i-1] = torfnum_atopi(argv[i]);
     gcd = nums[0];
     for (i=1; i < argc-1; i++)
-        gcd = greatest_common_divisor_mathfn(gcd, nums[i]);
+        gcd = mathfn_greatest_common_divisor(gcd, nums[i]);
     free(nums);
     printf("%lu\n", gcd);
 }

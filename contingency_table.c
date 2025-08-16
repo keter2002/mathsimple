@@ -46,10 +46,10 @@ void *x, *y;
     return strcmp(((attr*)x)->freqp->word, ((attr*)y)->freqp->word);
 }
 
-GENERATE_ARRAYTYPED(attr, 2, 0)
-GENERATE_ORDERED_INSERT_ARRAYTYPED(attr, 0, compar_attr)
+ARRAYTYPED_GENERATE(attr, 2, 0)
+ARRAYTYPED_GENERATE_ORDERED_INSERT(attr, 0, compar_attr)
 
-typedef array_arraytyped_attr v_attr;
+typedef arraytyped_array_attr v_attr;
 
 typedef struct {
     frequencie fword;
@@ -63,9 +63,9 @@ typedef union {
 
 typedef unode *unode_tuple[2];
 
-GENERATE_ARRAYTYPED(unode_tuple, 2, 0)
+ARRAYTYPED_GENERATE(unode_tuple, 2, 0)
 
-typedef array_arraytyped_unode_tuple array_relations_unode;
+typedef arraytyped_array_unode_tuple array_relations_unode;
 
 /*polir o funcionamento e os nomes da trow*/
 /*fazer o resumo do funcionamento de cada funcao*/
@@ -77,7 +77,7 @@ char *argv[];
     FILE *fp;
     array_relations_unode U;
     
-    allocate_arraytyped(unode_tuple, U, 1);
+    arraytyped_allocate(unode_tuple, U, 1);
     if (argc >= 2)
         if (argv[1][0] == '-') {
             argc--;
@@ -121,36 +121,36 @@ array_relations_unode *arr;
     void insert_tuple(), make_table(), insert(), intersect();
     char s[MAXLEN];
     int type, side = LEFT;
-    avl_tree tf, ts;
-    avl_node *ret;
+    avltree_tree tf, ts;
+    avltree_node *ret;
     unode key, *new;
     
-    create_avltree(tf, 1, compar_f, NULL);
-    create_avltree(ts, 1, compar_s, NULL);
+    avltree_create(tf, 1, compar_f, NULL);
+    avltree_create(ts, 1, compar_s, NULL);
     arr->nmemb = 0;
     first = FALSE;
     while ((type = getword(s, MAXLEN, fp)) != EOF)
         if (type == LETTER) {
             if (side) {
                 key.fword.word = s;
-                if ((ret = find_node_avltree(tf, &key)))
+                if ((ret = avltree_find_node(tf, &key)))
                     ((frequencie*)ret->key)->count++;
                 else {
                     new = malloc(sizeof(unode));
                     new->fword.word = strsave(s);
                     new->fword.count = 1;
-                    ret = insert_key_avltree(tf, new);
+                    ret = avltree_insert_key(tf, new);
                 }
             } else {
                 key.sword.fword.word = s;
-                if ((ret = find_node_avltree(ts, &key))) {
+                if ((ret = avltree_find_node(ts, &key))) {
                     ((section*)ret->key)->fword.count++;
                 } else {
                     new = malloc(sizeof(unode));
                     new->sword.fword.word = strsave(s);
                     new->sword.fword.count = 1;
                     new->sword.vattr = NULL;
-                    ret = insert_key_avltree(ts, new);
+                    ret = avltree_insert_key(ts, new);
                 }
             }
             insert_tuple(ret, arr, side);
@@ -163,21 +163,21 @@ array_relations_unode *arr;
 }
 
 void insert_tuple(x, arr, side)
-avl_node *x;
+avltree_node *x;
 array_relations_unode *arr;
 {
     if (side == RIGHT && columns && first == FALSE) {
         arr->nmemb = 0;
         first = TRUE;
     }
-    expand_arraytyped_unode_tuple(arr);
-    (*LAST_SPACE_PTR_ARRAYTYPED(arr))[side] = x->key;
+    arraytyped_expand_unode_tuple(arr);
+    (*ARRAYTYPED_LAST_SPACE_PTR(arr))[side] = x->key;
     if ((columns==FALSE && side==RIGHT) || columns)
         arr->nmemb++;
 }
 
 void intersect(t, arr)
-avl_tree *t;
+avltree_tree *t;
 array_relations_unode *arr;
 {
     unode_tuple *ptr;
@@ -189,37 +189,37 @@ array_relations_unode *arr;
         vec = &((*ptr)[LEFT])->sword.vattr;
         if (!*vec) {
             *vec = malloc(sizeof(v_attr));
-            allocate_ptr_arraytyped(attr, (*vec),  2);
+            arraytyped_allocate_ptr(attr, (*vec),  2);
         }
         item.freqp = &((*ptr)[RIGHT])->fword;
         item.count = 1;
-        if (!insert_aorder_arraytyped_attr(*vec, &item, &idx))
-            AT_PTR_ARRAYTYPED((*vec), idx)->count++;
+        if (!arraytyped_insert_aorder_attr(*vec, &item, &idx))
+            ARRAYTYPED_AT_PTR((*vec), idx)->count++;
     }
     free(arr->base);
 }
 
-GENERATE_ARRAYTYPED(int, 2, 0)
+ARRAYTYPED_GENERATE(int, 2, 0)
 
 typedef char *str;
 
-GENERATE_ARRAYTYPED(str, 2, 0)
+ARRAYTYPED_GENERATE(str, 2, 0)
 
 #define ROW_L 15
 #define FORMAT "|%-15.15s|"
 
 void make_table(ts, tf)
-avl_tree *ts, *tf;
+avltree_tree *ts, *tf;
 {
     void theader(), trow();
-    array_arraytyped_int row, total;
-    array_arraytyped_str header;
+    arraytyped_array_int row, total;
+    arraytyped_array_str header;
     char cell[ROW_L];
     int i, n = 0;
     
-    allocate_arraytyped(int, row, 2);
-    allocate_arraytyped(int, total, 2);
-    allocate_arraytyped(str, header, 2);
+    arraytyped_allocate(int, row, 2);
+    arraytyped_allocate(int, total, 2);
+    arraytyped_allocate(str, header, 2);
 
     printf(FORMAT, "Categoria");
     theader(tf->root, &header, &total, &n);
@@ -243,27 +243,27 @@ avl_tree *ts, *tf;
 }
 
 void theader(r, header, total, acc)
-avl_node *r;
-array_arraytyped_str *header;
-array_arraytyped_int *total;
+avltree_node *r;
+arraytyped_array_str *header;
+arraytyped_array_int *total;
 int *acc;
 {
     int count;
 
     if (r) {
         theader(r->child[0], header, total, acc);
-        APPEND_TO_IDX_PTR_ARRAYTYPED(str, header, header->nmemb-1, &((unode*)r->key)->fword.word);
+        ARRAYTYPED_APPEND_TO_IDX_PTR(str, header, header->nmemb-1, &((unode*)r->key)->fword.word);
         count = ((unode*)r->key)->fword.count;
         *acc += count;
-        APPEND_TO_IDX_PTR_ARRAYTYPED(int, total, total->nmemb-1, &count);
+        ARRAYTYPED_APPEND_TO_IDX_PTR(int, total, total->nmemb-1, &count);
         theader(r->child[1], header, total, acc);
     }
 }
 
 void trow(r, e, h, ce)
-avl_node *r;
-array_arraytyped_int *e;
-array_arraytyped_str *h;
+avltree_node *r;
+arraytyped_array_int *e;
+arraytyped_array_str *h;
 char *ce;
 {
     int i, j, n;
@@ -274,12 +274,12 @@ char *ce;
         for (i=j=e->nmemb=n=0; j < h->nmemb; j++) {
             if (strcmp(((unode*)r->key)->sword.vattr->base[i].freqp->word, h->base[j])) {
                 e->base[e->nmemb++] = 0;
-                expand_arraytyped_int(e);
+                arraytyped_expand_int(e);
                 continue;
             }
             e->base[e->nmemb] = ((unode*)r->key)->sword.vattr->base[i++].count;
             n += e->base[e->nmemb++];
-            expand_arraytyped_int(e);
+            arraytyped_expand_int(e);
         }
         for (i=0; i < e->nmemb; i++) {
             sprintf(ce, "%d (%.1f%%)", e->base[i], ((float)e->base[i]*100)/n);

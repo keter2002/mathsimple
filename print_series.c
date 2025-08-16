@@ -22,16 +22,16 @@
 main(argc, argv)
 char *argv[];
 {
-    extern int atoi_torfnum();
-    dynamic_array fullexp;
+    extern int torfnum_atoi();
+    array_dynamic fullexp;
     int i, start, n;
 
     if (argc < 4) {
         fputs("Usage: print_series start n expression\n", stderr);
         return 2;
     }
-    i = start = atoi_torfnum(argv[1]);
-    n = atoi_torfnum(argv[2]);
+    i = start = torfnum_atoi(argv[1]);
+    n = torfnum_atoi(argv[2]);
     infix_posfix(&fullexp, argv[3]);
     show_expr(&fullexp);
     for (; i < start+n; i++)

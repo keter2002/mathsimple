@@ -23,13 +23,13 @@
 #include "mathfn.h"
 
 
-int signal_torfnum(char s[], int *i);
-double value_torfnum(char s[], int *i);
-void reverse_torfnum(char s[]);
-double atof_torfnum(char s[]);
-int atoi_torfnum(char s[]);
-positive_int_mathfn atopi_torfnum(char s[]);
-int ftoa_torfnum(double n, char s[], int lim);
-int itoa_torfnum(int n, char s[], int lim);
+int torfnum_signal(char s[], int *i);
+double torfnum_value(char s[], int *i);
+void torfnum_reverse(char s[]);
+double torfnum_atof(char s[]);
+int torfnum_atoi(char s[]);
+mathfn_positive_int torfnum_atopi(char s[]);
+int torfnum_ftoa(double n, char s[], int lim);
+int torfnum_itoa(int n, char s[], int lim);
 
 #endif

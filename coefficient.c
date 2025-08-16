@@ -32,7 +32,7 @@
 
 typedef double point[2];
 
-GENERATE_ARRAYTYPED(point, STEP, 0)
+ARRAYTYPED_GENERATE(point, STEP, 0)
 
 int columns = FALSE;
 
@@ -42,9 +42,9 @@ char *argv[];
 {
     void read_nums();
     FILE *fp;
-    array_arraytyped_point points;
+    arraytyped_array_point points;
     
-    allocate_arraytyped(point, points, 1);
+    arraytyped_allocate(point, points, 1);
     if (argc >= 2)
         if (argv[1][0] == '-') {
             argc--;
@@ -70,7 +70,7 @@ static first;
 
 void read_nums(fp, arr)
 FILE *fp;
-array_arraytyped_point *arr;
+arraytyped_array_point *arr;
 {
     extern double atof_torfnum();
     void insert_tuple(), estatistics();
@@ -92,20 +92,20 @@ array_arraytyped_point *arr;
 
 void insert_tuple(x, arr, side)
 double x;
-array_arraytyped_point *arr;
+arraytyped_array_point *arr;
 {
     if (side == RIGHT && columns && first == FALSE) {
         arr->nmemb = 0;
         first = TRUE;
     }
-    expand_arraytyped_point(arr);
-    (*LAST_SPACE_PTR_ARRAYTYPED(arr))[side] = x;
+    arraytyped_expand_point(arr);
+    (*ARRAYTYPED_LAST_SPACE_PTR(arr))[side] = x;
     if ((columns==FALSE && side==RIGHT) || columns)
         arr->nmemb++;
 }
 
 void estatistics(v)
-array_arraytyped_point *v;
+arraytyped_array_point *v;
 {
     double (*ptr)[2];
     double sumx, sumy, sumx2, sumy2, sumxy;

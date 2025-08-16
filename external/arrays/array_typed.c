@@ -16,49 +16,49 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef H_ARRAYTYPED
-#define H_ARRAYTYPED
+#ifndef ARRAYTYPED_H
+#define ARRAYTYPED_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-#define allocate_ptr_arraytyped(TYPENAME, ARR, CAP)\
+#define arraytyped_allocate_ptr(TYPENAME, ARR, CAP)\
     do {\
 	    (ARR)->nmemb = 0;\
 	    (ARR)->capacity = CAP;\
 	    (ARR)->base = malloc(sizeof(TYPENAME) * (CAP));\
 	    if (!(ARR)->base) { \
-	    	fputs("[allocate_ptr_arraytyped] Not enough memory.\n", stderr); \
-	    	exit(1); \
+	    	fputs("[arraytyped_allocate_ptr] Not enough memory.\n", stderr); \
+	    	exit(EXIT_FAILURE); \
 	    } \
     } while (0)
-#define allocate_arraytyped(TYPENAME, ARR, CAP) allocate_ptr_arraytyped(TYPENAME, &(ARR), CAP)
+#define arraytyped_allocate(TYPENAME, ARR, CAP) arraytyped_allocate_ptr(TYPENAME, &(ARR), CAP)
 
-#define LAST_SPACE_PTR_ARRAYTYPED(ARR) ((ARR)->base + (ARR)->nmemb)
-#define LAST_SPACE_ARRAYTYPED(ARR) LAST_SPACE_PTR_ARRAYTYPED(&(ARR))
+#define ARRAYTYPED_LAST_SPACE_PTR(ARR) ((ARR)->base + (ARR)->nmemb)
+#define ARRAYTYPED_LAST_SPACE(ARR) ARRAYTYPED_LAST_SPACE_PTR(&(ARR))
 
-#define AT_PTR_ARRAYTYPED(ARR, I) ((ARR)->base + (I))
-#define AT_ARRAYTYPED(ARR, I) AT_PTR_ARRAYTYPED(&(ARR), I)
+#define ARRAYTYPED_AT_PTR(ARR, I) ((ARR)->base + (I))
+#define ARRAYTYPED_AT(ARR, I) ARRAYTYPED_AT_PTR(&(ARR), I)
 
-#define APPEND_TO_IDX_PTR_ARRAYTYPED(TYPENAME, ARR, I, ITEM) \
+#define ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, ARR, I, ITEM) \
     do {\
         (ARR)->nmemb++;\
-        expand_arraytyped_##TYPENAME(ARR);\
+        arraytyped_expand_##TYPENAME(ARR);\
         memcpy((ARR)->base + (I), ITEM, sizeof(TYPENAME));\
     } while (0)
-#define APPEND_TO_IDX_ARRAYTYPED(TYPENAME, ARR, I, ITEM) APPEND_TO_IDX_PTR_ARRAYTYPED(TYPENAME, &(ARR), I, ITEM)
+#define ARRAYTYPED_APPEND_TO_IDX(TYPENAME, ARR, I, ITEM) ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, &(ARR), I, ITEM)
 
-#define GENERATE_ARRAYTYPED(TYPENAME, FAC, INC)\
+#define ARRAYTYPED_GENERATE(TYPENAME, FAC, INC)\
 \
 typedef struct {\
 	TYPENAME *base;\
 	size_t nmemb, capacity;\
-} array_arraytyped_##TYPENAME;\
+} arraytyped_array_##TYPENAME;\
 \
-void expand_arraytyped_##TYPENAME(arr)\
-array_arraytyped_##TYPENAME *arr;\
+void arraytyped_expand_##TYPENAME(arr)\
+arraytyped_array_##TYPENAME *arr;\
 {\
     TYPENAME *tmp;\
     \
@@ -68,12 +68,12 @@ array_arraytyped_##TYPENAME *arr;\
     		arr->base = tmp;\
     	else {\
     		fprintf(stderr, "[%s] Realloc fail.\n", __func__);\
-    		exit(1);\
+    		exit(EXIT_FAILURE);\
     	}\
     }\
 }\
 \
-void move_arraytyped_##TYPENAME(end, begin, offset)\
+void arraytyped_move_##TYPENAME(end, begin, offset)\
 TYPENAME *end, *begin;\
 size_t offset;\
 {\
@@ -81,8 +81,8 @@ size_t offset;\
         memcpy(end+offset, end, sizeof(TYPENAME));\
 }
 
-#define GENERATE_ORDERED_INSERT_ARRAYTYPED(TYPENAME, INPLACE, CMP)\
-size_t upper_bound_arraytyped_##TYPENAME(arr, item, begin, end)\
+#define ARRAYTYPED_GENERATE_ORDERED_INSERT(TYPENAME, INPLACE, CMP)\
+size_t arraytyped_upper_bound_##TYPENAME(arr, item, begin, end)\
 TYPENAME *arr, *item;\
 {\
     size_t idx;\
@@ -104,24 +104,24 @@ TYPENAME *arr, *item;\
     return idx;\
 }\
 \
-insert_aorder_arraytyped_##TYPENAME(arr, item, idx)\
-array_arraytyped_##TYPENAME *arr;\
+arraytyped_insert_aorder_##TYPENAME(arr, item, idx)\
+arraytyped_array_##TYPENAME *arr;\
 TYPENAME *item;\
 size_t *idx;\
 {\
     if (!arr->nmemb) {\
         *idx = 0;\
-        APPEND_TO_IDX_PTR_ARRAYTYPED(TYPENAME, arr, *idx, item);\
+        ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, arr, *idx, item);\
         return 1;\
     }\
-    if ((*idx = upper_bound_arraytyped_##TYPENAME(arr->base, item, 0, arr->nmemb-1)) == arr->nmemb) {\
-        APPEND_TO_IDX_PTR_ARRAYTYPED(TYPENAME, arr, *idx, item);\
+    if ((*idx = arraytyped_upper_bound_##TYPENAME(arr->base, item, 0, arr->nmemb-1)) == arr->nmemb) {\
+        ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, arr, *idx, item);\
         return 1;\
     }\
     if (CMP(arr->base + *idx, item)) {\
         arr->nmemb++;\
-        expand_arraytyped_##TYPENAME(arr);\
-        move_arraytyped_##TYPENAME(arr->base + arr->nmemb-2, arr->base + *idx, 1);\
+        arraytyped_expand_##TYPENAME(arr);\
+        arraytyped_move_##TYPENAME(arr->base + arr->nmemb-2, arr->base + *idx, 1);\
         memcpy(arr->base + *idx, item, sizeof(TYPENAME));\
         return 1;\
     }\
@@ -129,8 +129,8 @@ size_t *idx;\
         memcpy(arr->base + *idx, item, sizeof(TYPENAME));\
 }
 
-#define GENERATE_SORT_ARRAYTYPED(TYPENAME, CMP)\
-static void swap_arraytyped_##TYPENAME(x, y)\
+#define ARRAYTYPED_GENERATE_SORT(TYPENAME, CMP)\
+static void arraytyped_swap_##TYPENAME(x, y)\
 TYPENAME *x, *y;\
 {\
     TYPENAME aux;\
@@ -140,7 +140,7 @@ TYPENAME *x, *y;\
     memcpy(y, &aux, sizeof(TYPENAME));\
 }\
 \
-void quick_sort_arraytyped_##TYPENAME(arr, begin, end)\
+void arraytyped_quick_sort_##TYPENAME(arr, begin, end)\
 TYPENAME arr[];\
 {\
     TYPENAME pivot;\
@@ -154,16 +154,16 @@ TYPENAME arr[];\
         for (;CMP(arr + j, &pivot) > 0 && j > begin; --j);\
 \
         if (i <= j){\
-            swap_arraytyped_##TYPENAME(arr + i, arr + j);\
+            arraytyped_swap_##TYPENAME(arr + i, arr + j);\
             --j;\
             ++i;\
         }\
     }\
 \
     if (j > begin)\
-        quick_sort_arraytyped_##TYPENAME(arr, begin, j + 1);\
+        arraytyped_quick_sort_##TYPENAME(arr, begin, j + 1);\
     if (i < end)\
-        quick_sort_arraytyped_##TYPENAME(arr, i, end);\
+        arraytyped_quick_sort_##TYPENAME(arr, i, end);\
 }
 
 #endif
