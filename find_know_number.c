@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "la_eps.h"
+#include "eps_la.h"
 #include "torfnum.h"
 #include "mathfn.h"
 
@@ -40,7 +40,7 @@ char *argv[];
 		sqrt_i = sqrt(ilf);
 		if (ceil(sqrt_i) != sqrt_i) {
 			c = sqrt(ilf);
-			if (c - LA_EPS < x && c + LA_EPS > x) {
+			if (c - EPS_LA < x && c + EPS_LA > x) {
 				printf("%d^(1/2)\n", i);
 				return 0;
 			}
@@ -49,19 +49,19 @@ char *argv[];
 			jlf = j;
 			if (greatest_common_divisor_mathfn(i, j) == 1) {
 				c = i / jlf;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
+				if (c - EPS_LA < x && c + EPS_LA > x) {
 					printf("%d/%d\n", i, j);
 					return 0;
 				}
 			}
 			if (ceil(sqrt_i) != sqrt_i) {
 				c = sqrt(ilf) * j;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
+				if (c - EPS_LA < x && c + EPS_LA > x) {
 					printf("%d.%d^(1/2)\n", j, i);
 					return 0;
 				}
 				c = sqrt(ilf) / jlf;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
+				if (c - EPS_LA < x && c + EPS_LA > x) {
 					printf("%d^(1/2)/%d\n", i, j);
 					return 0;
 				}
@@ -69,7 +69,7 @@ char *argv[];
 					if (greatest_common_divisor_mathfn(j, k) == 1) {
 						klf = k;
 						c = sqrt(ilf)*j/klf;
-						if (c - LA_EPS < x && c + LA_EPS > x) {
+						if (c - EPS_LA < x && c + EPS_LA > x) {
 							printf("%d.%d^(1/2)/%d\n", j, i, k);
 							return 0;
 						}

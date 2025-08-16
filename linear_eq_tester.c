@@ -22,8 +22,8 @@
 #include <math.h>
 #include "linear_algebra.h"
 
-double matrix[LA_TAM][LA_TAM];
-double values[LA_TAM];
+double matrix[SIZE_LA][SIZE_LA];
+double values[SIZE_LA];
 
 main()
 {
@@ -31,9 +31,9 @@ main()
     int i,j,k;
     double sum;
 
-    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+    read_one_pointer_matrix_d_la(matrix, &rows, &cols);
     puts("Linear System:");
-    la_show_pointer_matrix_d(matrix, rows, cols);
+    show_pointer_matrix_d_la(matrix, rows, cols);
     for (i=0; i < cols-1; i++) {
         printf("Variable %02d: ", i+1);
         scanf("%lf", &values[i]);
@@ -42,6 +42,6 @@ main()
         for (sum=j=0; j < cols-1; j++)
             sum += matrix[k][j]*values[j];
         printf("%lf ", sum);
-        puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < LA_EPS? "Equal" : "Not equal");
+        puts(fabs(fabs(sum)-fabs(matrix[k][cols-1])) < EPS_LA? "Equal" : "Not equal");
     }
 }

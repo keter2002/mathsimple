@@ -68,7 +68,7 @@ generate_header: generate_header.c $(mathfn_lib)
 	$(CC) $< -o $@ $(mathfn_lib) -lm -Wno-implicit-int
 
 $(la_lib): linear_algebra.c linear_algebra.h generate_header
-	./generate_header > la_print_know_constant.h
+	./generate_header > print_know_constant_la.h
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ -Wno-implicit-int
 
@@ -76,22 +76,22 @@ $(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torf
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -lcblas -Wno-implicit-int
 
-$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib)
+$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
-$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib)
+$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
-$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib)
+$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
-$(BUILD_DIR)/determinant: determinant.c $(la_lib)
+$(BUILD_DIR)/determinant: determinant.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
-$(BUILD_DIR)/inverse: inverse.c $(la_lib)
+$(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
-$(BUILD_DIR)/matmul: matmul.c $(la_lib)
+$(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -Wno-implicit-int
 
@@ -120,3 +120,8 @@ test:
 	cat tests/coefficient/t03.in | ./build/coefficient | diff - tests/coefficient/t03.out
 	
 	cat tests/determinant/t01.in | ./build/determinant | diff - tests/determinant/t01.out
+	
+	cat tests/linear_solver/t01.in | ./build/linear_solver | diff - tests/linear_solver/t01.out
+	
+	cat tests/linear_eq_tester/t01.in | ./build/linear_eq_tester | diff - tests/linear_eq_tester/t01.out
+

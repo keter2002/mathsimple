@@ -31,9 +31,9 @@ float *basis;
     float inner_product, *u, *g;
 
     for (i=0; i < n; i++) {
-        u = &basis[i*LA_TAM];
+        u = &basis[i*SIZE_LA];
         for (j = i-1; j >= 0; j--) {
-            g = &basis[j*LA_TAM];
+            g = &basis[j*SIZE_LA];
             inner_product = cblas_sdot(m, u, 1, g, 1);
             cblas_saxpy(m, -inner_product, g, 1, u, 1);
         }
@@ -45,7 +45,7 @@ float *basis;
 main()
 {
     extern double atof_torfnum();
-    float basis[LA_TAM*LA_TAM] = { 0 };
+    float basis[SIZE_LA*SIZE_LA] = { 0 };
     int n, len, m;
     char *line, *p;
     size_t size;
@@ -55,11 +55,11 @@ main()
     while (getline(&line, &size, stdin) != EOF) {
         len = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            basis[n * LA_TAM + len++] = atof_torfnum(p);
+            basis[n * SIZE_LA + len++] = atof_torfnum(p);
         if (len > m)
             m = len;
         n++;
     }
     orthonormalization(basis, n, m);
-    la_show_matrix_s(basis, n, m, LA_TAM);
+    show_matrix_s_la(basis, n, m, SIZE_LA);
 }

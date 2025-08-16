@@ -24,7 +24,6 @@
 #include "external/avltree/avltree.c"
 #include "external/heaps/minmax_heap_typed.c"
 #include "external/arrays/array_typed.c"
-#include "la_eps.h"
 
 #define TRUE 1
 #define FALSE 0

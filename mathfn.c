@@ -17,7 +17,7 @@
 */
 
 #include <assert.h>
-#include "la_eps.h"
+#include "eps_la.h"
 #include "mathfn.h"
 #include <math.h>
 
@@ -97,7 +97,7 @@ const void *x, *y;
     double d;
     
     d = *(double*)x-*(double*)y;
-    if (fabs(d) <= LA_EPS)
+    if (fabs(d) <= EPS_LA)
         return 0;
     return d > 0? 1 : -1;
 }
@@ -107,7 +107,7 @@ const void *x, *y;
     float d;
     
     d = *(float*)x-*(float*)y;
-    if (fabsf(d) <= LA_EPS)
+    if (fabsf(d) <= EPS_LA)
         return 0;
     return d > 0? 1 : -1;
 }
