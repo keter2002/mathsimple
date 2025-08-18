@@ -22,12 +22,12 @@
 
 main()
 {
-    double a[SIZE_LA*SIZE_LA], b[SIZE_LA*SIZE_LA], c[SIZE_LA*SIZE_LA];
+    double a[LA_SIZE*LA_SIZE], b[LA_SIZE*LA_SIZE], c[LA_SIZE*LA_SIZE];
     int rows_a, cols_a, rows_b, cols_b;
 
     la_read_matrices_d(a, &rows_a, &cols_a);
     la_read_matrices_d(b, &rows_b, &cols_b);
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, rows_a, cols_b,
-                cols_a, 1.f, a, SIZE_LA, b, SIZE_LA, 1.f, c, SIZE_LA);
-    la_show_matrix_d(c, rows_a, cols_b, SIZE_LA);
+                cols_a, 1.f, a, LA_SIZE, b, LA_SIZE, 1.f, c, LA_SIZE);
+    la_show_matrix_d(c, rows_a, cols_b, LA_SIZE);
 }

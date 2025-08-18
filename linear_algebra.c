@@ -1,3 +1,21 @@
+/*
+    Definitions of utility functions to deal with matrices.
+    Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include "linear_algebra.h"
@@ -18,12 +36,12 @@ float *a;
 }
 
 void la_show_pointer_matrix_s(a, rows, cols)
-float a[][SIZE_LA];
+float a[][LA_SIZE];
 {
     int i;
 
     for (i=0; i < rows; i++)
-        la_show_matrix_s(a[i], 1, cols, SIZE_LA);
+        la_show_matrix_s(a[i], 1, cols, LA_SIZE);
 }
 
 void la_show_matrix_d(a, rows, cols, lda)
@@ -42,18 +60,18 @@ double *a;
 }
 
 void la_show_pointer_matrix_d(a, rows, cols)
-double a[][SIZE_LA];
+double a[][LA_SIZE];
 {
     int i;
 
     for (i=0; i < rows; i++)
-        la_show_matrix_d(a[i], 1, cols, SIZE_LA);
+        la_show_matrix_d(a[i], 1, cols, LA_SIZE);
 }
 
 extern double torfnum_atof();
 
 void la_read_one_pointer_matrix_s(a, rows, cols)
-float a[][SIZE_LA];
+float a[][LA_SIZE];
 int *rows, *cols;
 {
     char *line, *p;
@@ -73,7 +91,7 @@ int *rows, *cols;
 }
 
 void la_read_one_pointer_matrix_d(a, rows, cols)
-double a[][SIZE_LA];
+double a[][LA_SIZE];
 int *rows, *cols;
 {
     char *line, *p;
@@ -105,7 +123,7 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * SIZE_LA + (*cols)++] = torfnum_atof(p);
+            a[*rows * LA_SIZE + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);
@@ -124,7 +142,7 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * SIZE_LA + (*cols)++] = torfnum_atof(p);
+            a[*rows * LA_SIZE + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);

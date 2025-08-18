@@ -10,7 +10,7 @@ mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
-la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul
+la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul inner_product
 LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
 all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS)
@@ -20,7 +20,7 @@ $(BUILD_DIR)/series_convergence: series_convergence.c
 	$(CC) $< -o $@ -lm  -Wno-implicit-int
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int -g
+	$(CC) $^ -o $@ -Wno-implicit-int
 
 $(mathfn_lib): mathfn.c
 	mkdir -p $(BUILD_DIR)/lib
@@ -94,6 +94,9 @@ $(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 $(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -Wno-implicit-int
+$(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lcblas -lm -Wno-implicit-int
 
 clean:
 	rm -rd $(BUILD_DIR)

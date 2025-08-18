@@ -21,9 +21,9 @@
 #include <stdlib.h>
 #include "linear_algebra.h"
 
-#define LDA (SIZE_LA<<1)
+#define LDA (LA_SIZE<<1)
 
-double matrix[SIZE_LA*LDA];
+double matrix[LA_SIZE*LDA];
 
 main()
 {

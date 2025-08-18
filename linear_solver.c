@@ -23,7 +23,7 @@
 
 main()
 {
-    double matrix[SIZE_LA][SIZE_LA];
+    double matrix[LA_SIZE][LA_SIZE];
     int rows, cols;
     int i,j,k;
 

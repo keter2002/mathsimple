@@ -20,10 +20,10 @@
 #include "linear_algebra.h"
 
 double determinant(m, rows, cols)
-double m[][SIZE_LA];
+double m[][LA_SIZE];
 {
-	int p[SIZE_LA+1];
-	int k_indexes[SIZE_LA];
+	int p[LA_SIZE+1];
+	int k_indexes[LA_SIZE];
 	int i, j, k;
 
 	double det = 0, prod;
@@ -66,7 +66,7 @@ double m[][SIZE_LA];
 
 main()
 {
-	double matrix[SIZE_LA][SIZE_LA];
+	double matrix[LA_SIZE][LA_SIZE];
 	int rows, cols;
 
 	la_read_one_pointer_matrix_d(matrix, &rows, &cols);

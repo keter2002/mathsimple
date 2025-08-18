@@ -22,7 +22,7 @@
 
 main()
 {
-    float matrix[SIZE_LA][SIZE_LA];
+    float matrix[LA_SIZE][LA_SIZE];
     int rows, cols;
     int i,j;
     

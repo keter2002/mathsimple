@@ -22,8 +22,8 @@
 #include <math.h>
 #include "linear_algebra.h"
 
-double matrix[SIZE_LA][SIZE_LA];
-double values[SIZE_LA];
+double matrix[LA_SIZE][LA_SIZE];
+double values[LA_SIZE];
 
 main()
 {
