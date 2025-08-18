@@ -10,7 +10,7 @@ mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
-la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul inner_product
+la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul inner_product kruskal_wallis
 LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
 all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS)
@@ -95,6 +95,9 @@ $(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -Wno-implicit-int
 $(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lcblas -lm -Wno-implicit-int
+$(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm -Wno-implicit-int
 
