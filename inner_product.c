@@ -1,6 +1,7 @@
 /*
     Calculates the inner product, norm and distance between two
-    vectors/matrices.
+    vectors/matrices. If the input is two vectors it calculates the cosine of
+    the angle beetwen them too.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     This program is free software: you can redistribute it and/or modify

@@ -27,16 +27,15 @@
 /*signal que a cadeia está muito grande*/
 #define TOOBIG '9'
 
-extern int ch();
-extern void unch();
-
-extern int torfnum_ftoa(), torfnum_atoi();
-extern double torfnum_atof();
-
 getop(s, lim, fp)
 char *s;
 FILE *fp;
 {
+    extern int ch();
+    extern void unch();
+    extern int torfnum_ftoa(), torfnum_atoi();
+    extern double torfnum_atof();
+
     int c, neg = 0, err;
     char exp[lim];
     char *aux = s, *e = exp;

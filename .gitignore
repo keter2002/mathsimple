@@ -5,3 +5,5 @@ build
 TODO.txt
 cemiterio
 generate_header
+fibo.c
+summation_n_k.c
