@@ -21,12 +21,24 @@
 #include <stdlib.h>
 #include "linear_algebra.h"
 
-main()
+main(argc)
 {
     double matrix[LA_SIZE][LA_SIZE];
     int rows, cols;
     int i,j,k;
-
+    
+    if (argc >= 2) {
+        fputs("Usage: linear_solver\n"
+              "Solves a linear system of equations using Gauss-Jordan elimination.\n\n"
+              "The system is read from stdin in general form, each cell is the coefficient of\n"
+              "a variable, the coefficients should be in the same order for each equation and\n"
+              "the right side of the equations should stay in the last column.\n"
+              "For example, a system with the equations: x + 3/2*y = 3 and 8*x + 18*y = 30 is\n"
+              "read as below:\n"
+              "1 1.5 3\n"
+              "8 18 30\n", stderr);
+        return argc > 2? 2 : 0;
+    }
     la_read_one_pointer_matrix_d(matrix, &rows, &cols);
     puts("Linear System:");
     la_show_pointer_matrix_d(matrix, rows, cols);

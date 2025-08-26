@@ -17,7 +17,7 @@ all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_B
 
 $(BUILD_DIR)/series_convergence: series_convergence.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -lm  -Wno-implicit-int
+	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -Wno-implicit-int
@@ -128,6 +128,7 @@ test:
 	cat tests/determinant/t01.in | ./build/determinant | diff - tests/determinant/t01.out
 	
 	cat tests/linear_solver/t01.in | ./build/linear_solver | diff - tests/linear_solver/t01.out
+	cat tests/linear_solver/t02.in | ./build/linear_solver | diff - tests/linear_solver/t02.out
 	
 	cat tests/linear_eq_tester/t01.in | ./build/linear_eq_tester | diff - tests/linear_eq_tester/t01.out
 

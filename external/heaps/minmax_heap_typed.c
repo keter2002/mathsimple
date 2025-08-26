@@ -2,8 +2,8 @@
 /* Autor original foi perdido. Código originalmente similar ao encontrado em:
  * https://github.com/MillenniumDB/MillenniumDB/blob/dev/src/misc/min_max_heap.h*/
 
-#ifndef H_MINMAXH
-#define H_MINMAXH
+#ifndef MINMAXH_H
+#define MINMAXH_H
 
 #include <math.h>
 #include <string.h>
