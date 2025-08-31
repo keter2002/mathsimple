@@ -39,7 +39,7 @@ void la_show_pointer_matrix_s(a, rows, cols)
 float a[][LA_SIZE];
 {
     int i;
-
+    
     for (i=0; i < rows; i++)
         la_show_matrix_s(a[i], 1, cols, LA_SIZE);
 }
@@ -63,7 +63,7 @@ void la_show_pointer_matrix_d(a, rows, cols)
 double a[][LA_SIZE];
 {
     int i;
-
+    
     for (i=0; i < rows; i++)
         la_show_matrix_d(a[i], 1, cols, LA_SIZE);
 }
@@ -83,8 +83,10 @@ int *rows, *cols;
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
-        for (p=strtok(line, " "); p; p = strtok(NULL, " "))
+        for (p=strtok(line, " "); p; p = strtok(NULL, " ")) {
+            assert(*cols < LA_SIZE);
             a[*rows][(*cols)++] = torfnum_atof(p);
+        }
         ++*rows;
     }
     free(line);
@@ -103,8 +105,10 @@ int *rows, *cols;
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
-        for (p=strtok(line, " "); p; p = strtok(NULL, " "))
+        for (p=strtok(line, " "); p; p = strtok(NULL, " ")) {
+            assert(*cols < LA_SIZE);
             a[*rows][(*cols)++] = torfnum_atof(p);
+        }
         ++*rows;
     }
     free(line);

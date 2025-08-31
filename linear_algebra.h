@@ -25,6 +25,8 @@
 
 #define LA_SIZE 30
 
+/* WARNING: these functions do not handle invalid memory access. */
+
 void la_show_matrix_s(float *a, int rows, int cols, int lda);
 void la_show_pointer_matrix_s(float a[][LA_SIZE], int rows, int cols);
 
@@ -33,6 +35,9 @@ void la_show_pointer_matrix_d(double a[][LA_SIZE], int rows, int cols);
 
 void la_read_matrices_s(float *a, int *rows, int *cols);
 void la_read_matrices_d(double *a, int *rows, int *cols);
+
+/* Have checks for maximum column length, but not for row length.*/
+
 void la_read_one_pointer_matrix_s(float a[][LA_SIZE], int *rows, int *cols);
 void la_read_one_pointer_matrix_d(double a[][LA_SIZE], int *rows, int *cols);
 
