@@ -29,6 +29,7 @@ double m[][LA_SIZE];
 
     double det = 0, prod;
     int sig = -1;
+
     /* Do first iteration of the summation */
     for (prod=m[0][0], k=1; k < cols; k++)
         prod *= m[k][k];
