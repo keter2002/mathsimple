@@ -1,105 +1,116 @@
 BUILD_DIR := ./build
 
-simple_progs := series_convergence contingency_table 
+WARNINGS := -Wno-implicit-int
+
+simple_progs := contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient print_series integral_aprox
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
+
+expression_lib := $(BUILD_DIR)/lib/expression.o
+expression_dependent := series_convergence print_series integral_aprox
+EXPRESSION_BINS := $(expression_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
 la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul inner_product kruskal_wallis
 LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
-all: $(mathfn_lib) $(torfnum_lib) $(la_lib) $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS)
+all: $(mathfn_lib) $(torfnum_lib) $(expression_lib) $(la_lib) $(SIMPLE_BINS)\
+	 $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS)
 
-$(BUILD_DIR)/series_convergence: series_convergence.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 
 $(mathfn_lib): mathfn.c
 	mkdir -p $(BUILD_DIR)/lib
-	$(CC) -c $< -o $@ -lm -Wno-implicit-int
+	$(CC) -c $< -o $@ -lm $(WARNINGS)
 
 $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
-	$(CC) -c $< -o $@ -Wno-implicit-int
+	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib)
-	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
-$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib)
-	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
 $(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/factorizer: factorizer.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/lcm: lcm.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/gcd: gcd.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/mode: mode.c getch.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/logarithm: logarithm.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lm $(WARNINGS)
+
+$(expression_lib): expression.c expression.h
+	$(CC) -c $< -o $@ $(WARNINGS)
+
+$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm $(WARNINGS)
+$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib) $(expression_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm $(WARNINGS)
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib) $(expression_lib)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm $(WARNINGS)
 
 generate_header: generate_header.c $(mathfn_lib)
-	$(CC) $< -o $@ $(mathfn_lib) -lm -Wno-implicit-int
+	$(CC) $< -o $@ $(mathfn_lib) -lm $(WARNINGS)
 
 $(la_lib): linear_algebra.c linear_algebra.h generate_header
 	./generate_header > la_print_know_constant.h
 	mkdir -p $(BUILD_DIR)/lib
-	$(CC) -c $< -o $@ -Wno-implicit-int
+	$(CC) -c $< -o $@ $(WARNINGS)
 
 $(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lm -lcblas -Wno-implicit-int
+	$(CC) $^ -o $@ -lm -lcblas $(WARNINGS)
 
 $(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/determinant: determinant.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -Wno-implicit-int
+	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lcblas -Wno-implicit-int
+	$(CC) $^ -o $@ -lcblas $(WARNINGS)
 $(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lcblas -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
 $(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ -lcblas -lm -Wno-implicit-int
+	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
 
 clean:
 	rm -rd $(BUILD_DIR)

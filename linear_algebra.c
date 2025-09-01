@@ -18,6 +18,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+
 #include "linear_algebra.h"
 
 void la_show_matrix_s(a, rows, cols, lda)

@@ -1,5 +1,5 @@
 /*
-    Mathematical expression parser implementation in C.
+    Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -16,12 +16,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "external/arrays/array.c"
 #include <stdio.h>
 #include <math.h>
 #include <ctype.h>
 
-/*fazer o cosseno...*/
+#include "expression.h"
+
+/*fazer o cosseno.*/
 
 #define HASH(x) (x - '*')
 
@@ -34,29 +35,21 @@ static char op['^'-'*'] = { 0 };
      op[HASH('/')]=2; \
      op[HASH('^')]=3;
 
-typedef struct {
-    union uop {
-        char opval;
-        double fval;
-    } symb;
-    unsigned char utype;
-} expression;
-
-void insert(fullexp, c, fc, type)
+void expression_insert(fullexp, c, fc, type)
 array_dynamic *fullexp;
 char c;
 double fc;
 {
     if (type)
-        ((expression*)ARRAY_LAST_SPACE_PTR(fullexp))->symb.fval = fc;
+        ((expression_op*)ARRAY_LAST_SPACE_PTR(fullexp))->symb.fval = fc;
     else
-        ((expression*)ARRAY_LAST_SPACE_PTR(fullexp))->symb.opval = c;
-    ((expression*)ARRAY_LAST_SPACE_PTR(fullexp))->utype = type;
+        ((expression_op*)ARRAY_LAST_SPACE_PTR(fullexp))->symb.opval = c;
+    ((expression_op*)ARRAY_LAST_SPACE_PTR(fullexp))->utype = type;
     fullexp->nmemb++;
     array_expand_ptr(fullexp,1,5);
 }
 
-void infix_posfix(fullexp, c)
+void expression_infix_posfix(fullexp, c)
 array_dynamic *fullexp;
 char *c;
 {
@@ -66,24 +59,24 @@ char *c;
     
     endb = 0;
     PRIORITIES
-    array_allocate_ptr(fullexp, sizeof(expression), 5);
+    array_allocate_ptr(fullexp, sizeof(expression_op), 5);
     array_allocate(stack, 1, 16);
     while (*c) {
         if (isalnum(*c) || *c == '.') {
             if (isdigit(*c) || *c == '.')
                 buffer[endb++] = *c;
             else
-                insert(fullexp, *c, 0, 0);
+                expression_insert(fullexp, *c, 0, 0);
         } else if (*c == '+' || *c == '-' || *c == '*' || *c == '/' || *c == '^') {
             if (endb){
                 buffer[endb]='\0';
-                insert(fullexp, 0, atof(buffer), 1);
+                expression_insert(fullexp, 0, atof(buffer), 1);
                 endb=0;
             }
             if (stack.nmemb > 0)
                 while (op[HASH(*c)] <= op[HASH(*(char*)ARRAY_AT(stack, stack.nmemb-1))]) {
                     stack.nmemb--;
-                    insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
+                    expression_insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
                     if (stack.nmemb == 0)
                         break;
                 }
@@ -97,12 +90,12 @@ char *c;
         } else if (*c == ')') {
             if (endb){
                 buffer[endb]='\0';
-                insert(fullexp, 0, atof(buffer), 1);
+                expression_insert(fullexp, 0, atof(buffer), 1);
                 endb=0;
             }
             while (*(char*)ARRAY_AT(stack, stack.nmemb-1) != '(') {
                 stack.nmemb--;
-                insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
+                expression_insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
             }
             stack.nmemb--;
         }
@@ -110,23 +103,23 @@ char *c;
     }
     if (endb) {
         buffer[endb]='\0';
-        insert(fullexp, 0, atof(buffer), 1);
+        expression_insert(fullexp, 0, atof(buffer), 1);
         endb=0;
     }
     while (stack.nmemb) {
         stack.nmemb--;
-        insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
+        expression_insert(fullexp, *(char*)ARRAY_LAST_SPACE(stack), 0, 0);
     }
     free(stack.base);
 }
 
 static array_dynamic stack = { 0 };
 
-double evaluate(fullexp, x)
+double expression_evaluate(fullexp, x)
 array_dynamic *fullexp;
 double x;
 {
-    expression *next;
+    expression_op *next;
     double *op1, *op2, res;
     int i;
     
@@ -172,10 +165,10 @@ double x;
     return res;
 }
 
-void show_expr(fullexp)
+void expression_show_expr(fullexp)
 array_dynamic *fullexp;
 {
-    expression *next;
+    expression_op *next;
     int i;
 
     for (i=0; i < fullexp->nmemb; i++) {

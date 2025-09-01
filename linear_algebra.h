@@ -16,8 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef H_LA
-#define H_LA
+#ifndef LA_H
+#define LA_H
 
 #include <stdio.h>
 

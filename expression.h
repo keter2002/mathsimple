@@ -1,5 +1,5 @@
 /*
-    Sum the terms of an infinite summation.
+    Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include "expression.h"
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 
-main(argc, argv)
-char *argv[];
-{
-    array_dynamic fullexp;
-    int i,next;
-    double sum;
+#include "external/arrays/array.c"
 
-    if (argc < 2) {
-        fputs("Usage: series_convergence expression\n", stderr);
-        return 2;
-    }
-    expression_infix_posfix(&fullexp, argv[1]);
-    expression_show_expr(&fullexp);
-    for (i=1,sum=0, next=1; i <= 10000000; i++) {
-        sum += expression_evaluate(&fullexp, (double)i);
-        if (i==next) {
-            printf("%.5f [%d]\n", sum, i);
-            next *= 10;
-        }
-    }
-}
+typedef struct {
+    union uop {
+        char opval;
+        double fval;
+    } symb;
+    unsigned char utype;
+} expression_op;
+
+void expression_insert(array_dynamic *fullexp, char c, double fc, int type);
+void expression_infix_posfix(array_dynamic *fullexp, char *c);
+double expression_evaluate(array_dynamic *fullexp, double x);
+void expression_show_expr(array_dynamic *fullexp);
+
+#endif

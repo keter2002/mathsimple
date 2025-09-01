@@ -16,8 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "expression.c"
 #include <stdio.h>
+#include "expression.h"
 
 main(argc, argv)
 char *argv[];
@@ -32,8 +32,8 @@ char *argv[];
     }
     i = start = torfnum_atoi(argv[1]);
     n = torfnum_atoi(argv[2]);
-    infix_posfix(&fullexp, argv[3]);
-    show_expr(&fullexp);
+    expression_infix_posfix(&fullexp, argv[3]);
+    expression_show_expr(&fullexp);
     for (; i < start+n; i++)
-        printf(i == start+n-1? "%.5f\n" : "%.5f ", evaluate(&fullexp, (double)i));
+        printf(i == start+n-1? "%.5f\n" : "%.5f ", expression_evaluate(&fullexp, (double)i));
 }
