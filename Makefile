@@ -65,13 +65,13 @@ $(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_lib) $(mathfn_lib)
 $(expression_lib): expression.c expression.h
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib)
+$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib) $(expression_lib)
+$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib) $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib) $(expression_lib)
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib) $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
@@ -142,4 +142,10 @@ test:
 	cat tests/linear_solver/t02.in | ./build/linear_solver | diff - tests/linear_solver/t02.out
 	
 	cat tests/linear_eq_tester/t01.in | ./build/linear_eq_tester | diff - tests/linear_eq_tester/t01.out
-
+	
+	cat tests/print_series/t01.in | xargs ./build/print_series | diff - tests/print_series/t01.out
+	cat tests/print_series/t02.in | xargs ./build/print_series | diff - tests/print_series/t02.out
+	cat tests/print_series/t03.in | xargs ./build/print_series | diff - tests/print_series/t02.out
+	cat tests/print_series/t04.in | xargs ./build/print_series | diff - tests/print_series/t01.out
+	cat tests/print_series/t05.in | xargs ./build/print_series | diff - tests/print_series/t05.out
+	cat tests/print_series/t06.in | xargs ./build/print_series | diff - tests/print_series/t05.out

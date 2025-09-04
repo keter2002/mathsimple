@@ -1,5 +1,5 @@
 /*
-    Mathematical expression parser declarations.
+    Auxiliar string standard lib functions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef EXPRESSION_H
-#define EXPRESSION_H
+#include <stdlib.h>
 
-#include "external/arrays/array.c"
+/* Copies at most n  */
+char *strncpy_while_type(dest, src, n, check)
+char *dest, *src;
+size_t n;
+int (*check)();
+{
+    size_t i;
 
-typedef struct {
-    union uop {
-        char opval;
-        double fval;
-        double (*fnval)();
-    } symb;
-    unsigned char utype;
-} expression_op;
-
-#define EXPRESSION_OP_TYPE_OP 0
-#define EXPRESSION_OP_TYPE_F  1
-#define EXPRESSION_OP_TYPE_FN 2
-
-void expression_insert(array_dynamic *fullexp, char op, double f, double (*fn)(), int type);
-void expression_infix_posfix(array_dynamic *fullexp, char *c);
-double expression_evaluate(array_dynamic *fullexp, double x);
-void expression_show_expr(array_dynamic *fullexp);
-
-#endif
+    for (i=0; i < n && *src && check((unsigned char)*src); i++)
+        dest[i] = *src++;
+    if (i < n) dest[i] = '\0';
+    return dest;
+}
