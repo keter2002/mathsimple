@@ -149,3 +149,4 @@ test:
 	cat tests/print_series/t04.in | xargs ./build/print_series | diff - tests/print_series/t01.out
 	cat tests/print_series/t05.in | xargs ./build/print_series | diff - tests/print_series/t05.out
 	cat tests/print_series/t06.in | xargs ./build/print_series | diff - tests/print_series/t05.out
+	cat tests/print_series/t07.in | xargs ./build/print_series | diff - tests/print_series/t07.out
