@@ -1,4 +1,5 @@
 /*
+    linear_solver - v0.1.0
     Solves a linear system of equations using Gauss-Jordan elimination.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

@@ -1,4 +1,5 @@
 /*
+    getop.c - v0.1.0
     Parse an operator of a mathematical expression in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

@@ -1,4 +1,5 @@
 /*
+    factorizer - v0.1.0
     Prints the factors of an integer number.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

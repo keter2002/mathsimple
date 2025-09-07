@@ -1,4 +1,5 @@
 /*
+    torfnum.h - v0.1.0
     Declarations of functions to convert from number to string or from string
     to number in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>

@@ -1,4 +1,5 @@
 /*
+    binomial_series - v0.1.0
     Prints the first iterations of a binomial series (1+number)^exponent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

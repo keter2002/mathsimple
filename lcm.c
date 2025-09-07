@@ -1,4 +1,5 @@
 /*
+    lcm - v0.1.0
     Computes the least common multiple (LCM) of two arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

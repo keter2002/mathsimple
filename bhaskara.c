@@ -1,4 +1,5 @@
 /*
+    bhaskara - v0.1.0
     Solves a quadratic formula with solutions in real numbers.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

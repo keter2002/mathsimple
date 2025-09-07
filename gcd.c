@@ -1,4 +1,5 @@
 /*
+    gcd - v0.1.0
     Get the greatest common divisor among arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

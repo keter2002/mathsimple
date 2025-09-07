@@ -1,4 +1,5 @@
 /*
+    matmul - v0.1.0
     Do matrix multiplication.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

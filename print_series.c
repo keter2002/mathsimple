@@ -1,4 +1,5 @@
 /*
+    print_series - v0.1.0
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

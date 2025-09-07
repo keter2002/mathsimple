@@ -8,7 +8,8 @@ SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm binomial_series bhaskara coefficient
+mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm\
+					binomial_series bhaskara coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 expression_lib := $(BUILD_DIR)/lib/expression.o
@@ -16,7 +17,8 @@ expression_dependent := series_convergence print_series integral_aprox
 EXPRESSION_BINS := $(expression_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
-la_dependent := base_orthonormalization linear_solver linear_eq_tester invert_matrix determinant inverse matmul inner_product kruskal_wallis
+la_dependent := base_orthonormalization linear_solver linear_eq_tester\
+				invert_matrix determinant inverse matmul inner_product kruskal_wallis
 LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
 all: $(mathfn_lib) $(torfnum_lib) $(expression_lib) $(la_lib) $(SIMPLE_BINS)\
@@ -116,7 +118,7 @@ clean:
 	rm -rd $(BUILD_DIR)
 
 install:
-	ln -rsf $(SIMPLE_BINS) $(MATHFN_BINS) $(LA_BINS) $(HOME)/.local/bin
+	ln -rsf $(SIMPLE_BINS) $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS) $(HOME)/.local/bin
 
 test:
 	cat tests/mode/t01.in | ./build/mode | diff - tests/mode/t01.out

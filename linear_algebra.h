@@ -1,4 +1,5 @@
 /*
+    linear_algebra.h - v0.1.0
     Declarations of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

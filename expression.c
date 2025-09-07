@@ -1,4 +1,5 @@
 /*
+    expression.c - v0.1.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

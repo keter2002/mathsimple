@@ -1,4 +1,5 @@
 /*
+    series_convergence - v0.1.0
     Sum the terms of an infinite summation.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

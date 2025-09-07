@@ -1,4 +1,5 @@
 /*
+    generate_header - v0.1.0
     Program to generate LA_PRINT_KNOW_CONSTANT macro. This macro gets a
     floating point number and prints equivalent mathematical symbol.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
