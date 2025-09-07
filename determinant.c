@@ -1,5 +1,5 @@
 /*
-    determinant - v0.1.0
+    determinant - v1.0.0
     Find the determinant of a matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

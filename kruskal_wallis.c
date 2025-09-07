@@ -1,5 +1,5 @@
 /*
-    kruskal_wallis - v0.1.0
+    kruskal_wallis - v1.0.0
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

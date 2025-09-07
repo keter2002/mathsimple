@@ -1,5 +1,5 @@
 /*
-    mathfn.c - v0.1.0
+    mathfn.c - v1.0.0
     Mathematical functions definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

@@ -1,5 +1,5 @@
 /*
-    inner_product - v0.1.0
+    inner_product - v1.0.0
     Calculates the inner product, norm and distance between two
     vectors/matrices. If the input is two vectors it calculates the cosine of
     the angle beetwen them too.

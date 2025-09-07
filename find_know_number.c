@@ -1,5 +1,5 @@
 /*
-    find_know_number - v0.1.0
+    find_know_number - v1.0.0
     Return the symbolic representation of a floating point number.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

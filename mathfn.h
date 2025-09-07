@@ -1,5 +1,5 @@
 /*
-    mathfn.h - v0.1.0
+    mathfn.h - v1.0.0
     Mathematical functions declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

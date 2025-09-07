@@ -1,5 +1,5 @@
 /*
-    mode - v0.1.0
+    mode - v1.0.0
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

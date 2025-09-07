@@ -1,5 +1,5 @@
 /*
-    getch.c - v0.1.0
+    getch.c - v1.0.0
     ch and unch functions in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

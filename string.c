@@ -1,5 +1,5 @@
 /*
-    string.c - v0.1.0
+    string.c - v1.0.0
     Auxiliar string standard lib functions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

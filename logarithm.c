@@ -1,5 +1,5 @@
 /*
-    logarithm - v0.1.0
+    logarithm - v1.0.0
     Calculates the natural logarithm of naturals.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

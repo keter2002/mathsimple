@@ -1,5 +1,5 @@
 /*
-    coefficient - v0.1.0
+    coefficient - v1.0.0
     Computes the Pearson's correlation coefficient (r) and fits a line by
     linear regression.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>

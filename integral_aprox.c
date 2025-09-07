@@ -1,5 +1,5 @@
 /*
-    integral_aprox - v0.1.0
+    integral_aprox - v1.0.0
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>

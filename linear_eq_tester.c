@@ -1,5 +1,5 @@
 /*
-    linear_eq_tester - v0.1.0
+    linear_eq_tester - v1.0.0
     Tests if a solution to a linear system is correct.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

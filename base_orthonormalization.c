@@ -1,5 +1,5 @@
 /*
-    base_orthonormalization - v0.1.0
+    base_orthonormalization - v1.0.0
     Makes the orthogonalization of a set of vectors. The given vectors need to
     be linearly independent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>

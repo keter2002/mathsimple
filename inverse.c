@@ -1,5 +1,5 @@
 /*
-    inverse - v0.1.0
+    inverse - v1.0.0
     Finds the inverse of a given matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

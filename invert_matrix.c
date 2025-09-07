@@ -1,4 +1,5 @@
 /*
+    invert_matrix - v1.0.0
     Inverts a matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

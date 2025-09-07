@@ -1,5 +1,5 @@
 /*
-    expression.h - v0.1.0
+    expression.h - v1.0.0
     Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

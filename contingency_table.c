@@ -1,5 +1,5 @@
 /*
-    contingency_table - v0.1.0
+    contingency_table - v1.0.0
     Contingency table implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
