@@ -1,4 +1,5 @@
 /*
+    array_typed.c - v1.0.0
     Typed growable array implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 

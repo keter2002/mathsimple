@@ -1,4 +1,5 @@
 /*
+    avltree.h - v1.0.0
     AVL tree implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
