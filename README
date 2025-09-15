@@ -2,8 +2,9 @@ MathSimple - Tiny CLI programs to do math
 =========================================
 
 This is a collection of mathematical programs. These programs are like short bc
-scripts, but using floating point precision and they don't rely on dc. They do
-depend on C standard library, math and some in cblas.
+scripts, but in C with a defined command-line interface (CLI) and using
+floating point precision. They do depend on C standard library and some in
+cblas.
 
 MathSimple is free software: you can redistribute it and/or modify it under the
 terms of the GNU General Public License.
