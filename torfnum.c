@@ -173,7 +173,7 @@ char *s;
         *s++ = '-';
 
     if (s-aux > l)
-        return (-1);
+        return -1;
     /*preenche com espaços em branco, se não obteve o tamanho mínimo*/
     for (i = s-aux; i < l; *s++ = ' ', i++);
     

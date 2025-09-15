@@ -1,6 +1,6 @@
 BUILD_DIR := ./build
 
-WARNINGS := -Wno-implicit-int
+WARNINGS := -Wno-implicit-int -Wall
 
 simple_progs := contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)

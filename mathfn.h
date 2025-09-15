@@ -1,5 +1,5 @@
 /*
-    mathfn.h - v1.0.0
+    mathfn.h - v1.0.1
     Mathematical functions declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -21,7 +21,7 @@ typedef unsigned long mathfn_positive_int;
 
 mathfn_positive_int mathfn_greatest_common_divisor(mathfn_positive_int x, mathfn_positive_int y);
 
-#define MATHFN_LCM(X,Y) ((X) * (Y) / mathfn_greatest_common_divisor(x,y))
+#define MATHFN_LCM(X,Y) ((X) * (Y) / mathfn_greatest_common_divisor(X, Y))
 
 unsigned mathfn_brent(long *f, int end, unsigned *mu);
 

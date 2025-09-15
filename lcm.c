@@ -1,6 +1,6 @@
 /*
-    lcm - v1.0.0
-    Computes the least common multiple (LCM) of two arguments.
+    lcm - v1.1.0
+    Computes the least common multiple (LCM) of one or more arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     lcm is free software: you can redistribute it and/or modify it under the
@@ -21,13 +21,16 @@
 main(argc, argv)
 char *argv[];
 {
-	int x,y;
+    mathfn_positive_int lcm, x;
 
-	if (argc < 3) {
-		fputs("lcm: x y\n", stderr);
-		return 2;
-	}
-	x = torfnum_atoi(argv[1]);
-	y = torfnum_atoi(argv[2]);
-	printf("%ld\n", MATHFN_LCM(x,y));
+    if (argc < 2) {
+        fputs("lcm: a [b c ...]\n", stderr);
+        return 2;
+    }
+    lcm = torfnum_atopi(argv[1]);
+    while (argc > 1) {
+        x = torfnum_atopi(argv[--argc]);
+        lcm = MATHFN_LCM(lcm, x);
+    }
+    printf("%ld\n", lcm);
 }
