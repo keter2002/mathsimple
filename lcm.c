@@ -1,5 +1,5 @@
 /*
-    lcm - v1.1.0
+    lcm - v1.1.1
     Computes the least common multiple (LCM) of one or more arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -28,7 +28,7 @@ char *argv[];
         return 2;
     }
     lcm = torfnum_atopi(argv[1]);
-    while (argc > 1) {
+    while (argc > 2) {
         x = torfnum_atopi(argv[--argc]);
         lcm = MATHFN_LCM(lcm, x);
     }
