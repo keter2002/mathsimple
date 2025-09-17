@@ -1,5 +1,5 @@
 /*
-    linear_algebra.c - v2.0.0
+    linear_algebra.c - v2.0.1
     Definitions of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -25,10 +25,10 @@ FILE *stream;
 double x;
 {
     static unsigned char opened = 0;
-    static arraytyped_array_know_constant_math_constant know;
-    static know_constant_math_constant c;
+    static arraytyped_array_know_constant_c know;
+    static know_constant_c c;
     FILE *fp;
-    know_constant_math_constant *ptr;
+    know_constant_c *ptr;
     
     if (!opened) {
         if (!(fp = fopen(KNOW_CONSTANT_FILENAME, "rb"))) {
@@ -42,13 +42,13 @@ double x;
             exit(EXIT_FAILURE);
         }
         know.capacity = know.nmemb;
-        know.base = malloc(sizeof(know_constant_math_constant) * know.capacity);
-        fread(know.base, sizeof(know_constant_math_constant), know.nmemb, fp);
+        know.base = malloc(sizeof(know_constant_c) * know.capacity);
+        fread(know.base, sizeof(know_constant_c), know.nmemb, fp);
         fclose(fp);
         opened = 1;
     }
     c.val = x < 0? -x : x;
-    if (!(ptr = arraytyped_find_know_constant_math_constant(&know, &c)))
+    if (!(ptr = arraytyped_find_know_constant_c(&know, &c)))
         return 1;
     fprintf(stream, "%s%s ", x < 0? "-" : "", ptr->symb);
     return 0;
