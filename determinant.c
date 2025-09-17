@@ -1,5 +1,5 @@
 /*
-    determinant - v1.0.0
+    determinant - v1.0.1
     Find the determinant of a matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -79,6 +79,6 @@ main(argc)
               ". . . ...\n", stderr);
         return argc > 2? 2 : 0;
     }
-    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_d(stdin, matrix, &rows, &cols);
     printf("%lf\n", determinant(matrix, rows, cols));
 }

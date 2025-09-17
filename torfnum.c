@@ -1,5 +1,5 @@
 /*
-    torfnum.c - v1.0.0
+    torfnum.c - v1.0.1
     Definitions of functions to convert from number to string or from string to
     number in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
@@ -179,4 +179,5 @@ char *s;
     
     *s = '\0';
     torfnum_reverse(aux);
+    return 0;
 }

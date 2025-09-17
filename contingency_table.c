@@ -1,5 +1,5 @@
 /*
-    contingency_table - v1.0.0
+    contingency_table - v1.0.1
     Contingency table implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -250,10 +250,10 @@ int *acc;
 
     if (r) {
         theader(r->child[0], header, total, acc);
-        ARRAYTYPED_APPEND_TO_IDX_PTR(str, header, header->nmemb-1, &((unode*)r->key)->fword.word);
+        arraytyped_append_to_end_ptr(str, header, &((unode*)r->key)->fword.word);
         count = ((unode*)r->key)->fword.count;
         *acc += count;
-        ARRAYTYPED_APPEND_TO_IDX_PTR(int, total, total->nmemb-1, &count);
+        arraytyped_append_to_end_ptr(int, total, &count);
         theader(r->child[1], header, total, acc);
     }
 }

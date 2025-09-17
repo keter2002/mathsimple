@@ -1,5 +1,5 @@
 /*
-    array_typed.c - v1.0.0
+    array_typed.c - v2.0.0
     Typed growable array implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -39,13 +39,23 @@
 #define ARRAYTYPED_AT_PTR(ARR, I) ((ARR)->base + (I))
 #define ARRAYTYPED_AT(ARR, I) ARRAYTYPED_AT_PTR(&(ARR), I)
 
-#define ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, ARR, I, ITEM) \
+/* Be careful if you use nmemb as idx, because nmemb is incremented before
+ * doing the appending. It is better call arraytyped_append_to_end if the item
+ * needs to be placed in last. */
+#define arraytyped_append_to_idx_ptr(TYPENAME, ARR, I, ITEM) \
     do {\
         (ARR)->nmemb++;\
         arraytyped_expand_##TYPENAME(ARR);\
         memcpy((ARR)->base + (I), ITEM, sizeof(TYPENAME));\
     } while (0)
-#define ARRAYTYPED_APPEND_TO_IDX(TYPENAME, ARR, I, ITEM) ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, &(ARR), I, ITEM)
+#define arraytyped_append_to_idx(TYPENAME, ARR, I, ITEM) arraytyped_append_to_idx_ptr(TYPENAME, &(ARR), I, ITEM)
+
+#define arraytyped_append_to_end_ptr(TYPENAME, ARR, ITEM) arraytyped_append_to_idx_ptr(TYPENAME, ARR, (ARR)->nmemb-1, ITEM)
+#define arraytyped_append_to_end(TYPENAME, ARR, ITEM) arraytyped_append_to_idx_ptr(TYPENAME, &(ARR), (ARR).nmemb-1, ITEM)
+
+#define arraytyped_qsort_ptr(TYPENAME, ARR, CMP) \
+    qsort((ARR)->base, (ARR)->nmemb, sizeof(TYPENAME), CMP);
+#define arraytyped_qsort(TYPENAME, ARR, CMP) arraytyped_qsort_ptr(TYPENAME, &(ARR), CMP)
 
 #define ARRAYTYPED_GENERATE(TYPENAME, FAC, INC)\
 \
@@ -108,11 +118,11 @@ size_t *idx;\
 {\
     if (!arr->nmemb) {\
         *idx = 0;\
-        ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, arr, *idx, item);\
+        arraytyped_append_to_idx_ptr(TYPENAME, arr, *idx, item);\
         return 1;\
     }\
     if ((*idx = arraytyped_upper_bound_##TYPENAME(arr->base, item, 0, arr->nmemb-1)) == arr->nmemb) {\
-        ARRAYTYPED_APPEND_TO_IDX_PTR(TYPENAME, arr, *idx, item);\
+        arraytyped_append_to_idx_ptr(TYPENAME, arr, *idx, item);\
         return 1;\
     }\
     if (CMP(arr->base + *idx, item)) {\
@@ -124,43 +134,27 @@ size_t *idx;\
     }\
     if (INPLACE)\
         memcpy(arr->base + *idx, item, sizeof(TYPENAME));\
-}
-
-#define ARRAYTYPED_GENERATE_SORT(TYPENAME, CMP)\
-static void arraytyped_swap_##TYPENAME(x, y)\
-TYPENAME *x, *y;\
-{\
-    TYPENAME aux;\
-\
-    memcpy(&aux, x, sizeof(TYPENAME));\
-    memcpy(x, y, sizeof(TYPENAME));\
-    memcpy(y, &aux, sizeof(TYPENAME));\
+    return 0;\
 }\
 \
-void arraytyped_quick_sort_##TYPENAME(arr, begin, end)\
-TYPENAME arr[];\
+TYPENAME *arraytyped_find_##TYPENAME(arr, item)\
+arraytyped_array_##TYPENAME *arr;\
+TYPENAME *item;\
 {\
-    TYPENAME pivot;\
-    int i, j;\
-\
-    i = begin;\
-    j = end - 1;\
-    memcpy(&pivot, arr + ((begin + end) / 2), sizeof(TYPENAME));\
-    while (i <= j){\
-        for (;CMP(arr + i, &pivot) < 0 && i < end; ++i);\
-        for (;CMP(arr + j, &pivot) > 0 && j > begin; --j);\
-\
-        if (i <= j){\
-            arraytyped_swap_##TYPENAME(arr + i, arr + j);\
-            --j;\
-            ++i;\
-        }\
-    }\
-\
-    if (j > begin)\
-        arraytyped_quick_sort_##TYPENAME(arr, begin, j + 1);\
-    if (i < end)\
-        arraytyped_quick_sort_##TYPENAME(arr, i, end);\
+    size_t idx;\
+    TYPENAME *ptr;\
+    \
+    if (!arr->nmemb)\
+        return NULL;\
+    if ((idx =\
+         arraytyped_upper_bound_##TYPENAME(arr->base, item, 0, arr->nmemb-1))\
+          == arr->nmemb)\
+        return NULL;\
+    \
+    ptr = arr->base + idx;\
+    if (CMP(ptr, item))\
+        return NULL;\
+    return ptr;\
 }
 
 #endif

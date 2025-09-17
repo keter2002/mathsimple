@@ -1,5 +1,5 @@
 /*
-    inverse - v1.0.0
+    inverse - v1.0.1
     Finds the inverse of a given matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -24,19 +24,10 @@ double matrix[LA_SIZE*LDA];
 
 main()
 {
-	char *line, *p;
-	size_t size;
 	int rows, cols;
 	int i,j,k;
-
-	cols = rows = size = 0;
-	line = NULL;
-	while (getline(&line, &size, stdin) != EOF) {
-		cols = 0;
-		for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-			matrix[LDA * rows + cols++] = atof(p);
-		rows++;
-	}
+    
+    la_read_matrices_d(stdin, matrix, &rows, &cols, LDA);
 	/* Concatenate with inverse: */
 	for (i=0; i < rows; i++)
 		for (j=0; j < cols; j++)
@@ -59,7 +50,7 @@ main()
 			matrix[LDA * i + k] = 0;
 		}
 		printf("Step %0d:\n", k+1);
-		la_show_matrix_d(matrix, rows, cols, LDA);
+		la_show_matrix_d(stdout, matrix, rows, cols, LDA);
 	}
 	/* From the bottom up, subtract row akj times aik. */
 	for (k=rows-1; k > 0; k--)	
@@ -70,7 +61,7 @@ main()
 			matrix[LDA * i + k] = 0;
 		}
 	puts("M:");
-	la_show_matrix_d(matrix, rows, cols, LDA);
+	la_show_matrix_d(stdout, matrix, rows, cols, LDA);
 	puts("M^-1:");
-	la_show_matrix_d(&matrix[cols], rows, cols, LDA);
+	la_show_matrix_d(stdout, &matrix[cols], rows, cols, LDA);
 }

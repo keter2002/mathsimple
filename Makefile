@@ -77,12 +77,13 @@ $(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib) $(exp
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
-generate_header: generate_header.c $(mathfn_lib)
+$(BUILD_DIR)/know_constant: know_constant.c $(mathfn_lib)
+	mkdir -p $(BUILD_DIR)
 	$(CC) $< -o $@ $(mathfn_lib) -lm $(WARNINGS)
 
-$(la_lib): linear_algebra.c linear_algebra.h generate_header
-	./generate_header > la_print_know_constant.h
+$(la_lib): linear_algebra.c linear_algebra.h know_constant.h $(BUILD_DIR)/know_constant
 	mkdir -p $(BUILD_DIR)/lib
+	$(BUILD_DIR)/know_constant
 	$(CC) -c $< -o $@ $(WARNINGS)
 
 $(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
@@ -116,6 +117,7 @@ $(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_lib) $(mathfn_
 
 clean:
 	rm -rd $(BUILD_DIR)
+	rm know_constants.data
 
 install:
 	ln -rsf $(SIMPLE_BINS) $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS) $(HOME)/.local/bin

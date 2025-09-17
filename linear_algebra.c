@@ -1,5 +1,5 @@
 /*
-    linear_algebra.c - v1.0.0
+    linear_algebra.c - v2.0.0
     Definitions of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -18,58 +18,96 @@
 #include <assert.h>
 
 #include "linear_algebra.h"
+#include "know_constant.h"
 
-void la_show_matrix_s(a, rows, cols, lda)
+static la_print_know_constant(stream, x)
+FILE *stream;
+double x;
+{
+    static unsigned char opened = 0;
+    static arraytyped_array_know_constant_math_constant know;
+    static know_constant_math_constant c;
+    FILE *fp;
+    know_constant_math_constant *ptr;
+    
+    if (!opened) {
+        if (!(fp = fopen(KNOW_CONSTANT_FILENAME, "rb"))) {
+            fprintf(stderr, "[%s:%s] could not open for reading (%s).\n", __FILE__,
+                    __func__, KNOW_CONSTANT_FILENAME);
+            exit(EXIT_FAILURE);
+        }
+        if (fscanf(fp, "%lx\n", &know.nmemb) != 1) {
+            fprintf(stderr, "[%s:%s] Unable to read the number of constants\n",
+                    __FILE__, __func__);
+            exit(EXIT_FAILURE);
+        }
+        know.capacity = know.nmemb;
+        know.base = malloc(sizeof(know_constant_math_constant) * know.capacity);
+        fread(know.base, sizeof(know_constant_math_constant), know.nmemb, fp);
+        fclose(fp);
+        opened = 1;
+    }
+    c.val = x < 0? -x : x;
+    if (!(ptr = arraytyped_find_know_constant_math_constant(&know, &c)))
+        return 1;
+    fprintf(stream, "%s%s ", x < 0? "-" : "", ptr->symb);
+    return 0;
+}
+
+void la_show_matrix_s(stream, a, rows, cols, lda)
+FILE *stream;
 float *a;
 {
     int i, j;
     float aij;
 
-    for (i=0; i < rows; i++, putchar('\n'))
+    for (i=0; i < rows; i++, putc('\n', stream))
         for (j=0; j < cols; j++) {
             aij = a[i * lda + j];
-                LA_PRINT_KNOW_CONSTANT(aij)
-            else
-                printf("%f ", aij);
+            if (la_print_know_constant(stream, aij))
+                fprintf(stream, "%f ", aij);
         }
 }
 
-void la_show_pointer_matrix_s(a, rows, cols)
+void la_show_pointer_matrix_s(stream, a, rows, cols)
+FILE *stream;
 float a[][LA_SIZE];
 {
     int i;
     
     for (i=0; i < rows; i++)
-        la_show_matrix_s(a[i], 1, cols, LA_SIZE);
+        la_show_matrix_s(stream, a[i], 1, cols, LA_SIZE);
 }
 
-void la_show_matrix_d(a, rows, cols, lda)
+void la_show_matrix_d(stream, a, rows, cols, lda)
+FILE *stream;
 double *a;
 {
     int i, j;
     double aij;
 
-    for (i=0; i < rows; i++, putchar('\n'))
+    for (i=0; i < rows; i++, putc('\n', stream))
         for (j=0; j < cols; j++) {
             aij = a[i * lda + j];
-                LA_PRINT_KNOW_CONSTANT(aij)
-            else
-                printf("%lf ", aij);
+            if (la_print_know_constant(stream, aij))
+                fprintf(stream, "%lf ", aij);
         }
 }
 
-void la_show_pointer_matrix_d(a, rows, cols)
+void la_show_pointer_matrix_d(stream, a, rows, cols)
+FILE *stream;
 double a[][LA_SIZE];
 {
     int i;
     
     for (i=0; i < rows; i++)
-        la_show_matrix_d(a[i], 1, cols, LA_SIZE);
+        la_show_matrix_d(stream, a[i], 1, cols, LA_SIZE);
 }
 
 extern double torfnum_atof();
 
-void la_read_one_pointer_matrix_s(a, rows, cols)
+void la_read_one_pointer_matrix_s(stream, a, rows, cols)
+FILE *stream;
 float a[][LA_SIZE];
 int *rows, *cols;
 {
@@ -78,7 +116,7 @@ int *rows, *cols;
 
     *rows = size = 0;
     line = NULL;
-    while (getline(&line, &size, stdin) != EOF) {
+    while (getline(&line, &size, stream) != EOF) {
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
@@ -91,7 +129,8 @@ int *rows, *cols;
     free(line);
 }
 
-void la_read_one_pointer_matrix_d(a, rows, cols)
+void la_read_one_pointer_matrix_d(stream, a, rows, cols)
+FILE *stream;
 double a[][LA_SIZE];
 int *rows, *cols;
 {
@@ -100,7 +139,7 @@ int *rows, *cols;
 
     *rows = size = 0;
     line = NULL;
-    while (getline(&line, &size, stdin) != EOF) {
+    while (getline(&line, &size, stream) != EOF) {
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
@@ -113,7 +152,8 @@ int *rows, *cols;
     free(line);
 }
 
-void la_read_matrices_s(a, rows, cols)
+void la_read_matrices_s(stream, a, rows, cols, lda)
+FILE *stream;
 float *a;
 int *rows, *cols;
 {
@@ -121,18 +161,19 @@ int *rows, *cols;
     size_t size;
     
     line = NULL;
-    while (getline(&line, &size, stdin) != EOF) {
+    while (getline(&line, &size, stream) != EOF) {
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * LA_SIZE + (*cols)++] = torfnum_atof(p);
+            a[*rows * lda + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);
 }
 
-void la_read_matrices_d(a, rows, cols)
+void la_read_matrices_d(stream, a, rows, cols, lda)
+FILE *stream;
 double *a;
 int *rows, *cols;
 {
@@ -140,12 +181,12 @@ int *rows, *cols;
     size_t size;
     
     line = NULL;
-    while (getline(&line, &size, stdin) != EOF) {
+    while (getline(&line, &size, stream) != EOF) {
         if (!strcmp(line, "e\n"))
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * LA_SIZE + (*cols)++] = torfnum_atof(p);
+            a[*rows * lda + (*cols)++] = torfnum_atof(p);
         ++*rows;
     }
     free(line);

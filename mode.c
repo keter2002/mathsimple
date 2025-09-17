@@ -1,5 +1,5 @@
 /*
-    mode - v1.0.0
+    mode - v1.0.1
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -27,7 +27,6 @@
 #define STEP 2
 
 ARRAYTYPED_GENERATE(double, 2, 0)
-ARRAYTYPED_GENERATE_SORT(double, mathfn_compar_double)
 
 arraytyped_array_double v;
 
@@ -69,9 +68,9 @@ FILE *fp;
                 *count = 1;
                 avltree_insert(&tree, x, count);
             }
-            ARRAYTYPED_APPEND_TO_IDX(double, v, v.nmemb-1, x);
+            arraytyped_append_to_end(double, v, x);
         }
-    arraytyped_quick_sort_double(v.base, 0, v.nmemb);
+    arraytyped_qsort(double, v, mathfn_compar_double);
     estatistics(v.base, v.nmemb);
 
     dsc_print(construct_heap(&tree));

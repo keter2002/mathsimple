@@ -1,5 +1,5 @@
 /*
-    linear_solver - v1.0.0
+    linear_solver - v1.0.1
     Solves a linear system of equations using Gauss-Jordan elimination.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -36,9 +36,9 @@ main(argc)
               "8 18 30\n", stderr);
         return argc > 2? 2 : 0;
     }
-    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_d(stdin, matrix, &rows, &cols);
     puts("Linear System:");
-    la_show_pointer_matrix_d(matrix, rows, cols);
+    la_show_pointer_matrix_d(stdout, matrix, rows, cols);
     for (k=0; k < rows; k++) {
         for (i=k+1; i < cols; i++)
             matrix[k][i] /= matrix[k][k];
@@ -49,7 +49,7 @@ main(argc)
             matrix[i][k] = 0;
         }
         printf("Step %0d:\n", k+1);
-        la_show_pointer_matrix_d(matrix, rows, cols);
+        la_show_pointer_matrix_d(stdout, matrix, rows, cols);
     }
     if (rows+1==cols)
         for (k=rows-2; k >= 0; k--)
@@ -65,5 +65,5 @@ main(argc)
                 matrix[i][k] = 0;
             }
     puts("Solution");
-    la_show_pointer_matrix_d(matrix, rows, cols);
+    la_show_pointer_matrix_d(stdout, matrix, rows, cols);
 }

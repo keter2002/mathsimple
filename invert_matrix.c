@@ -1,5 +1,5 @@
 /*
-    invert_matrix - v1.0.0
+    invert_matrix - v1.0.1
     Inverts a matrix.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -23,7 +23,7 @@ main()
     int rows, cols;
     int i,j;
     
-    la_read_one_pointer_matrix_s(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_s(stdin, matrix, &rows, &cols);
     puts("Inverted:");
     for (i=0; i < rows; i++, putchar('\n'))
         for (j=cols-1; j >= 0; j--)

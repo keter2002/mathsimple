@@ -1,5 +1,5 @@
 /*
-    inner_product - v1.0.0
+    inner_product - v1.0.1
     Calculates the inner product, norm and distance between two
     vectors/matrices. If the input is two vectors it calculates the cosine of
     the angle beetwen them too.
@@ -90,11 +90,11 @@ main()
     int brows, bcols;
 
     brows = arows = 0;
-    la_read_matrices_s(a, &arows, &acols);
-    la_read_matrices_s(b, &brows, &bcols);
+    la_read_matrices_s(stdin, a, &arows, &acols, LA_SIZE);
+    la_read_matrices_s(stdin, b, &brows, &bcols, LA_SIZE);
     puts(arows < 2 && brows < 2? "Vectors:" : "Matrices:");
-    la_show_matrix_s(a, arows, acols, LA_SIZE);
-    la_show_matrix_s(b, brows, bcols, LA_SIZE);
+    la_show_matrix_s(stdout, a, arows, acols, LA_SIZE);
+    la_show_matrix_s(stdout, b, brows, bcols, LA_SIZE);
     if (arows < 2 && brows < 2) {
         inner_product = cblas_sdot(acols, a, 1, brows? b : a, 1);
         distance = distance_vectors(acols, a, 1, brows? b : a, 1);

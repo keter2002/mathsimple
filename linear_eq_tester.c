@@ -1,5 +1,5 @@
 /*
-    linear_eq_tester - v1.0.0
+    linear_eq_tester - v1.0.1
     Tests if a solution to a linear system is correct.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -28,9 +28,9 @@ main()
     int i,j,k;
     double sum;
 
-    la_read_one_pointer_matrix_d(matrix, &rows, &cols);
+    la_read_one_pointer_matrix_d(stdin, matrix, &rows, &cols);
     puts("Linear System:");
-    la_show_pointer_matrix_d(matrix, rows, cols);
+    la_show_pointer_matrix_d(stdout, matrix, rows, cols);
     for (i=0; i < cols-1; i++) {
         printf("Variable %02d: ", i+1);
         scanf("%lf", &values[i]);
