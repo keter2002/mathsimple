@@ -1,5 +1,5 @@
 /*
-    linear_algebra.c - v2.0.2
+    linear_algebra.c - v2.0.3
     Definitions of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
@@ -31,16 +31,11 @@ double x;
     know_constant_c *ptr;
     
     if (!opened) {
-        if (!(fp = fopen(KNOW_CONSTANT_FILENAME, "rb"))) {
-            fprintf(stderr, "%s: could not open for reading (%s).\n", __func__,
-                    KNOW_CONSTANT_FILENAME);
-            exit(EXIT_FAILURE);
-        }
-        if (fscanf(fp, "%lx\n", &know.nmemb) != 1) {
-            fprintf(stderr, "%s: Unable to read the number of constants\n",
-                    __func__);
-            exit(EXIT_FAILURE);
-        }
+        /* File not found, so number not found. */
+        if (!(fp = fopen(KNOW_CONSTANT_FILENAME, "rb")))
+            return 1;
+        if (fscanf(fp, "%lx\n", &know.nmemb) != 1)
+            return 1;
         know.capacity = know.nmemb;
         know.base = malloc(sizeof(know_constant_c) * know.capacity);
         fread(know.base, sizeof(know_constant_c), know.nmemb, fp);
