@@ -25,8 +25,8 @@ char *argv[];
     int i;
 
     if (argc == 1) {
-		puts("Usage: gcd a b c ...");
-		return 2;
+        puts("Usage: gcd a b c ...");
+        return 2;
     }
     nums = malloc(sizeof(mathfn_positive_int) * (argc-1));
     for (i=1; i < argc; i++)

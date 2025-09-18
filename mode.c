@@ -31,8 +31,8 @@ ARRAYTYPED_GENERATE(double, 2, 0)
 arraytyped_array_double v;
 
 typedef struct {
-	double value;
-	int count;
+    double value;
+    int count;
 } frequencie;
 
 compar_frequencie(x, y)

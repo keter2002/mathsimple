@@ -11,13 +11,13 @@
 
 #define minmaxh_allocate_ptr(TYPENAME, ARR, CAP)\
     do {\
-	    (ARR)->nmemb = 0;\
-	    (ARR)->capacity = CAP;\
-	    (ARR)->base = malloc(sizeof(TYPENAME) * (CAP));\
-	    if (!(ARR)->base) { \
-	    	fputs("[allocate_ptr_arraytyped] Not enough memory.\n", stderr); \
-	    	exit(1); \
-	    } \
+        (ARR)->nmemb = 0;\
+        (ARR)->capacity = CAP;\
+        (ARR)->base = malloc(sizeof(TYPENAME) * (CAP));\
+        if (!(ARR)->base) { \
+            fputs("[allocate_ptr_arraytyped] Not enough memory.\n", stderr); \
+            exit(1); \
+        } \
     } while (0)
 #define minmaxh_allocate(TYPENAME, ARR, CAP) minmaxh_allocate_ptr(TYPENAME, &(ARR), CAP)
 

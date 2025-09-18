@@ -23,13 +23,13 @@
 
 #define arraytyped_allocate_ptr(TYPENAME, ARR, CAP)\
     do {\
-	    (ARR)->nmemb = 0;\
-	    (ARR)->capacity = CAP;\
-	    (ARR)->base = malloc(sizeof(TYPENAME) * (CAP));\
-	    if (!(ARR)->base) { \
-	    	fputs("[arraytyped_allocate_ptr] Not enough memory.\n", stderr); \
-	    	exit(EXIT_FAILURE); \
-	    } \
+        (ARR)->nmemb = 0;\
+        (ARR)->capacity = CAP;\
+        (ARR)->base = malloc(sizeof(TYPENAME) * (CAP));\
+        if (!(ARR)->base) { \
+            fputs("[arraytyped_allocate_ptr] Not enough memory.\n", stderr); \
+            exit(EXIT_FAILURE); \
+        } \
     } while (0)
 #define arraytyped_allocate(TYPENAME, ARR, CAP) arraytyped_allocate_ptr(TYPENAME, &(ARR), CAP)
 
@@ -60,8 +60,8 @@
 #define ARRAYTYPED_GENERATE(TYPENAME, FAC, INC)\
 \
 typedef struct {\
-	TYPENAME *base;\
-	size_t nmemb, capacity;\
+    TYPENAME *base;\
+    size_t nmemb, capacity;\
 } arraytyped_array_##TYPENAME;\
 \
 void arraytyped_expand_##TYPENAME(arr)\
@@ -71,12 +71,12 @@ arraytyped_array_##TYPENAME *arr;\
     \
     if (arr->nmemb == arr->capacity) {\
         arr->capacity = arr->capacity * (FAC) + (INC);\
-    	if ((tmp = realloc(arr->base, sizeof(TYPENAME) * arr->capacity)))\
-    		arr->base = tmp;\
-    	else {\
-    		fprintf(stderr, "[%s] Realloc fail.\n", __func__);\
-    		exit(EXIT_FAILURE);\
-    	}\
+        if ((tmp = realloc(arr->base, sizeof(TYPENAME) * arr->capacity)))\
+            arr->base = tmp;\
+        else {\
+            fprintf(stderr, "[%s] Realloc fail.\n", __func__);\
+            exit(EXIT_FAILURE);\
+        }\
     }\
 }\
 \

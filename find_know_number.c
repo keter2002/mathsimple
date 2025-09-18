@@ -25,53 +25,53 @@
 main(argc, argv)
 char *argv[];
 {
-	int i, j, k;
-	double ilf, jlf, klf;
-	double sqrt_i;
-	double x, c;
-	
-	x = torfnum_atof(argv[1]);
+    int i, j, k;
+    double ilf, jlf, klf;
+    double sqrt_i;
+    double x, c;
+    
+    x = torfnum_atof(argv[1]);
 
-	for (i=1; i <= RANGE; i++) {
-		ilf = i;
-		sqrt_i = sqrt(ilf);
-		if (ceil(sqrt_i) != sqrt_i) {
-			c = sqrt(ilf);
-			if (c - LA_EPS < x && c + LA_EPS > x) {
-				printf("%d^(1/2)\n", i);
-				return 0;
-			}
-		}
-		for (j=2; j <= RANGE; j++) {
-			jlf = j;
-			if (mathfn_greatest_common_divisor(i, j) == 1) {
-				c = i / jlf;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
-					printf("%d/%d\n", i, j);
-					return 0;
-				}
-			}
-			if (ceil(sqrt_i) != sqrt_i) {
-				c = sqrt(ilf) * j;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
-					printf("%d.%d^(1/2)\n", j, i);
-					return 0;
-				}
-				c = sqrt(ilf) / jlf;
-				if (c - LA_EPS < x && c + LA_EPS > x) {
-					printf("%d^(1/2)/%d\n", i, j);
-					return 0;
-				}
-				for (k=2; k <= RANGE; k++)
-					if (mathfn_greatest_common_divisor(j, k) == 1) {
-						klf = k;
-						c = sqrt(ilf)*j/klf;
-						if (c - LA_EPS < x && c + LA_EPS > x) {
-							printf("%d.%d^(1/2)/%d\n", j, i, k);
-							return 0;
-						}
-					}
-			}
-		}
-	}
+    for (i=1; i <= RANGE; i++) {
+        ilf = i;
+        sqrt_i = sqrt(ilf);
+        if (ceil(sqrt_i) != sqrt_i) {
+            c = sqrt(ilf);
+            if (c - LA_EPS < x && c + LA_EPS > x) {
+                printf("%d^(1/2)\n", i);
+                return 0;
+            }
+        }
+        for (j=2; j <= RANGE; j++) {
+            jlf = j;
+            if (mathfn_greatest_common_divisor(i, j) == 1) {
+                c = i / jlf;
+                if (c - LA_EPS < x && c + LA_EPS > x) {
+                    printf("%d/%d\n", i, j);
+                    return 0;
+                }
+            }
+            if (ceil(sqrt_i) != sqrt_i) {
+                c = sqrt(ilf) * j;
+                if (c - LA_EPS < x && c + LA_EPS > x) {
+                    printf("%d.%d^(1/2)\n", j, i);
+                    return 0;
+                }
+                c = sqrt(ilf) / jlf;
+                if (c - LA_EPS < x && c + LA_EPS > x) {
+                    printf("%d^(1/2)/%d\n", i, j);
+                    return 0;
+                }
+                for (k=2; k <= RANGE; k++)
+                    if (mathfn_greatest_common_divisor(j, k) == 1) {
+                        klf = k;
+                        c = sqrt(ilf)*j/klf;
+                        if (c - LA_EPS < x && c + LA_EPS > x) {
+                            printf("%d.%d^(1/2)/%d\n", j, i, k);
+                            return 0;
+                        }
+                    }
+            }
+        }
+    }
 }

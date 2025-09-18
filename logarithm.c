@@ -22,15 +22,15 @@
 
 double log_e(x)
 {
-	double convergence, aux;
-	int i, odd;
-	
-	for (convergence=0, x--; x; x--)
-		for (aux = 2*x+1, i=0; i < ITERATIONS; i++) {
-			odd = i*2+1;
-			convergence += 2 * (1.0/odd) * (1.0/mathfn_powd(aux, odd));
-		}
-	return convergence;
+    double convergence, aux;
+    int i, odd;
+    
+    for (convergence=0, x--; x; x--)
+        for (aux = 2*x+1, i=0; i < ITERATIONS; i++) {
+            odd = i*2+1;
+            convergence += 2 * (1.0/odd) * (1.0/mathfn_powd(aux, odd));
+        }
+    return convergence;
 }
 
 /* Para números muito grandes, pode-se fatorar e calcular a soma dos logs dos
@@ -38,12 +38,12 @@ double log_e(x)
 main(argc, argv)
 char *argv[];
 {
-	int x;
+    int x;
 
-	x = torfnum_atoi(argv[1]);
-	if (x < 2) {
-		fputs("Number must be greater than 1.\n", stderr);
-		return 2;
-	}
-	printf("%f\n", log_e(x));
+    x = torfnum_atoi(argv[1]);
+    if (x < 2) {
+        fputs("Number must be greater than 1.\n", stderr);
+        return 2;
+    }
+    printf("%f\n", log_e(x));
 }
