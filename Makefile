@@ -8,8 +8,8 @@ SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := factorizer lcm gcd find_know_number mode logarithm\
-					binomial_series bhaskara coefficient
+mathfn_dependent := lcm gcd find_know_number mode logarithm  binomial_series\
+					bhaskara coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 expression_lib := $(BUILD_DIR)/lib/expression.o
@@ -42,9 +42,6 @@ $(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
 $(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/factorizer: factorizer.c $(torfnum_lib) $(mathfn_lib)
-	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ $(WARNINGS)
 $(BUILD_DIR)/lcm: lcm.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
