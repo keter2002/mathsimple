@@ -64,13 +64,13 @@ $(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_lib) $(mathfn_lib)
 $(expression_lib): expression.c expression.h
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) string.c
+$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/print_series: print_series.c $(torfnum_lib) $(mathfn_lib) $(expression_lib) string.c
+$(BUILD_DIR)/print_series: print_series.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/integral_aprox: integral_aprox.c $(torfnum_lib) $(mathfn_lib) $(expression_lib) string.c
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 

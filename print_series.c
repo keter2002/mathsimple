@@ -1,7 +1,11 @@
 /*
-    print_series - v1.0.0
+    print_series - v2.0.0
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v2.0.0  Changes in expression syntax and support to variables
+        v1.0.0  First version
 
     print_series is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -14,23 +18,35 @@
 */
 
 #include <stdio.h>
+
 #include "expression.h"
 
 main(argc, argv)
 char *argv[];
 {
     extern int torfnum_atoi();
-    array_dynamic fullexp;
+    expression_expr expr;
+    avltree_node *x;
     int i, start, n;
 
     if (argc < 4) {
-        fputs("Usage: print_series start n expression\n", stderr);
+        fputs("Usage: print_series start n expression [a=5] [...]\n"
+              "Prints the terms of a sequence.\n\n"
+              "The variable x is special here, it starts with start and is incremented n times\n"
+              "to print the terms.\n", stderr);
         return 2;
     }
+    expression_infix_posfix(&expr, argv[3]);
+    x = avltree_find_node(expr.vars, "x");
+    read_vars(&expr, argc-4, &argv[4]);
     i = start = torfnum_atoi(argv[1]);
     n = torfnum_atoi(argv[2]);
-    expression_infix_posfix(&fullexp, argv[3]);
-    expression_show_expr(&fullexp);
-    for (; i < start+n; i++)
-        printf(i == start+n-1? "%.5f\n" : "%.5f ", expression_evaluate(&fullexp, (double)i));
+
+    expression_show_expr(stdout, &expr);
+    for (; i < start+n; i++) {
+        *(double*)x->value = i;
+        printf(i == start+n-1? "%.5f\n" : "%.5f ",
+               expression_evaluate(&expr.exp));
+    }
+    expression_destroy(expr);
 }

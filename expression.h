@@ -1,7 +1,11 @@
 /*
-    expression.h - v1.0.0
+    expression.h - v2.0.0
     Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v2.0.0  Changes in expression syntax and support to variables
+        v1.0.0  First version
 
     expression.h is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -16,6 +20,7 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+#include "external/avltree/avltree.h"
 #include "external/arrays/array.c"
 
 typedef struct {
@@ -23,17 +28,42 @@ typedef struct {
         char opval;
         double fval;
         double (*fnval)();
+        double *nameval;
     } symb;
     unsigned char utype;
 } expression_op;
 
-#define EXPRESSION_OP_TYPE_OP 0
-#define EXPRESSION_OP_TYPE_F  1
-#define EXPRESSION_OP_TYPE_FN 2
+#define EXPRESSION_OP_TYPE_OP   0
+#define EXPRESSION_OP_TYPE_F    1
+#define EXPRESSION_OP_TYPE_FN   2
+#define EXPRESSION_OP_TYPE_NAME 3
 
-void expression_insert(array_dynamic *fullexp, char op, double f, double (*fn)(), int type);
-void expression_infix_posfix(array_dynamic *fullexp, char *c);
-double expression_evaluate(array_dynamic *fullexp, double x);
-void expression_show_expr(array_dynamic *fullexp);
+typedef struct {
+    array_dynamic exp;
+    avltree_tree vars, vars_rev;
+} expression_expr;
+
+/* Caution, expression_infix_posfix must have been called. */
+#define expression_destroy_ptr(EXPR)\
+    do {\
+        avltree_destroy((EXPR)->vars);\
+        avltree_empty(&(EXPR)->vars_rev);\
+        free((EXPR)->exp.base);\
+    } while (0)
+#define expression_destroy(EXPR)\
+    do {\
+        avltree_destroy((EXPR).vars);\
+        avltree_empty((EXPR).vars_rev);\
+        free((EXPR).exp.base);\
+    } while (0)
+
+void expression_insert(expression_expr *expr, char op, double f,
+                       double (*fn)(), char name[], int type);
+void expression_infix_posfix(expression_expr *expr, char *str);
+
+double expression_evaluate(array_dynamic *fullexp);
+
+void expression_show_expr(FILE *stream, expression_expr *expr);
+void read_vars(expression_expr *expr, int argc, char *argv[]);
 
 #endif
