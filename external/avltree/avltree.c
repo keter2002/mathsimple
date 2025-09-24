@@ -3,6 +3,10 @@
     AVL tree implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
+    History:
+        v1.1.0  avl_empty()
+        v1.0.0  First version
+
     avltree.c is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
     Software Foundation, either version 3 of the License, or any later version.
