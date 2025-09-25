@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v2.0.0
+    integral_aprox - v2.0.1
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.1  Typo in help
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
 
@@ -43,7 +44,7 @@ char *argv[];
     
     opt = getopt_long(argc, argv, "h", long_opts, NULL);
     if (argc < 5 || opt == 'h' || opt == '?') {
-        fputs("Usage: expression a b n [a=5] [...]\n"
+        fputs("Usage: integral_aprox expression a b n [a=5] [...]\n"
               "Computes a definite integral by right, left, middle, trapezoid and Simpson\n"
               "methods.\n\n"
               "Inform the function to integrate in 'expression', functions with only one\n"

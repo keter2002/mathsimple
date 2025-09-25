@@ -151,3 +151,6 @@ test:
 	cat tests/print_series/t05.in | xargs ./build/print_series | diff - tests/print_series/t05.out
 	cat tests/print_series/t06.in | xargs ./build/print_series | diff - tests/print_series/t05.out
 	cat tests/print_series/t07.in | xargs ./build/print_series | diff - tests/print_series/t07.out
+	
+	cat tests/integral_aprox/t01.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t01.out
+	cat tests/integral_aprox/t02.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t02.out
