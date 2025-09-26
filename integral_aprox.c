@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v2.0.3
+    integral_aprox - v2.0.4
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.4  Move printing to only main
         v2.0.3  Change order of parameters in read_vars
         v2.0.2  Checks missing variables in expression
         v2.0.1  Typo in help
@@ -37,7 +38,7 @@ char *argv[];
     extern double torfnum_atof();
     void infix_posfix();
     double right_integral(), left_integral(), middle_integral(), trapezoid(), simpson();
-    double a,b,n;
+    double a,b,n,inc,ri,li;
 
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
@@ -72,6 +73,15 @@ char *argv[];
     a = torfnum_atof(argv[2]); b = torfnum_atof(argv[3]); n = torfnum_atof(argv[4]);
 
     expression_show_expr(stdout, &expr);
+    inc = (b-a)/n;
+    printf("%lf %lf %lf %lf\n", a, b, n, inc);
+
+    *(double*)varx->value = b;
+    ri = expression_evaluate(&expr.exp);
+    *(double*)varx->value = a;
+    li = expression_evaluate(&expr.exp);
+    printf("RI - LI = %lf\n", inc*(ri-li));
+
     printf("RI: %lf\n", right_integral(a, b, n));
     printf("LI: %lf\n", left_integral(a, b, n));
     printf("MI: %lf\n", middle_integral(a, b, n));
@@ -84,16 +94,10 @@ char *argv[];
 double right_integral(a, b, n)
 double a,b,n;
 {
-    double inc, res, x, ri, li;
+    double inc, res, x;
     int i;
 
     inc = (b-a)/n;
-    printf("%lf %lf %lf %lf\n", a, b, n, inc);
-    *(double*)varx->value = b;
-    ri = expression_evaluate(&expr.exp);
-    *(double*)varx->value = a;
-    li = expression_evaluate(&expr.exp);
-    printf("RI - LI = %lf\n", inc*(ri-li));
     res = 0;
     for (x=a+inc,i=0; i < n; x+=inc, i++) {
         *(double*)varx->value = x;
