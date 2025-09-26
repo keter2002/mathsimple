@@ -1,9 +1,10 @@
 /*
-    print_series - v2.0.1
+    print_series - v2.0.2
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.2  Change order of parameters in read_vars
         v2.0.1  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
@@ -47,7 +48,7 @@ char *argv[];
     }
     avltree_create(controled, 1, strcmp, NULL, NULL);
     avltree_insert_key(controled, "x");
-    read_vars(&expr, argc-4, &argv[4], &controled);
+    read_vars(&expr, &controled, argc-4, &argv[4]);
     i = start = torfnum_atoi(argv[1]);
     n = torfnum_atoi(argv[2]);
 

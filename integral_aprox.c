@@ -1,11 +1,12 @@
 /*
-    integral_aprox - v2.0.2
+    integral_aprox - v2.0.3
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
-        v2.0.2  Checks missing variables in expression.
+        v2.0.3  Change order of parameters in read_vars
+        v2.0.2  Checks missing variables in expression
         v2.0.1  Typo in help
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
@@ -67,7 +68,7 @@ char *argv[];
     }
     avltree_create(controled, 1, strcmp, NULL, NULL);
     avltree_insert_key(controled, "x");
-    read_vars(&expr, argc-5, &argv[5], &controled);
+    read_vars(&expr, &controled, argc-5, &argv[5]);
     a = torfnum_atof(argv[2]); b = torfnum_atof(argv[3]); n = torfnum_atof(argv[4]);
 
     expression_show_expr(stdout, &expr);

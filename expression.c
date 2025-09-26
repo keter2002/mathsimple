@@ -1,10 +1,11 @@
 /*
-    expression.c - v3.0.0
+    expression.c - v4.0.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
-        v3.0.0  Checks missing variables in expression.
+        v4.0.0  Change order of parameters in read_vars
+        v3.0.0  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
 
@@ -297,10 +298,10 @@ void *key, *value;
     fprintf(stream, "%s", (char*)key);
 }
 
-void read_vars(expr, argc, argv, controled)
+void read_vars(expr, controled, argc, argv)
 expression_expr *expr;
-char *argv[];
 avltree_tree *controled;
+char *argv[];
 {
     extern double torfnum_atof();
     avltree_tree vars_clone;

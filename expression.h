@@ -1,9 +1,10 @@
 /*
-    expression.h - v3.0.0
+    expression.h - v4.0.0
     Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.0.0  Change order of parameters in read_vars
         v3.0.0  Checks missing variables in expression.
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
@@ -65,7 +66,7 @@ void expression_infix_posfix(expression_expr *expr, char *str);
 double expression_evaluate(array_dynamic *fullexp);
 
 void expression_show_expr(FILE *stream, expression_expr *expr);
-void read_vars(expression_expr *expr, int argc, char *argv[],
-               avltree_tree *controled);
+void read_vars(expression_expr *expr, avltree_tree *controled, int argc,
+               char *argv[]);
 
 #endif
