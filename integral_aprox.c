@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v2.0.1
+    integral_aprox - v2.0.2
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.2  Checks missing variables in expression.
         v2.0.1  Typo in help
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
@@ -21,6 +22,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <getopt.h>
 
 #include "expression.h"
@@ -41,7 +43,9 @@ char *argv[];
         { 0 },
     };
     int opt;
-    
+
+    avltree_tree controled;
+
     opt = getopt_long(argc, argv, "h", long_opts, NULL);
     if (argc < 5 || opt == 'h' || opt == '?') {
         fputs("Usage: integral_aprox expression a b n [a=5] [...]\n"
@@ -55,10 +59,15 @@ char *argv[];
               stderr);
         return 2;
     }
-
     expression_infix_posfix(&expr, argv[1]);
-    varx = avltree_find_node(expr.vars, "x");
-    read_vars(&expr, argc-5, &argv[5]);
+    if (!(varx = avltree_find_node(expr.vars, "x"))) {
+        fputs("variable x not found.\n", stderr);
+        expression_destroy(expr);
+        return EXIT_FAILURE;
+    }
+    avltree_create(controled, 1, strcmp, NULL, NULL);
+    avltree_insert_key(controled, "x");
+    read_vars(&expr, argc-5, &argv[5], &controled);
     a = torfnum_atof(argv[2]); b = torfnum_atof(argv[3]); n = torfnum_atof(argv[4]);
 
     expression_show_expr(stdout, &expr);

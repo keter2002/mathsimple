@@ -1,9 +1,10 @@
 /*
-    expression.c - v2.0.0
+    expression.c - v3.0.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.0.0  Checks missing variables in expression.
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
 
@@ -101,8 +102,8 @@ char *str;
     PRIORITIES
     array_allocate(expr->exp, sizeof(expression_op), 5);
     array_allocate(stack.exp, sizeof(expression_op), 16);
-    avltree_create(expr->vars, 1, strcmp, NULL);
-    avltree_create(expr->vars_rev, 1, compar_ptr, NULL);
+    avltree_create(expr->vars, 1, strcmp, NULL, NULL);
+    avltree_create(expr->vars_rev, 1, compar_ptr, NULL, NULL);
     for (; *str; str++) {
         /* Read a number, a variable or a function. */
         if (isalnum(*str) || *str == '.') {
@@ -289,28 +290,49 @@ expression_expr *expr;
     putc('\n', stream);
 }
 
-void read_vars(expr, argc, argv)
+void print_key(stream, key, value)
+FILE *stream;
+void *key, *value;
+{
+    fprintf(stream, "%s", (char*)key);
+}
+
+void read_vars(expr, argc, argv, controled)
 expression_expr *expr;
 char *argv[];
+avltree_tree *controled;
 {
     extern double torfnum_atof();
+    avltree_tree vars_clone;
+    avltree_node *var;
     int i;
     char *saveptr1, *saveptr2;
     char *attr, *varname, *varvalue;
-    avltree_node *var;
-    
+
+    /* Clones all variables present in expr to check missing ones. */
+    avltree_create(vars_clone, 1, strcmp, print_key, ", ");
+    avltree_copy_keys(vars_clone, expr->vars);
+    avltree_diff_ptr(&vars_clone, controled, AVLTREE_FREE_NONE);
     for (i=0; i < argc; i++)
         for (attr=strtok_r(argv[i], ",", &saveptr1); attr;
-             attr = strtok_r(NULL, ",", &saveptr1)) {
+             attr=strtok_r(NULL, ",", &saveptr1)) {
             varname = strtok_r(attr, "=", &saveptr2);
             if (!(varvalue = strtok_r(NULL, "=", &saveptr2))) {
                 fprintf(stderr, "[%s] equality \"=\" not found.\n", __func__);
                 exit(EXIT_FAILURE);
             }
-            if ((var = avltree_find_node(expr->vars, varname)))
+            if ((var = avltree_find_node(expr->vars, varname))) {
                 *(double*)var->value = torfnum_atof(varvalue);
-            else
+                avltree_remove_node(vars_clone, varname, AVLTREE_FREE_NONE);
+            } else
                 fprintf(stderr, "[%s] %s not present in expression.\n",
                         __func__, varname);
         }
+    if (vars_clone.nmemb) {
+        fprintf(stderr, "[%s] missing values for: ", __func__);
+        avltree_infix(stderr, vars_clone);
+        putc('\n', stderr);
+        exit(EXIT_FAILURE);
+    }
+    avltree_empty(vars_clone);
 }

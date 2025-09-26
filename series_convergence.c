@@ -1,9 +1,10 @@
 /*
-    series_convergence - v2.0.0
+    series_convergence - v2.0.1
     Sum the terms of an infinite summation.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.1  Checks missing variables in expression.
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
 
@@ -28,6 +29,7 @@ main(argc, argv)
 char *argv[];
 {
     expression_expr expr;
+    avltree_tree controled;
     avltree_node *x;
     int i,next;
     double sum;
@@ -40,8 +42,14 @@ char *argv[];
         return 2;
     }
     expression_infix_posfix(&expr, argv[1]);
-    x = avltree_find_node(expr.vars, "x");
-    read_vars(&expr, argc-2, &argv[2]);
+    if (!(x = avltree_find_node(expr.vars, "x"))) {
+        fputs("variable x not found.\n", stderr);
+        expression_destroy(expr);
+        return EXIT_FAILURE;
+    }
+    avltree_create(controled, 1, strcmp, NULL, NULL);
+    avltree_insert_key(controled, "x");
+    read_vars(&expr, argc-2, &argv[2], &controled);
 
     expression_show_expr(stdout, &expr);
     for (i=1,sum=0, next=1; i <= 10000000; i++) {

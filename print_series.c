@@ -1,9 +1,10 @@
 /*
-    print_series - v2.0.0
+    print_series - v2.0.1
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.1  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
         v1.0.0  First version
 
@@ -18,6 +19,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "expression.h"
 
@@ -26,6 +28,7 @@ char *argv[];
 {
     extern int torfnum_atoi();
     expression_expr expr;
+    avltree_tree controled;
     avltree_node *x;
     int i, start, n;
 
@@ -37,8 +40,14 @@ char *argv[];
         return 2;
     }
     expression_infix_posfix(&expr, argv[3]);
-    x = avltree_find_node(expr.vars, "x");
-    read_vars(&expr, argc-4, &argv[4]);
+    if (!(x = avltree_find_node(expr.vars, "x"))) {
+        fputs("variable x not found.\n", stderr);
+        expression_destroy(expr);
+        return EXIT_FAILURE;
+    }
+    avltree_create(controled, 1, strcmp, NULL, NULL);
+    avltree_insert_key(controled, "x");
+    read_vars(&expr, argc-4, &argv[4], &controled);
     i = start = torfnum_atoi(argv[1]);
     n = torfnum_atoi(argv[2]);
 

@@ -1,7 +1,13 @@
 /*
-    mode - v1.0.1
+    mode - v1.0.2
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.2  Changes in avltree_create
+        v1.0.1  Replace ARRAYTYPED_APPEND_TO_IDX with arraytyped_append_to_end
+                and arraytyped_quick_sort_double with arraytyped_qsort
+        v1.0.0  First version
 
     mode is free software: you can redistribute it and/or modify it under the
     terms of the GNU General Public License as published by the Free Software
@@ -16,11 +22,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "mathfn.h"
-#include "getop.c"
+
 #include "external/avltree/avltree.c"
 #include "external/heaps/minmax_heap_typed.c"
 #include "external/arrays/array_typed.c"
+
+#include "mathfn.h"
+#include "getop.c"
 
 #define TRUE 1
 #define FALSE 0
@@ -55,7 +63,7 @@ FILE *fp;
     avltree_tree tree;
     avltree_node *found;
 
-    avltree_create(tree, 1, mathfn_compar_double, NULL);
+    avltree_create(tree, 1, mathfn_compar_double, NULL, NULL);
     v.nmemb = 0;
     while ((type = getop(s, MAXOP, fp)) != EOF)
         if (type == NUMBER) {

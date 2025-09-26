@@ -1,7 +1,12 @@
 /*
-    contingency_table - v1.0.1
+    contingency_table - v1.0.2
     Contingency table implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.2  Changes in avltree_create
+        v1.0.1  Changes in ARRAYTYPED_APPEND_TO_IDX_PTR
+        v1.0.0  First version
 
     contingency_table is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by the
@@ -16,9 +21,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "getword.c"
+
 #include "external/avltree/avltree.c"
 #include "external/arrays/array_typed.c"
+
+#include "getword.c"
 
 #define TRUE 1
 #define FALSE 0
@@ -123,8 +130,8 @@ array_relations_unode *arr;
     avltree_node *ret;
     unode key, *new;
     
-    avltree_create(tf, 1, compar_f, NULL);
-    avltree_create(ts, 1, compar_s, NULL);
+    avltree_create(tf, 1, compar_f, NULL, NULL);
+    avltree_create(ts, 1, compar_s, NULL, NULL);
     arr->nmemb = 0;
     first = FALSE;
     while ((type = getword(s, MAXLEN, fp)) != EOF)

@@ -1,9 +1,12 @@
 /*
-    avltree.c - v1.1.0
+    avltree.c - v2.0.0
     AVL tree implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.0  avl_diff(), avl_copy_keys(), flags parameter in avl_remove,
+                stream pointer parameter and separator string in printing
+                routines.
         v1.1.0  avl_empty()
         v1.0.0  First version
 
@@ -17,11 +20,24 @@
     more details.
 */
 
-#include "avltree.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
+#include "avltree.h"
+
+
+void avl_diff(td, ts, r, flags)
+avltree_tree *td, *ts;
+avltree_node *r;
+unsigned char flags;
+{
+    if (!r)
+        return;
+    avl_diff(td, ts, r->child[0], flags);
+    avl_diff(td, ts, r->child[1], flags);
+    avltree_remove_node_ptr(td, r->key, flags);
+}
 
 void avl_empty(t, r)
 avltree_tree *t;
@@ -32,6 +48,17 @@ avltree_node *r;
     avl_empty(t, r->child[0]);
     avl_empty(t, r->child[1]);
     free(r);
+}
+
+void avl_copy_keys(td, ts, r)
+avltree_tree *td, *ts;
+avltree_node *r;
+{
+    if (!r)
+        return;
+    avl_copy_keys(td, ts, r->child[0]);
+    avl_copy_keys(td, ts, r->child[1]);
+    avltree_insert(td, r->key, NULL);
 }
 
 void avl_destroy(t, r)
@@ -274,9 +301,10 @@ void *key, *value;
     return new;
 }
 
-void avl_remove(t, z)
+void avl_remove(t, z, flags)
 avltree_tree *t;
 avltree_node *z;
+unsigned char flags;
 {
     avltree_node *y, *q, *parenty;
     unsigned char side_z, two;
@@ -310,9 +338,10 @@ avltree_node *z;
     if (y)
         y->parent = q;
     
-    if (z->has_value)
+    if (flags & AVLTREE_FREE_VALUE && z->has_value)
         free(z->value);
-    free(z->key);
+    if (flags & AVLTREE_FREE_KEY)
+        free(z->key);
     free(z);
     t->nmemb--;
 
@@ -330,66 +359,115 @@ avltree_node *z;
                 side_z? -1 : 1, 1);
 }
 
-avltree_remove(t, key)
+avltree_remove(t, key, flags)
 avltree_tree *t;
 void *key;
+unsigned char flags;
 {
     avltree_node *z;
     
     if (!(z = avl_find_node(t, t->root, key, NULL)))
         return 1;
-    avl_remove(t, z);
+    avl_remove(t, z, flags);
     return 0;
 }
 
-/* Printing test routines, from BEE 1201: */
+/* Printing routines: */
 
-void avl_infix(t, r, last)
+void avl_infix(stream, t, r, last)
+FILE *stream;
 avltree_tree *t;
 avltree_node *r, *last;
 {
     if (!r)
         return;
-    avl_infix(t, r->child[0], last);
-    printf("%p ", r);
-    if (t->print_node)
-        t->print_node(stdout, r->key, r->value);
-    printf(" [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
+    avl_infix(stream, t, r->child[0], last);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
     if (last != r)
-        putchar('\n');
-    avl_infix(t, r->child[1], last);
+        fprintf(stream, "%s", t->stprint.separator);
+    avl_infix(stream, t, r->child[1], last);
 }
 
-void avl_prefix(t, r)
+void avl_dump_infix(stream, t, r, last)
+FILE *stream;
+avltree_tree *t;
+avltree_node *r, *last;
+{
+    if (!r)
+        return;
+    avl_dump_infix(stream, t, r->child[0], last);
+    fprintf(stream, "%p ", r);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
+    fprintf(stream, " [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
+    if (last != r)
+        putc('\n', stream);
+    avl_dump_infix(stream, t, r->child[1], last);
+}
+
+void avl_prefix(stream, t, r)
+FILE *stream;
 avltree_tree *t;
 avltree_node *r;
 {
     if (!r)
         return;
     if (r != t->root)
-        putchar('\n');
-    printf("%p ", r);
-    if (t->print_node)
-        t->print_node(stdout, r->key, r->value);
-    printf(" [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
-    avl_prefix(t, r->child[0]);
-    avl_prefix(t, r->child[1]);
+        fprintf(stream, "%s", t->stprint.separator);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
+    avl_prefix(stream, t, r->child[0]);
+    avl_prefix(stream, t, r->child[1]);
 }
 
-void avl_posfix(t, r)
+void avl_dump_prefix(stream, t, r)
+FILE *stream;
 avltree_tree *t;
 avltree_node *r;
 {
     if (!r)
         return;
-    avl_posfix(t, r->child[0]);
-    avl_posfix(t, r->child[1]);
-    printf("%p ", r);
-    if (t->print_node)
-        t->print_node(stdout, r->key, r->value);
-    printf(" [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
     if (r != t->root)
-        putchar('\n');
+        putc('\n', stream);
+    fprintf(stream, "%p ", r);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
+    fprintf(stream, " [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
+    avl_dump_prefix(stream, t, r->child[0]);
+    avl_dump_prefix(stream, t, r->child[1]);
+}
+
+void avl_posfix(stream, t, r)
+FILE *stream;
+avltree_tree *t;
+avltree_node *r;
+{
+    if (!r)
+        return;
+    avl_posfix(stream, t, r->child[0]);
+    avl_posfix(stream, t, r->child[1]);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
+    if (r != t->root)
+        fprintf(stream, "%s", t->stprint.separator);
+}
+
+void avl_dump_posfix(stream, t, r)
+FILE *stream;
+avltree_tree *t;
+avltree_node *r;
+{
+    if (!r)
+        return;
+    avl_dump_posfix(stream, t, r->child[0]);
+    avl_dump_posfix(stream, t, r->child[1]);
+    fprintf(stream, "%p ", r);
+    if (t->stprint.print_fn)
+        t->stprint.print_fn(stream, r->key, r->value);
+    fprintf(stream, " [%d] (%p, %p) ^%p", r->bf, r->child[0], r->child[1], r->parent);
+    if (r != t->root)
+        putc('\n', stream);
 }
 
 /* Assumes that arr has sufficient capacity. */
@@ -411,22 +489,23 @@ int *nmemb;
 
 /* Debug functions: */
 
-avl_height(t, r)
+avl_height(stream, t, r)
+FILE *stream;
 avltree_tree *t;
 avltree_node *r;
 {
     int lh, rh;
     if (!r)
         return 0;
-    lh = avl_height(t, r->child[0])+1;
-    rh = avl_height(t, r->child[1])+1;
+    lh = avl_height(stream, t, r->child[0])+1;
+    rh = avl_height(stream, t, r->child[1])+1;
     if (r->bf != rh - lh || abs(r->bf) >= 2) {
-        fprintf(stderr, "Node ");
-        if (t->print_node)
-            t->print_node(stderr, r->key, r->value);
+        fprintf(stream, "Node ");
+        if (t->stprint.print_fn)
+            t->stprint.print_fn(stream, r->key, r->value);
         else
-            fprintf(stderr, "%p", r);
-        fprintf(stderr, " rh: %d lh: %d, BF -> %d\n", rh, lh, r->bf);
+            fprintf(stream, "%p", r);
+        fprintf(stream, " rh: %d lh: %d, BF -> %d\n", rh, lh, r->bf);
         exit(EXIT_FAILURE);
     }
     return rh > lh? rh : lh;
