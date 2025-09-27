@@ -14,9 +14,9 @@
 */
 
 #include <assert.h>
-#include "la_eps.h"
-#include "mathfn.h"
 #include <math.h>
+
+#include "mathfn.h"
 
 
 mathfn_positive_int mathfn_greatest_common_divisor(x, y)

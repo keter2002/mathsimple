@@ -154,3 +154,5 @@ test:
 	
 	cat tests/integral_aprox/t01.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t01.out
 	cat tests/integral_aprox/t02.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t02.out
+	
+	cat tests/find_know_number/t01.in | xargs ./build/find_know_number | diff - tests/find_know_number/t01.out

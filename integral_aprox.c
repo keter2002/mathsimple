@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v2.0.4
+    integral_aprox - v2.0.5
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.5  Remove 'h' option
         v2.0.4  Move printing to only main
         v2.0.3  Change order of parameters in read_vars
         v2.0.2  Checks missing variables in expression
@@ -48,7 +49,7 @@ char *argv[];
 
     avltree_tree controled;
 
-    opt = getopt_long(argc, argv, "h", long_opts, NULL);
+    opt = getopt_long(argc, argv, "", long_opts, NULL);
     if (argc < 5 || opt == 'h' || opt == '?') {
         fputs("Usage: integral_aprox expression a b n [a=5] [...]\n"
               "Computes a definite integral by right, left, middle, trapezoid and Simpson\n"

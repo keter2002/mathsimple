@@ -1,8 +1,12 @@
 /*
-    know_constant - v1.0.0
+    know_constant - v1.0.1
     This program generates the set of mathematical constants of
     KNOW_CONSTANT_FILENAME.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v1.0.1  Forgot to add the constants
+        v1.0.0  First version
 
     know_constant is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -85,7 +89,11 @@ void append_constants()
                   sizeof(know_constant_c) - 1; i++) {
         val = know_constant_constants[i].c.val;
         symb = know_constant_constants[i].c.symb;
-
+        
+        /* THE NUMBER */
+        num.val = val;
+        snprintf(num.symb, KNOW_CONSTANT_MAX_SYMB_LEN, "%s", symb);
+        arraytyped_append_to_end(know_constant_c, know, &num);
         /* SQRT */
         sqrt_lf = num.val = sqrt(val);
         snprintf(num.symb, KNOW_CONSTANT_MAX_SYMB_LEN, "(%s)^(1/2)", symb);
