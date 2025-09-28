@@ -45,9 +45,9 @@ $(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
 $(BUILD_DIR)/lcm: lcm.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/gcd: gcd.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/gcd: gcd.c
 	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ $(WARNINGS)
+	$(CC) $< -o $@ $(WARNINGS) -lgmp
 $(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
@@ -156,3 +156,5 @@ test:
 	cat tests/integral_aprox/t02.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t02.out
 	
 	cat tests/find_know_number/t01.in | xargs ./build/find_know_number | diff - tests/find_know_number/t01.out
+	
+	cat tests/gcd/t01.in | xargs ./build/gcd | diff - tests/gcd/t01.out

@@ -1,7 +1,11 @@
 /*
-    gcd - v1.0.0
+    gcd - v2.0.0
     Get the greatest common divisor among arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v2.0.0  Support to arbitrary-precision integers
+        v1.0.0  First version
 
     gcd is free software: you can redistribute it and/or modify it under the
     terms of the GNU General Public License as published by the Free Software
@@ -15,25 +19,30 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "torfnum.h"
+
+#include <gmp.h>
+
 #include "mathfn.h"
 
 main(argc, argv)
 char *argv[];
 {
-    mathfn_positive_int *nums, gcd;
+    mpz_t *nums, gcd;
     int i;
 
     if (argc == 1) {
-        puts("Usage: gcd a b c ...");
+        puts("Usage: gcd [NUMBER]...");
         return 2;
     }
-    nums = malloc(sizeof(mathfn_positive_int) * (argc-1));
+    nums = malloc(sizeof(mpz_t) * (argc-1));
     for (i=1; i < argc; i++)
-        nums[i-1] = torfnum_atopi(argv[i]);
-    gcd = nums[0];
+        mpz_init_set_str(nums[i-1], argv[i], 10);
+    mpz_init(gcd);
+    mpz_set(gcd, nums[0]);
     for (i=1; i < argc-1; i++)
-        gcd = mathfn_greatest_common_divisor(gcd, nums[i]);
+        mpz_gcd(gcd, gcd, nums[i]);
+    for (i=0; i < argc-1; i++)
+        mpz_clear(nums[i]);
+    gmp_printf("%Zd\n", gcd);
     free(nums);
-    printf("%lu\n", gcd);
 }
