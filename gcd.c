@@ -1,9 +1,10 @@
 /*
-    gcd - v2.0.0
+    gcd - v2.0.1
     Get the greatest common divisor among arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.1  Free gcd var
         v2.0.0  Support to arbitrary-precision integers
         v1.0.0  First version
 
@@ -43,6 +44,7 @@ char *argv[];
         mpz_gcd(gcd, gcd, nums[i]);
     for (i=0; i < argc-1; i++)
         mpz_clear(nums[i]);
-    gmp_printf("%Zd\n", gcd);
     free(nums);
+    gmp_printf("%Zd\n", gcd);
+    mpz_clear(gcd);
 }
