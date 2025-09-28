@@ -1,7 +1,13 @@
 /*
-    lcm - v1.1.1
+    lcm - v2.0.0
     Computes the least common multiple (LCM) of one or more arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v2.0.0  Support to arbitrary-precision integers
+        v1.1.1  Fix wrong start of parsing args
+        v1.1.0  Computes least common multiple of one or more arguments
+        v1.0.0  First version
 
     lcm is free software: you can redistribute it and/or modify it under the
     terms of the GNU General Public License as published by the Free Software
@@ -14,23 +20,32 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
+
+#include <gmp.h>
+
 #include "torfnum.h"
 #include "mathfn.h"
 
 main(argc, argv)
 char *argv[];
 {
-    mathfn_positive_int lcm, x;
+    mpz_t lcm, x;
+    int i;
 
     if (argc < 2) {
-        fputs("lcm: a [b c ...]\n", stderr);
+        fputs("Usage: lcm [NUMBER]...\n", stderr);
         return 2;
     }
-    lcm = torfnum_atopi(argv[1]);
-    while (argc > 2) {
-        x = torfnum_atopi(argv[--argc]);
-        lcm = MATHFN_LCM(lcm, x);
+    mpz_init_set_str(lcm, argv[1], 10);
+    if (argc > 2)
+        mpz_init(x);
+    for (i=argc-1; i > 1; i--) {
+        mpz_set_str(x, argv[i], 10);
+        mpz_lcm(lcm, lcm, x);
     }
-    printf("%ld\n", lcm);
+    if (argc > 2)
+        mpz_clear(x);
+    gmp_printf("%Zd\n", lcm);
+    mpz_clear(lcm);
 }

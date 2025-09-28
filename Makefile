@@ -8,8 +8,8 @@ SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-mathfn_dependent := lcm gcd find_know_number mode logarithm  binomial_series\
-					bhaskara coefficient
+mathfn_dependent := find_know_number mode logarithm  binomial_series bhaskara\
+					coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 expression_lib := $(BUILD_DIR)/lib/expression.o
@@ -21,8 +21,11 @@ la_dependent := base_orthonormalization linear_solver linear_eq_tester\
 				invert_matrix determinant inverse matmul inner_product kruskal_wallis
 LA_BINS := $(la_dependent:%=$(BUILD_DIR)/%)
 
+gmp_dependent := lcm gcd
+GMP_BINS := $(gmp_dependent:%=$(BUILD_DIR)/%)
+
 all: $(mathfn_lib) $(torfnum_lib) $(expression_lib) $(la_lib) $(SIMPLE_BINS)\
-	 $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS)
+	 $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS) $(GMP_BINS)
 
 $(BUILD_DIR)/contingency_table: contingency_table.c getch.c
 	mkdir -p $(BUILD_DIR)
@@ -42,12 +45,6 @@ $(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
 $(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/lcm: lcm.c $(torfnum_lib) $(mathfn_lib)
-	mkdir -p $(BUILD_DIR)
-	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/gcd: gcd.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $< -o $@ $(WARNINGS) -lgmp
 $(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
@@ -112,6 +109,13 @@ $(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_lib) $(mathfn_
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
 
+$(BUILD_DIR)/lcm: lcm.c
+	mkdir -p $(BUILD_DIR)
+	$(CC) $< -o $@ $(WARNINGS) -lgmp
+$(BUILD_DIR)/gcd: gcd.c
+	mkdir -p $(BUILD_DIR)
+	$(CC) $< -o $@ $(WARNINGS) -lgmp
+
 clean:
 	rm -rd $(BUILD_DIR)
 	rm know_constants.data
@@ -158,3 +162,6 @@ test:
 	cat tests/find_know_number/t01.in | xargs ./build/find_know_number | diff - tests/find_know_number/t01.out
 	
 	cat tests/gcd/t01.in | xargs ./build/gcd | diff - tests/gcd/t01.out
+	
+	cat tests/lcm/t01.in | xargs ./build/lcm | diff - tests/lcm/t01.out
+	cat tests/lcm/t02.in | xargs ./build/lcm | diff - tests/lcm/t02.out

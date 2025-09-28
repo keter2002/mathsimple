@@ -1,9 +1,10 @@
 /*
-    gcd - v2.0.1
+    gcd - v2.0.2
     Get the greatest common divisor among arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.2  Show help in stderr
         v2.0.1  Free gcd var
         v2.0.0  Support to arbitrary-precision integers
         v1.0.0  First version
@@ -32,7 +33,7 @@ char *argv[];
     int i;
 
     if (argc == 1) {
-        puts("Usage: gcd [NUMBER]...");
+        fputs("Usage: gcd [NUMBER]...\n", stderr);
         return 2;
     }
     nums = malloc(sizeof(mpz_t) * (argc-1));
