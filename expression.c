@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.0.0
+    expression.c - v4.1.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.1.0  Euler's number and pi
         v4.0.0  Change order of parameters in read_vars
         v3.0.0  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
@@ -113,6 +114,19 @@ char *str;
                 buffer[endb++] = *str;
             } else {
                 strncpy_while_type(buffer, str, MAX_NUMERIC_PRECISION, isalnum);
+
+                /* Euler's number. */
+                if (!strcmp(buffer, "e")) {
+                    expression_insert(expr, 0, M_E, 0, 0, EXPRESSION_OP_TYPE_F);
+                    continue;
+                } else if (!strcmp(buffer, "pi")) {
+                    expression_insert(expr, 0, M_PI, 0, 0, EXPRESSION_OP_TYPE_F);
+                    continue;
+                }
+
+                if (strlen(buffer) == 1)
+                    goto read_var;
+
                 if (!strcmp(buffer, "cos")) {
                     str+=3;
                     fn = cos;
@@ -126,6 +140,7 @@ char *str;
                     str+=2;
                     fn = log;
                 } else {
+read_var:
                     /* Read a variable. */
                     expression_insert(expr, 0, 0, 0, buffer,
                                       EXPRESSION_OP_TYPE_NAME);

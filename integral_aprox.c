@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v2.0.5
+    integral_aprox - v3.0.0
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.0.0  Change order of args
         v2.0.5  Remove 'h' option
         v2.0.4  Move printing to only main
         v2.0.3  Change order of parameters in read_vars
@@ -51,7 +52,7 @@ char *argv[];
 
     opt = getopt_long(argc, argv, "", long_opts, NULL);
     if (argc < 5 || opt == 'h' || opt == '?') {
-        fputs("Usage: integral_aprox expression a b n [a=5] [...]\n"
+        fputs("Usage: integral_aprox a b n expression [a=5] [...]\n"
               "Computes a definite integral by right, left, middle, trapezoid and Simpson\n"
               "methods.\n\n"
               "Inform the function to integrate in 'expression', functions with only one\n"
@@ -62,7 +63,9 @@ char *argv[];
               stderr);
         return 2;
     }
-    expression_infix_posfix(&expr, argv[1]);
+    a = torfnum_atof(argv[1]); b = torfnum_atof(argv[2]); n = torfnum_atof(argv[3]);
+
+    expression_infix_posfix(&expr, argv[4]);
     if (!(varx = avltree_find_node(expr.vars, "x"))) {
         fputs("variable x not found.\n", stderr);
         expression_destroy(expr);
@@ -71,7 +74,6 @@ char *argv[];
     avltree_create(controled, 1, strcmp, NULL, NULL);
     avltree_insert_key(controled, "x");
     read_vars(&expr, &controled, argc-5, &argv[5]);
-    a = torfnum_atof(argv[2]); b = torfnum_atof(argv[3]); n = torfnum_atof(argv[4]);
 
     expression_show_expr(stdout, &expr);
     inc = (b-a)/n;
