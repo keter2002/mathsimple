@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.2.0
+    expression.c - v4.2.1
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.1  Pi has to jump one more char
         v4.2.0  Unary '-' and '+'
         v4.1.0  Euler's number and pi
         v4.0.0  Change order of parameters in read_vars
@@ -125,6 +126,7 @@ char *str;
                     expression_insert(expr, 0, M_E, 0, 0, EXPRESSION_OP_TYPE_F);
                     continue;
                 } else if (!strcmp(buffer, "pi")) {
+                    ptr++;
                     expression_insert(expr, 0, M_PI, 0, 0, EXPRESSION_OP_TYPE_F);
                     continue;
                 }
