@@ -131,11 +131,11 @@ test:
 	./build/contingency_table tests/contingency_table/t01.in | diff - tests/contingency_table/t01.out
 	./build/contingency_table tests/contingency_table/t02.in | diff - tests/contingency_table/t02.out
 	
-	cat tests/logarithm/t01.in | xargs ./build/logarithm | diff - tests/logarithm/t01.out 
-	cat tests/logarithm/t02.in | xargs ./build/logarithm | diff - tests/logarithm/t02.out 
-	cat tests/logarithm/t03.in | xargs ./build/logarithm | diff - tests/logarithm/t03.out 
+	xargs -a tests/logarithm/t01.in ./build/logarithm | diff - tests/logarithm/t01.out 
+	xargs -a tests/logarithm/t02.in ./build/logarithm | diff - tests/logarithm/t02.out 
+	xargs -a tests/logarithm/t03.in ./build/logarithm | diff - tests/logarithm/t03.out 
 	
-	cat tests/bhaskara/t01.in | xargs ./build/bhaskara | diff - tests/bhaskara/t01.out
+	xargs -a tests/bhaskara/t01.in ./build/bhaskara | diff - tests/bhaskara/t01.out
 	
 	cat tests/coefficient/t01.in | ./build/coefficient | diff - tests/coefficient/t01.out
 	cat tests/coefficient/t02.in | ./build/coefficient | diff - tests/coefficient/t02.out
@@ -148,20 +148,20 @@ test:
 	
 	cat tests/linear_eq_tester/t01.in | ./build/linear_eq_tester | diff - tests/linear_eq_tester/t01.out
 	
-	cat tests/print_series/t01.in | xargs ./build/print_series | diff - tests/print_series/t01.out
-	cat tests/print_series/t02.in | xargs ./build/print_series | diff - tests/print_series/t02.out
-	cat tests/print_series/t03.in | xargs ./build/print_series | diff - tests/print_series/t02.out
-	cat tests/print_series/t04.in | xargs ./build/print_series | diff - tests/print_series/t01.out
-	cat tests/print_series/t05.in | xargs ./build/print_series | diff - tests/print_series/t05.out
-	cat tests/print_series/t06.in | xargs ./build/print_series | diff - tests/print_series/t05.out
-	cat tests/print_series/t07.in | xargs ./build/print_series | diff - tests/print_series/t07.out
+	xargs -a tests/print_series/t01.in ./build/print_series | diff - tests/print_series/t01.out
+	xargs -a tests/print_series/t02.in ./build/print_series | diff - tests/print_series/t02.out
+	xargs -a tests/print_series/t03.in ./build/print_series | diff - tests/print_series/t02.out
+	xargs -a tests/print_series/t04.in ./build/print_series | diff - tests/print_series/t01.out
+	xargs -a tests/print_series/t05.in ./build/print_series | diff - tests/print_series/t05.out
+	xargs -a tests/print_series/t06.in ./build/print_series | diff - tests/print_series/t05.out
+	xargs -a tests/print_series/t07.in ./build/print_series | diff - tests/print_series/t07.out
 	
-	cat tests/integral_aprox/t01.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t01.out
-	cat tests/integral_aprox/t02.in | xargs ./build/integral_aprox | diff - tests/integral_aprox/t02.out
+	xargs -a tests/integral_aprox/t01.in ./build/integral_aprox | diff - tests/integral_aprox/t01.out
+	xargs -a tests/integral_aprox/t02.in ./build/integral_aprox | diff - tests/integral_aprox/t02.out
 	
-	cat tests/find_know_number/t01.in | xargs ./build/find_know_number | diff - tests/find_know_number/t01.out
+	xargs -a tests/find_know_number/t01.in ./build/find_know_number | diff - tests/find_know_number/t01.out
 	
-	cat tests/gcd/t01.in | xargs ./build/gcd | diff - tests/gcd/t01.out
+	xargs -a tests/gcd/t01.in ./build/gcd | diff - tests/gcd/t01.out
 	
-	cat tests/lcm/t01.in | xargs ./build/lcm | diff - tests/lcm/t01.out
-	cat tests/lcm/t02.in | xargs ./build/lcm | diff - tests/lcm/t02.out
+	xargs -a tests/lcm/t01.in ./build/lcm | diff - tests/lcm/t01.out
+	xargs -a tests/lcm/t02.in ./build/lcm | diff - tests/lcm/t02.out
