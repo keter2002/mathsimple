@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.1.0
+    expression.c - v4.2.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.0  Unary '-' and '+'
         v4.1.0  Euler's number and pi
         v4.0.0  Change order of parameters in read_vars
         v3.0.0  Checks missing variables in expression
@@ -89,6 +90,9 @@ void *x, *y;
     return (uintptr_t)x-(uintptr_t)y;
 }
 
+#define IS_OP(C) \
+    ((C) == '+' || (C) == '-' || (C) == '*' || (C) == '/' || (C) == '^')
+
 void expression_infix_posfix(expr, str)
 expression_expr *expr;
 char *str;
@@ -97,6 +101,7 @@ char *str;
     expression_op *ptrop;
     #define MAX_NUMERIC_PRECISION 10
     char buffer[MAX_NUMERIC_PRECISION + 1];
+    char *ptr;
     int endb;
     double (*fn)();
 
@@ -106,14 +111,14 @@ char *str;
     array_allocate(stack.exp, sizeof(expression_op), 16);
     avltree_create(expr->vars, 1, strcmp, NULL, NULL);
     avltree_create(expr->vars_rev, 1, compar_ptr, NULL, NULL);
-    for (; *str; str++) {
+    for (ptr=str; *ptr; ptr++) {
         /* Read a number, a variable or a function. */
-        if (isalnum(*str) || *str == '.') {
-            if (isdigit(*str) || *str == '.') {
+        if (isalnum(*ptr) || *ptr == '.') {
+            if (isdigit(*ptr) || *ptr == '.') {
                 assert(endb < MAX_NUMERIC_PRECISION);
-                buffer[endb++] = *str;
+                buffer[endb++] = *ptr;
             } else {
-                strncpy_while_type(buffer, str, MAX_NUMERIC_PRECISION, isalnum);
+                strncpy_while_type(buffer, ptr, MAX_NUMERIC_PRECISION, isalnum);
 
                 /* Euler's number. */
                 if (!strcmp(buffer, "e")) {
@@ -128,16 +133,16 @@ char *str;
                     goto read_var;
 
                 if (!strcmp(buffer, "cos")) {
-                    str+=3;
+                    ptr+=3;
                     fn = cos;
                 } else if (!strcmp(buffer, "sin")) {
-                    str+=3;
+                    ptr+=3;
                     fn = sin;
                 } else if (!strcmp(buffer, "tan")) {
-                    str+=3;
+                    ptr+=3;
                     fn = tan;
                 } else if (!strcmp(buffer, "ln")) {
-                    str+=2;
+                    ptr+=2;
                     fn = log;
                 } else {
 read_var:
@@ -151,26 +156,32 @@ read_var:
                 expression_insert(&stack, 0, 0, fn, 0, EXPRESSION_OP_TYPE_FN);
             }
         /* Read a operator. */
-        } else if (*str == '+' || *str == '-' || *str == '*' || *str == '/' || *str == '^') {
+        } else if (IS_OP(*ptr)) {
             /* If has a number before, place it. */
             if (endb){
                 buffer[endb]='\0';
                 expression_insert(expr, 0, atof(buffer), 0, 0, EXPRESSION_OP_TYPE_F);
                 endb=0;
+            } else if ((*ptr == '+' || *ptr == '-') && (ptr == str || ptr[-1] == '(' || IS_OP(ptr[-1]))) {
+                /* Insert '0' when sees a unary '-' or '+': */
+                expression_insert(expr, 0, 0, 0, 0, EXPRESSION_OP_TYPE_F);
+                expression_insert(&stack, *ptr, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
+                continue;
             }
+
             /* Operates first with more priority. */
             ptrop = ARRAY_AT(stack.exp, stack.exp.nmemb-1);
             while (stack.exp.nmemb && ptrop->utype == EXPRESSION_OP_TYPE_OP &&
-                   op[HASH(*str)] <= op[HASH(ptrop->symb.opval)]) {
+                   op[HASH(*ptr)] <= op[HASH(ptrop->symb.opval)]) {
                 expression_insert(expr, ptrop->symb.opval, 0, 0, 0,
                                   EXPRESSION_OP_TYPE_OP);
                 stack.exp.nmemb--;
                 ptrop = ARRAY_AT(stack.exp, stack.exp.nmemb-1);
             }
-            expression_insert(&stack, *str, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
-        } else if (*str == '(')
-            expression_insert(&stack, *str, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
-        else if (*str == ')') {
+            expression_insert(&stack, *ptr, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
+        } else if (*ptr == '(')
+            expression_insert(&stack, *ptr, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
+        else if (*ptr == ')') {
             if (endb){
                 buffer[endb]='\0';
                 expression_insert(expr, 0, atof(buffer), 0, 0,
