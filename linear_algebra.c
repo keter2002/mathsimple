@@ -1,7 +1,15 @@
 /*
-    linear_algebra.c - v2.0.3
+    linear_algebra.c - v2.0.4
     Definitions of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v2.0.4  torfnum_atof macro
+        v2.0.3  Not exit on file know_constants.data missing
+        v2.0.2  Remove __FILE__ from error messages in la_print_know_constant()
+        v2.0.1  Shortens names of know_constant.h
+        v2.0.0  la_print_know_constant(), stream args and lda in read_matrices
+        v1.0.0  First version
 
     linear_algebra.c is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -19,6 +27,7 @@
 
 #include "linear_algebra.h"
 #include "know_constant.h"
+#include "torfnum.h"
 
 static la_print_know_constant(stream, x)
 FILE *stream;
@@ -98,8 +107,6 @@ double a[][LA_SIZE];
     for (i=0; i < rows; i++)
         la_show_matrix_d(stream, a[i], 1, cols, LA_SIZE);
 }
-
-extern double torfnum_atof();
 
 void la_read_one_pointer_matrix_s(stream, a, rows, cols)
 FILE *stream;

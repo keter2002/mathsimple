@@ -1,7 +1,11 @@
 /*
-    getop.c - v1.0.0
+    getop.c - v1.0.1
     Parse an operator of a mathematical expression in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.1  include torfnum.h
+        v1.0.0  First version
 
     getop.c is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -14,7 +18,9 @@
 */
 
 #include <string.h>
+
 #include "mathfn.h"
+#include "torfnum.h"
 
 
 /*tamanho máximo de um operando ou de um operador*/
@@ -30,8 +36,6 @@ FILE *fp;
 {
     extern int ch();
     extern void unch();
-    extern int torfnum_ftoa(), torfnum_atoi();
-    extern double torfnum_atof();
 
     int c, neg = 0, err;
     char exp[lim];

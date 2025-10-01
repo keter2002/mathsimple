@@ -1,8 +1,13 @@
 /*
-    base_orthonormalization - v1.0.1
+    base_orthonormalization - v1.0.2
     Makes the orthogonalization of a set of vectors. The given vectors need to
     be linearly independent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.2  torfnum_atof macro
+        v1.0.1  stream arg in la_show_matrix_s()
+        v1.0.0  First version
 
     base_orthonormalization is free software: you can redistribute it and/or
     modify it under the terms of the GNU General Public License as published by
@@ -19,8 +24,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include "cblas.h"
+
 #include "linear_algebra.h"
+#include "torfnum.h"
 
 void orthonormalization(basis, n, m)
 float *basis;
@@ -42,7 +50,6 @@ float *basis;
 
 main()
 {
-    extern double torfnum_atof();
     float basis[LA_SIZE*LA_SIZE] = { 0 };
     int n, len, m;
     char *line, *p;

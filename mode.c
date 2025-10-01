@@ -1,9 +1,10 @@
 /*
-    mode - v1.0.2
+    mode - v1.0.3
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.3  torfnum_atof macro
         v1.0.2  Changes in avltree_create
         v1.0.1  Replace ARRAYTYPED_APPEND_TO_IDX with arraytyped_append_to_end
                 and arraytyped_quick_sort_double with arraytyped_qsort
@@ -27,6 +28,7 @@
 #include "external/heaps/minmax_heap_typed.c"
 #include "external/arrays/array_typed.c"
 
+#include "torfnum.h"
 #include "mathfn.h"
 #include "getop.c"
 
@@ -54,7 +56,6 @@ MINMAXH_GENERATE(frequencie, compar_frequencie)
 void read_nums(fp)
 FILE *fp;
 {
-    extern double torfnum_atof();
     minmaxh_heap_frequencie *construct_heap();
     void estatistics(), dsc_print();
     char s[MAXOP];

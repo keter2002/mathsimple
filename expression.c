@@ -1,9 +1,11 @@
 /*
-    expression.c - v4.2.1
+    expression.c - v4.2.2
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.2  Simplification of expression_infix_posfix() parsing and
+                torfnum_atof macro
         v4.2.1  Pi has to jump one more char
         v4.2.0  Unary '-' and '+'
         v4.1.0  Euler's number and pi
@@ -33,6 +35,7 @@
 
 #include "string.c"
 #include "expression.h"
+#include "torfnum.h"
 
 #define HASH(x) (x - '*')
 
@@ -100,72 +103,58 @@ char *str;
 {
     expression_expr stack;
     expression_op *ptrop;
-    #define MAX_NUMERIC_PRECISION 10
-    char buffer[MAX_NUMERIC_PRECISION + 1];
-    char *ptr;
-    int endb;
+    char buffer[EXPRESSION_MAX_NAME_LEN + 1];
+    char *ptr, *endptr;
     double (*fn)();
 
-    endb = 0;
     PRIORITIES
     array_allocate(expr->exp, sizeof(expression_op), 5);
     array_allocate(stack.exp, sizeof(expression_op), 16);
     avltree_create(expr->vars, 1, strcmp, NULL, NULL);
     avltree_create(expr->vars_rev, 1, compar_ptr, NULL, NULL);
     for (ptr=str; *ptr; ptr++) {
-        /* Read a number, a variable or a function. */
-        if (isalnum(*ptr) || *ptr == '.') {
-            if (isdigit(*ptr) || *ptr == '.') {
-                assert(endb < MAX_NUMERIC_PRECISION);
-                buffer[endb++] = *ptr;
-            } else {
-                strncpy_while_type(buffer, ptr, MAX_NUMERIC_PRECISION, isalnum);
+        if (isdigit(*ptr) || TORFNUM_IS_DEC_SEP(*ptr)) { /* Read a number. */
+            expression_insert(expr, 0, torfnum_strtod(ptr, &endptr), 0, 0, EXPRESSION_OP_TYPE_F);
+            ptr = endptr-1;
+        } else if (isalpha(*ptr)) { /* Read a variable or a function. */
+            strncpy_while_type(buffer, ptr, EXPRESSION_MAX_NAME_LEN, isalnum);
 
-                /* Euler's number. */
-                if (!strcmp(buffer, "e")) {
-                    expression_insert(expr, 0, M_E, 0, 0, EXPRESSION_OP_TYPE_F);
-                    continue;
-                } else if (!strcmp(buffer, "pi")) {
-                    ptr++;
-                    expression_insert(expr, 0, M_PI, 0, 0, EXPRESSION_OP_TYPE_F);
-                    continue;
-                }
-
-                if (strlen(buffer) == 1)
-                    goto read_var;
-
-                if (!strcmp(buffer, "cos")) {
-                    ptr+=3;
-                    fn = cos;
-                } else if (!strcmp(buffer, "sin")) {
-                    ptr+=3;
-                    fn = sin;
-                } else if (!strcmp(buffer, "tan")) {
-                    ptr+=3;
-                    fn = tan;
-                } else if (!strcmp(buffer, "ln")) {
-                    ptr+=2;
-                    fn = log;
-                } else {
-read_var:
-                    /* Read a variable. */
-                    expression_insert(expr, 0, 0, 0, buffer,
-                                      EXPRESSION_OP_TYPE_NAME);
-                    continue;
-                }
-                /* It was a function. */
-                expression_insert(&stack, '(', 0, 0, 0, EXPRESSION_OP_TYPE_OP);
-                expression_insert(&stack, 0, 0, fn, 0, EXPRESSION_OP_TYPE_FN);
+            if (!strcmp(buffer, "e")) { /* Euler's number. */
+                expression_insert(expr, 0, M_E, 0, 0, EXPRESSION_OP_TYPE_F);
+                continue;
+            } else if (!strcmp(buffer, "pi")) {
+                ptr++;
+                expression_insert(expr, 0, M_PI, 0, 0, EXPRESSION_OP_TYPE_F);
+                continue;
             }
-        /* Read a operator. */
-        } else if (IS_OP(*ptr)) {
-            /* If has a number before, place it. */
-            if (endb){
-                buffer[endb]='\0';
-                expression_insert(expr, 0, atof(buffer), 0, 0, EXPRESSION_OP_TYPE_F);
-                endb=0;
-            } else if ((*ptr == '+' || *ptr == '-') && (ptr == str || ptr[-1] == '(' || IS_OP(ptr[-1]))) {
-                /* Insert '0' when sees a unary '-' or '+': */
+
+            if (strlen(buffer) == 1)
+                goto read_var;
+
+            if (!strcmp(buffer, "cos")) {
+                ptr+=3;
+                fn = cos;
+            } else if (!strcmp(buffer, "sin")) {
+                ptr+=3;
+                fn = sin;
+            } else if (!strcmp(buffer, "tan")) {
+                ptr+=3;
+                fn = tan;
+            } else if (!strcmp(buffer, "ln")) {
+                ptr+=2;
+                fn = log;
+            } else { /* Read a variable. */
+read_var:
+                expression_insert(expr, 0, 0, 0, buffer,
+                                  EXPRESSION_OP_TYPE_NAME);
+                continue;
+            }
+            /* It was a function. */
+            expression_insert(&stack, '(', 0, 0, 0, EXPRESSION_OP_TYPE_OP);
+            expression_insert(&stack, 0, 0, fn, 0, EXPRESSION_OP_TYPE_FN);
+        } else if (IS_OP(*ptr)) { /* Read a operator. */
+            /* Insert '0' when sees a unary '-' or '+': */
+            if ((*ptr == '+' || *ptr == '-') && (ptr == str || ptr[-1] == '(' || IS_OP(ptr[-1]))) {
                 expression_insert(expr, 0, 0, 0, 0, EXPRESSION_OP_TYPE_F);
                 expression_insert(&stack, *ptr, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
                 continue;
@@ -184,12 +173,6 @@ read_var:
         } else if (*ptr == '(')
             expression_insert(&stack, *ptr, 0, 0, 0, EXPRESSION_OP_TYPE_OP);
         else if (*ptr == ')') {
-            if (endb){
-                buffer[endb]='\0';
-                expression_insert(expr, 0, atof(buffer), 0, 0,
-                                  EXPRESSION_OP_TYPE_F);
-                endb=0;
-            }
             /* Put all operators inside the last parenthesis. */
             ptrop = ARRAY_AT(stack.exp, stack.exp.nmemb-1);
             while (stack.exp.nmemb && ((ptrop->utype == EXPRESSION_OP_TYPE_OP &&
@@ -202,12 +185,6 @@ read_var:
             }
             stack.exp.nmemb--;
         }
-    }
-    /* If last was a number. */
-    if (endb) {
-        buffer[endb]='\0';
-        expression_insert(expr, 0, atof(buffer), 0, 0, EXPRESSION_OP_TYPE_F);
-        endb=0;
     }
     /* Puts all remaining operators. */
     ptrop = ARRAY_AT(stack.exp, stack.exp.nmemb-1);
@@ -331,7 +308,6 @@ expression_expr *expr;
 avltree_tree *controled;
 char *argv[];
 {
-    extern double torfnum_atof();
     avltree_tree vars_clone;
     avltree_node *var;
     int i;

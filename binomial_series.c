@@ -1,7 +1,11 @@
 /*
-    binomial_series - v1.0.0
+    binomial_series - v1.0.1
     Prints the first iterations of a binomial series (1+number)^exponent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v1.0.1  torfnum_atof macro
+        v1.0.0  First version
 
     binomial_series is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -16,12 +20,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "torfnum.h"
+
 main(argc, argv)
 char *argv[];
 {
-    extern double torfnum_atof();
     extern double mathfn_powd();
-    extern torfnum_atoi(); 
     double num, x, rt, numerator, m, aux, exp;
     int i, j, k, fat, it;
 

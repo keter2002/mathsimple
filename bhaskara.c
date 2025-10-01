@@ -1,7 +1,11 @@
 /*
-    bhaskara - v1.0.0
+    bhaskara - v1.0.1
     Solves a quadratic formula with solutions in real numbers.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.1  torfnum_atof macro
+        v1.0.0  First version
 
     bhaskara is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -17,10 +21,11 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "torfnum.h"
+
 main(argc, argv)
 char *argv[];
 {
-    extern double torfnum_atof();
     float a, b, c;
     float delta;
 

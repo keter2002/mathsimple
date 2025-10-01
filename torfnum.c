@@ -1,8 +1,13 @@
 /*
-    torfnum.c - v1.0.1
+    torfnum.c - v1.1.0
     Definitions of functions to convert from number to string or from string to
     number in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v1.1.0  torfnum_strtod()
+        v1.0.1  Return 0 on success of torfnum_itoa()
+        v1.0.0  First version
 
     torfnum.c is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -50,30 +55,33 @@ int *i;
     return val;
 }
 
-double torfnum_atof(s)
-char s[];
+double torfnum_strtod(nptr, endptr)
+char nptr[];
+char **endptr;
 {
     double val, power;
     int i, sign, ex;
 
-    for (i=0; s[i]==' ' || s[i]=='\n' || s[i]=='\t'; i++);
-    sign = torfnum_signal(s, &i);
-    val = torfnum_value(s, &i);
-    if (s[i] == '.' || s[i] == ',')
+    for (i=0; nptr[i]==' ' || nptr[i]=='\n' || nptr[i]=='\t'; i++);
+    sign = torfnum_signal(nptr, &i);
+    val = torfnum_value(nptr, &i);
+    if (TORFNUM_IS_DEC_SEP(nptr[i]))
         i++;
-    for (power = 1; s[i] >= '0' && s[i] <= '9'; i++) {
-        val = 10 * val + s[i] - '0';
+    for (power = 1; nptr[i] >= '0' && nptr[i] <= '9'; i++) {
+        val = 10 * val + nptr[i] - '0';
         power *= 10;
     }
     
     val /= power * sign;
-    if (s[i] == 'e' || s[i] == 'E') {
+    if (nptr[i] == 'e' || nptr[i] == 'E') {
         i++;
-        sign = torfnum_signal(s, &i);
-        ex = torfnum_value(s, &i);
+        sign = torfnum_signal(nptr, &i);
+        ex = torfnum_value(nptr, &i);
         val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
     }
-    return(val);
+    if (endptr)
+        *endptr = nptr + i;
+    return val;
 }
 
 torfnum_atoi(s)
@@ -126,7 +134,7 @@ char s[];
     
     if (i > lim)
         return (-1);
-    s[i++] = '.';
+    s[i++] = TORFNUM_DEC_SEP;
     if (i > lim)
         return (-1);
 

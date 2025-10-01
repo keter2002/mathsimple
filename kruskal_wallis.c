@@ -1,7 +1,11 @@
 /*
-    kruskal_wallis - v1.0.0
+    kruskal_wallis - v1.0.1
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.1  torfnum_atof macro
+        v1.0.0  First version
 
     kruskal_wallis is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -16,7 +20,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "mathfn.h"
+#include "torfnum.h"
 
 #define MAX_GROUPS 5
 #define MAX_OBS 50
@@ -64,7 +70,6 @@ float H_test(r, c)
 main()
 {
     extern void la_show_matrix_s();
-    extern double torfnum_atof();
     char *line, *p;
     size_t size;
     int rows, cols;

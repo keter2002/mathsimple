@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v3.0.0
+    integral_aprox - v3.0.1
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.0.1  torfnum_atof macro
         v3.0.0  Change order of args
         v2.0.5  Remove 'h' option
         v2.0.4  Move printing to only main
@@ -30,6 +31,7 @@
 #include <getopt.h>
 
 #include "expression.h"
+#include "torfnum.h"
 
 expression_expr expr;
 avltree_node *varx;
@@ -37,7 +39,6 @@ avltree_node *varx;
 main(argc,argv)
 char *argv[];
 {
-    extern double torfnum_atof();
     void infix_posfix();
     double right_integral(), left_integral(), middle_integral(), trapezoid(), simpson();
     double a,b,n,inc,ri,li;
