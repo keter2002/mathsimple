@@ -1,7 +1,11 @@
 /*
-    logarithm - v1.0.0
+    logarithm - v1.0.1
     Calculates the natural logarithm of naturals.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+
+    History:
+        v1.0.1  atoi() replaces torfnum_atoi()
+        v1.0.0  First version
 
     logarithm is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -40,7 +44,7 @@ char *argv[];
 {
     int x;
 
-    x = torfnum_atoi(argv[1]);
+    x = atoi(argv[1]);
     if (x < 2) {
         fputs("Number must be greater than 1.\n", stderr);
         return 2;

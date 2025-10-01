@@ -1,9 +1,10 @@
 /*
-    kruskal_wallis - v1.0.1
+    kruskal_wallis - v1.0.2
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.2  atof() replaces torfnum_atof()
         v1.0.1  torfnum_atof macro
         v1.0.0  First version
 
@@ -80,7 +81,7 @@ main()
     while (getline(&line, &size, stdin) != EOF) {
         cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " ")) {
-            ranks[N] = torfnum_atof(p);
+            ranks[N] = atof(p);
             matrix[rows][cols++] = ranks[N++];
         }
         rows++;

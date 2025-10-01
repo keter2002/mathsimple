@@ -1,9 +1,11 @@
 /*
-    find_know_number - v2.0.0
+    find_know_number - v2.0.1
     Return the symbolic representation of a floating point number.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.1  Use atof() to replace torfnum_atof() and atoi() to replace
+                torfnum_atoi()
         v2.0.0  Search for know mathematical constants and parameters of search
         v1.0.0  First version
 
@@ -23,7 +25,6 @@
 #include <getopt.h>
 
 #include "know_constant.h"
-#include "torfnum.h"
 #include "mathfn.h"
 
 #define RANGE 500
@@ -61,9 +62,9 @@ char *argv[];
         switch (opt) {
         case 0:
             if (!strcmp("range", long_opts[option_index].name))
-                range = torfnum_atoi(optarg);
+                range = atoi(optarg);
             else
-                know_constant_range = torfnum_atoi(optarg);
+                know_constant_range = atoi(optarg);
             break;
         case 1:
             found = 0;
@@ -81,7 +82,7 @@ char *argv[];
             suppress_know_constant_finding = 1;
             break;
         case 'e':
-            epsilon = torfnum_atof(optarg);
+            epsilon = atof(optarg);
             break;
         case 'h':
         case '?':
@@ -116,7 +117,7 @@ double eps;
     double sqrt_lf, c, x;
     unsigned char found = 0;
     
-    x = torfnum_atof(strx);
+    x = atof(strx);
     for (i=1; i <= range; i++) {
         ilf = i;
         sqrt_lf = sqrt(ilf);
@@ -174,7 +175,7 @@ double eps;
     char *symb;
     unsigned char found = 0;
 
-    x = torfnum_atof(strx);
+    x = atof(strx);
     for (i=0; i < sizeof(know_constant_constants) /
                   sizeof(know_constant_c) - 1; i++) {
         val = know_constant_constants[i].c.val;

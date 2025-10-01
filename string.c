@@ -1,7 +1,11 @@
 /*
-    string.c - v1.0.0
+    string.c - v1.1.0
     Auxiliar string standard lib functions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v1.1.0  Move torfnum_reverse() to here
+        v1.0.0  First version
 
     string.c is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -14,6 +18,20 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
+
+void reverse(s)
+char *s;
+{
+    char c;
+    char *end;
+
+    for (end = s+strlen(s)-1; s < end; s++, end--){
+        c = *s;
+        *s = *end;
+        *end = c;
+    }    
+}
 
 /* Copies at most n  */
 char *strncpy_while_type(dest, src, n, check)

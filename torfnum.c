@@ -1,10 +1,12 @@
 /*
-    torfnum.c - v1.1.0
+    torfnum.c - v2.0.0
     Definitions of functions to convert from number to string or from string to
     number in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.0  Remove torfnum_value(), torfnum_strtod(), torfnum_atoi()
+                and torfnum_reverse()
         v1.1.0  torfnum_strtod()
         v1.0.1  Return 0 on success of torfnum_itoa()
         v1.0.0  First version
@@ -19,8 +21,6 @@
     more details.
 */
 
-#include <string.h>
-#include "mathfn.h"
 #include "torfnum.h"
 
 
@@ -33,17 +33,6 @@ int *i;
     return 1;
 }
 
-double torfnum_value(s, i)
-char s[];
-int *i;
-{
-    double val;
-
-    for (val = 0; s[*i] >= '0' && s[*i] <= '9'; ++*i)
-        val = 10 * val + s[*i] - '0';
-    return val;
-}
-
 mathfn_positive_int valuei_torfnum(s, i)
 char s[];
 int *i;
@@ -52,53 +41,6 @@ int *i;
 
     for (val = 0; s[*i] >= '0' && s[*i] <= '9'; ++*i)
         val = 10 * val + s[*i] - '0';
-    return val;
-}
-
-double torfnum_strtod(nptr, endptr)
-char nptr[];
-char **endptr;
-{
-    double val, power;
-    int i, sign, ex;
-
-    for (i=0; nptr[i]==' ' || nptr[i]=='\n' || nptr[i]=='\t'; i++);
-    sign = torfnum_signal(nptr, &i);
-    val = torfnum_value(nptr, &i);
-    if (TORFNUM_IS_DEC_SEP(nptr[i]))
-        i++;
-    for (power = 1; nptr[i] >= '0' && nptr[i] <= '9'; i++) {
-        val = 10 * val + nptr[i] - '0';
-        power *= 10;
-    }
-    
-    val /= power * sign;
-    if (nptr[i] == 'e' || nptr[i] == 'E') {
-        i++;
-        sign = torfnum_signal(nptr, &i);
-        ex = torfnum_value(nptr, &i);
-        val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
-    }
-    if (endptr)
-        *endptr = nptr + i;
-    return val;
-}
-
-torfnum_atoi(s)
-char s[];
-{
-    int val;
-    int i, sign, ex;
-
-    for (i=0; s[i]==' ' || s[i]=='\n' || s[i]=='\t'; i++);
-    sign = torfnum_signal(s, &i);
-    val = sign * torfnum_value(s, &i);
-    if (s[i] == 'e' || s[i] == 'E') {
-        i++;
-        sign = torfnum_signal(s, &i);
-        ex = torfnum_value(s, &i);
-        val = (sign==1) ? val * mathfn_powi(10, ex) : val / mathfn_powi(10, ex);
-    }
     return val;
 }
 
@@ -148,19 +90,6 @@ char s[];
     return(0);
 }
 
-void torfnum_reverse(s)
-char *s;
-{
-    char c;
-    char *end;
-
-    for (end = s+strlen(s)-1; s < end; s++, end--){
-        c = *s;
-        *s = *end;
-        *end = c;
-    }    
-}
-
 torfnum_itoa(n, s, l)
 char *s;
 {
@@ -186,6 +115,6 @@ char *s;
     for (i = s-aux; i < l; *s++ = ' ', i++);
     
     *s = '\0';
-    torfnum_reverse(aux);
+    reverse(aux);
     return 0;
 }

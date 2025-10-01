@@ -1,10 +1,11 @@
 /*
-    base_orthonormalization - v1.0.2
+    base_orthonormalization - v1.0.3
     Makes the orthogonalization of a set of vectors. The given vectors need to
     be linearly independent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.3  atof() replaces torfnum_atof()
         v1.0.2  torfnum_atof macro
         v1.0.1  stream arg in la_show_matrix_s()
         v1.0.0  First version
@@ -28,7 +29,6 @@
 #include "cblas.h"
 
 #include "linear_algebra.h"
-#include "torfnum.h"
 
 void orthonormalization(basis, n, m)
 float *basis;
@@ -60,7 +60,7 @@ main()
     while (getline(&line, &size, stdin) != EOF) {
         len = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            basis[n * LA_SIZE + len++] = torfnum_atof(p);
+            basis[n * LA_SIZE + len++] = atof(p);
         if (len > m)
             m = len;
         n++;

@@ -1,9 +1,10 @@
 /*
-    linear_algebra.c - v2.0.4
+    linear_algebra.c - v2.0.5
     Definitions of utility functions to deal with matrices.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.5  atof() replaces torfnum_atof()
         v2.0.4  torfnum_atof macro
         v2.0.3  Not exit on file know_constants.data missing
         v2.0.2  Remove __FILE__ from error messages in la_print_know_constant()
@@ -27,7 +28,6 @@
 
 #include "linear_algebra.h"
 #include "know_constant.h"
-#include "torfnum.h"
 
 static la_print_know_constant(stream, x)
 FILE *stream;
@@ -124,7 +124,7 @@ int *rows, *cols;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " ")) {
             assert(*cols < LA_SIZE);
-            a[*rows][(*cols)++] = torfnum_atof(p);
+            a[*rows][(*cols)++] = atof(p);
         }
         ++*rows;
     }
@@ -147,7 +147,7 @@ int *rows, *cols;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " ")) {
             assert(*cols < LA_SIZE);
-            a[*rows][(*cols)++] = torfnum_atof(p);
+            a[*rows][(*cols)++] = atof(p);
         }
         ++*rows;
     }
@@ -168,7 +168,7 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * lda + (*cols)++] = torfnum_atof(p);
+            a[*rows * lda + (*cols)++] = atof(p);
         ++*rows;
     }
     free(line);
@@ -188,7 +188,7 @@ int *rows, *cols;
             break;
         *cols = 0;
         for (p=strtok(line, " "); p; p = strtok(NULL, " "))
-            a[*rows * lda + (*cols)++] = torfnum_atof(p);
+            a[*rows * lda + (*cols)++] = atof(p);
         ++*rows;
     }
     free(line);

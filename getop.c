@@ -1,9 +1,11 @@
 /*
-    getop.c - v1.0.1
+    getop.c - v1.0.2
     Parse an operator of a mathematical expression in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.2  Use atof() to replace torfnum_atof() and atoi() to replace
+                torfnum_atoi()
         v1.0.1  include torfnum.h
         v1.0.0  First version
 
@@ -72,9 +74,9 @@ FILE *fp;
         *aux = *e = '\0';
         
         if (neg)
-            err = torfnum_ftoa(torfnum_atof(s) / mathfn_powi(10, torfnum_atoi(exp)), exp, lim);
+            err = torfnum_ftoa(atof(s) / mathfn_powi(10, atoi(exp)), exp, lim);
         else
-            err = torfnum_ftoa(torfnum_atof(s) * mathfn_powi(10, torfnum_atoi(exp)), exp, lim);
+            err = torfnum_ftoa(atof(s) * mathfn_powi(10, atoi(exp)), exp, lim);
         if (!err) {
             strcpy(s, exp);
             return(NUMBER);

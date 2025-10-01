@@ -1,9 +1,10 @@
 /*
-    print_series - v2.0.2
+    print_series - v2.0.3
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.3  atoi() replaces torfnum_atoi()
         v2.0.2  Change order of parameters in read_vars
         v2.0.1  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
@@ -27,7 +28,6 @@
 main(argc, argv)
 char *argv[];
 {
-    extern int torfnum_atoi();
     expression_expr expr;
     avltree_tree controled;
     avltree_node *x;
@@ -49,8 +49,8 @@ char *argv[];
     avltree_create(controled, 1, strcmp, NULL, NULL);
     avltree_insert_key(controled, "x");
     read_vars(&expr, &controled, argc-4, &argv[4]);
-    i = start = torfnum_atoi(argv[1]);
-    n = torfnum_atoi(argv[2]);
+    i = start = atoi(argv[1]);
+    n = atoi(argv[2]);
 
     expression_show_expr(stdout, &expr);
     for (; i < start+n; i++) {

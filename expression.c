@@ -1,9 +1,11 @@
 /*
-    expression.c - v4.2.2
+    expression.c - v4.2.3
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.3  Use atof() to replace torfnum_atof() and strtod() to
+                replace torfnum_strtod()
         v4.2.2  Simplification of expression_infix_posfix() parsing and
                 torfnum_atof macro
         v4.2.1  Pi has to jump one more char
@@ -33,7 +35,6 @@
 
 #include "external/avltree/avltree.c"
 
-#include "string.c"
 #include "expression.h"
 #include "torfnum.h"
 
@@ -101,6 +102,7 @@ void expression_infix_posfix(expr, str)
 expression_expr *expr;
 char *str;
 {
+    extern void strncpy_while_type();
     expression_expr stack;
     expression_op *ptrop;
     char buffer[EXPRESSION_MAX_NAME_LEN + 1];
@@ -114,7 +116,7 @@ char *str;
     avltree_create(expr->vars_rev, 1, compar_ptr, NULL, NULL);
     for (ptr=str; *ptr; ptr++) {
         if (isdigit(*ptr) || TORFNUM_IS_DEC_SEP(*ptr)) { /* Read a number. */
-            expression_insert(expr, 0, torfnum_strtod(ptr, &endptr), 0, 0, EXPRESSION_OP_TYPE_F);
+            expression_insert(expr, 0, strtod(ptr, &endptr), 0, 0, EXPRESSION_OP_TYPE_F);
             ptr = endptr-1;
         } else if (isalpha(*ptr)) { /* Read a variable or a function. */
             strncpy_while_type(buffer, ptr, EXPRESSION_MAX_NAME_LEN, isalnum);
@@ -327,7 +329,7 @@ char *argv[];
                 exit(EXIT_FAILURE);
             }
             if ((var = avltree_find_node(expr->vars, varname))) {
-                *(double*)var->value = torfnum_atof(varvalue);
+                *(double*)var->value = atof(varvalue);
                 avltree_remove_node(vars_clone, varname, AVLTREE_FREE_NONE);
             } else
                 fprintf(stderr, "[%s] %s not present in expression.\n",

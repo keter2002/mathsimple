@@ -1,9 +1,10 @@
 /*
-    bhaskara - v1.0.1
+    bhaskara - v1.0.2
     Solves a quadratic formula with solutions in real numbers.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.2  atof() replaces torfnum_atof()
         v1.0.1  torfnum_atof macro
         v1.0.0  First version
 
@@ -33,9 +34,9 @@ char *argv[];
         puts("Usage: bhaskara a b c");
         return 2;
     }
-    a = torfnum_atof(argv[1]);
-    b = -torfnum_atof(argv[2]);
-    c = torfnum_atof(argv[3]);
+    a = atof(argv[1]);
+    b = -atof(argv[2]);
+    c = atof(argv[3]);
     if ((delta = b*b - 4*a*c) < 0) {
         puts("No real solutions.");
         return 0;

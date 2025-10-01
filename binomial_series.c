@@ -1,9 +1,11 @@
 /*
-    binomial_series - v1.0.1
+    binomial_series - v1.0.2
     Prints the first iterations of a binomial series (1+number)^exponent.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v1.0.2  Use atof() to replace torfnum_atof() and atoi() to replace
+                torfnum_atoi()
         v1.0.1  torfnum_atof macro
         v1.0.0  First version
 
@@ -20,8 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "torfnum.h"
-
 main(argc, argv)
 char *argv[];
 {
@@ -33,9 +33,9 @@ char *argv[];
         fputs("Usage: binomial_series number exponent iterations\n", stderr);
         return 2;
     }
-    num = torfnum_atof(argv[1]);
-    exp = torfnum_atof(argv[2]);
-    it = argc > 3? torfnum_atoi(argv[3]) : 0;
+    num = atof(argv[1]);
+    exp = atof(argv[2]);
+    it = argc > 3? atoi(argv[3]) : 0;
     if (num > 1.0) {
         i = 0;
         do {

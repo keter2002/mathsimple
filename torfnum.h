@@ -1,10 +1,12 @@
 /*
-    torfnum.h - v1.1.0
+    torfnum.h - v2.0.0
     Declarations of functions to convert from number to string or from string
     to number in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.0  Remove torfnum_value(), torfnum_strtod(), torfnum_atof(),
+                torfnum_atoi() and torfnum_reverse()
         v1.1.0  torfnum_strtod(), torfnum_atof macro and TORFNUM_IS_DEC_SEP and
                 TORFNUM_DEC_SEP defines
         v1.0.0  First version
@@ -19,21 +21,16 @@
     more details.
 */
 
-#ifndef H_TORFNUM
-#define H_TORFNUM
+#ifndef TORFNUM_H
+#define TORFNUM_H
 
 #include "mathfn.h"
 
 
 int torfnum_signal(char s[], int *i);
-double torfnum_value(char s[], int *i);
-void torfnum_reverse(char s[]);
 
 #define TORFNUM_IS_DEC_SEP(C) ((C) == '.' || (C) == ',')
 
-double torfnum_strtod(char nptr[], char **endptr);
-
-int torfnum_atoi(char s[]);
 mathfn_positive_int torfnum_atopi(char s[]);
 
 #define TORFNUM_DEC_SEP '.'
@@ -41,7 +38,5 @@ mathfn_positive_int torfnum_atopi(char s[]);
 int torfnum_ftoa(double n, char s[], int lim);
 
 int torfnum_itoa(int n, char s[], int lim);
-
-#define torfnum_atof(S) torfnum_strtod(S, NULL)
 
 #endif

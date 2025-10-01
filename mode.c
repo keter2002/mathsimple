@@ -1,9 +1,10 @@
 /*
-    mode - v1.0.3
+    mode - v1.0.4
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.4  atof() replaces torfnum_atof()
         v1.0.3  torfnum_atof macro
         v1.0.2  Changes in avltree_create
         v1.0.1  Replace ARRAYTYPED_APPEND_TO_IDX with arraytyped_append_to_end
@@ -69,7 +70,7 @@ FILE *fp;
     while ((type = getop(s, MAXOP, fp)) != EOF)
         if (type == NUMBER) {
             x = malloc(sizeof(double));
-            *x = torfnum_atof(s);
+            *x = atof(s);
             if ((found = avltree_find_node(tree, x)))
                 *(int*)(found->value) += 1;
             else {

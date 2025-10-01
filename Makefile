@@ -6,8 +6,10 @@ simple_progs := contingency_table
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
 torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
-
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
+
+torfnum_objs := $(torfnum_lib) $(mathfn_lib) string.c
+
 mathfn_dependent := find_know_number mode logarithm  binomial_series bhaskara\
 					coefficient
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
@@ -39,35 +41,35 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/mode: mode.c getch.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/mode: mode.c getch.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/logarithm: logarithm.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/logarithm: logarithm.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
 $(expression_lib): expression.c expression.h
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/print_series: print_series.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/print_series: print_series.c $(expression_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
@@ -80,32 +82,32 @@ $(la_lib): linear_algebra.c linear_algebra.h know_constant.h $(BUILD_DIR)/know_c
 	$(BUILD_DIR)/know_constant
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -lcblas $(WARNINGS)
 
-$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/determinant: determinant.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/determinant: determinant.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas $(WARNINGS)
-$(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
-$(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_lib) $(mathfn_lib)
+$(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_objs)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
 
