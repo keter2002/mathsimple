@@ -5,10 +5,7 @@ WARNINGS := -Wno-implicit-int -Wall
 simple_progs := contingency_table 
 SIMPLE_BINS := $(simple_progs:%=$(BUILD_DIR)/%)
 
-torfnum_lib := $(BUILD_DIR)/lib/torfnum.o
 mathfn_lib := $(BUILD_DIR)/lib/mathfn.o
-
-torfnum_objs := $(torfnum_lib) $(mathfn_lib) string.c
 
 mathfn_dependent := find_know_number mode logarithm  binomial_series bhaskara\
 					coefficient
@@ -41,35 +38,35 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/coefficient: coefficient.c getch.c $(torfnum_objs)
+$(BUILD_DIR)/coefficient: coefficient.c getch.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/bhaskara: bhaskara.c $(torfnum_objs)
+$(BUILD_DIR)/bhaskara: bhaskara.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/find_know_number: find_know_number.c $(torfnum_objs)
+$(BUILD_DIR)/find_know_number: find_know_number.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/mode: mode.c getch.c $(torfnum_objs)
+$(BUILD_DIR)/mode: mode.c getch.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/logarithm: logarithm.c $(torfnum_objs)
+$(BUILD_DIR)/logarithm: logarithm.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/binomial_series: binomial_series.c $(torfnum_objs)
+$(BUILD_DIR)/binomial_series: binomial_series.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
 $(expression_lib): expression.c expression.h
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) $(torfnum_objs)
+$(BUILD_DIR)/series_convergence: series_convergence.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/print_series: print_series.c $(expression_lib) $(torfnum_objs)
+$(BUILD_DIR)/print_series: print_series.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) $(torfnum_objs)
+$(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 
@@ -82,32 +79,32 @@ $(la_lib): linear_algebra.c linear_algebra.h know_constant.h $(BUILD_DIR)/know_c
 	$(BUILD_DIR)/know_constant
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/base_orthonormalization: base_orthonormalization.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm -lcblas $(WARNINGS)
 
-$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/linear_solver: linear_solver.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/linear_eq_tester: linear_eq_tester.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/invert_matrix: invert_matrix.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/determinant: determinant.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/determinant: determinant.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/inverse: inverse.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/inverse: inverse.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
-$(BUILD_DIR)/matmul: matmul.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/matmul: matmul.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas $(WARNINGS)
-$(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/inner_product: inner_product.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
-$(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(torfnum_objs)
+$(BUILD_DIR)/kruskal_wallis: kruskal_wallis.c $(la_lib) $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lcblas -lm $(WARNINGS)
 
@@ -139,8 +136,8 @@ test:
 	
 	xargs -a tests/bhaskara/t01.in ./build/bhaskara | diff - tests/bhaskara/t01.out
 	
-	cat tests/coefficient/t01.in | ./build/coefficient | diff - tests/coefficient/t01.out
-	cat tests/coefficient/t02.in | ./build/coefficient | diff - tests/coefficient/t02.out
+	cat tests/coefficient/t01.in | xargs -a tests/coefficient/t01.args ./build/coefficient | diff - tests/coefficient/t01.out
+	cat tests/coefficient/t02.in | xargs -a tests/coefficient/t02.args ./build/coefficient | diff - tests/coefficient/t02.out
 	cat tests/coefficient/t03.in | ./build/coefficient | diff - tests/coefficient/t03.out
 	
 	cat tests/determinant/t01.in | ./build/determinant | diff - tests/determinant/t01.out

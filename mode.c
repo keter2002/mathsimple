@@ -1,9 +1,10 @@
 /*
-    mode - v1.0.4
+    mode - v1.0.5
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.5  Remove torfnum.h
         v1.0.4  atof() replaces torfnum_atof()
         v1.0.3  torfnum_atof macro
         v1.0.2  Changes in avltree_create
@@ -29,7 +30,6 @@
 #include "external/heaps/minmax_heap_typed.c"
 #include "external/arrays/array_typed.c"
 
-#include "torfnum.h"
 #include "mathfn.h"
 #include "getop.c"
 

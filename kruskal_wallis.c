@@ -1,9 +1,10 @@
 /*
-    kruskal_wallis - v1.0.2
+    kruskal_wallis - v1.0.3
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.3  remove torfnum.h
         v1.0.2  atof() replaces torfnum_atof()
         v1.0.1  torfnum_atof macro
         v1.0.0  First version
@@ -23,7 +24,6 @@
 #include <stdlib.h>
 
 #include "mathfn.h"
-#include "torfnum.h"
 
 #define MAX_GROUPS 5
 #define MAX_OBS 50

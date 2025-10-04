@@ -1,9 +1,10 @@
 /*
-    expression.h - v4.0.1
+    expression.h - v4.0.2
     Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.0.2  EXPRESSION_IS_DEC_SEP macro
         v4.0.1  EXPRESSION_MAX_NAME_LEN definition
         v4.0.0  Change order of parameters in read_vars
         v3.0.0  Checks missing variables in expression.
@@ -64,6 +65,7 @@ void expression_insert(expression_expr *expr, char op, double f,
                        double (*fn)(), char name[], int type);
 
 #define EXPRESSION_MAX_NAME_LEN 25
+#define EXPRESSION_IS_DEC_SEP(C) ((C) == '.' || (C) == ',')
 void expression_infix_posfix(expression_expr *expr, char *str);
 
 double expression_evaluate(array_dynamic *fullexp);

@@ -1,9 +1,10 @@
 /*
-    logarithm - v1.0.1
+    logarithm - v1.0.2
     Calculates the natural logarithm of naturals.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.2  Remove torfnum.h
         v1.0.1  atoi() replaces torfnum_atoi()
         v1.0.0  First version
 
@@ -19,7 +20,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "torfnum.h"
 #include "mathfn.h"
 
 #define ITERATIONS 7

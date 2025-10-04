@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.2.3
+    expression.c - v4.2.4
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.4  EXPRESSION_IS_DEC_SEP
         v4.2.3  Use atof() to replace torfnum_atof() and strtod() to
                 replace torfnum_strtod()
         v4.2.2  Simplification of expression_infix_posfix() parsing and
@@ -36,7 +37,6 @@
 #include "external/avltree/avltree.c"
 
 #include "expression.h"
-#include "torfnum.h"
 
 #define HASH(x) (x - '*')
 
@@ -115,7 +115,7 @@ char *str;
     avltree_create(expr->vars, 1, strcmp, NULL, NULL);
     avltree_create(expr->vars_rev, 1, compar_ptr, NULL, NULL);
     for (ptr=str; *ptr; ptr++) {
-        if (isdigit(*ptr) || TORFNUM_IS_DEC_SEP(*ptr)) { /* Read a number. */
+        if (isdigit(*ptr) || EXPRESSION_IS_DEC_SEP(*ptr)) { /* Read a number. */
             expression_insert(expr, 0, strtod(ptr, &endptr), 0, 0, EXPRESSION_OP_TYPE_F);
             ptr = endptr-1;
         } else if (isalpha(*ptr)) { /* Read a variable or a function. */

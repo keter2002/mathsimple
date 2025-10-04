@@ -1,9 +1,10 @@
 /*
-    lcm - v2.0.0
+    lcm - v2.0.1
     Computes the least common multiple (LCM) of one or more arguments.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.1  Remove torfnum.h
         v2.0.0  Support to arbitrary-precision integers
         v1.1.1  Fix wrong start of parsing args
         v1.1.0  Computes least common multiple of one or more arguments
@@ -24,7 +25,6 @@
 
 #include <gmp.h>
 
-#include "torfnum.h"
 #include "mathfn.h"
 
 main(argc, argv)

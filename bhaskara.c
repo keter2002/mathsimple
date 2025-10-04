@@ -1,9 +1,10 @@
 /*
-    bhaskara - v1.0.2
+    bhaskara - v1.0.3
     Solves a quadratic formula with solutions in real numbers.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.3  remove torfnum.h
         v1.0.2  atof() replaces torfnum_atof()
         v1.0.1  torfnum_atof macro
         v1.0.0  First version
@@ -21,8 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-#include "torfnum.h"
 
 main(argc, argv)
 char *argv[];

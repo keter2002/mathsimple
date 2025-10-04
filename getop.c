@@ -1,9 +1,10 @@
 /*
-    getop.c - v1.0.2
+    getop.c - v2.0.0
     Parse an operator of a mathematical expression in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.0  Remove torfnum.h and refactor the code
         v1.0.2  Use atof() to replace torfnum_atof() and atoi() to replace
                 torfnum_atoi()
         v1.0.1  include torfnum.h
@@ -20,9 +21,10 @@
 */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "mathfn.h"
-#include "torfnum.h"
+#include "expression.h"
 
 
 /*tamanho máximo de um operando ou de um operador*/
@@ -32,6 +34,8 @@
 /*signal que a cadeia está muito grande*/
 #define TOOBIG '9'
 
+#define IS_SPACE(C) ((C) == ' ' || (C) == '\t' || (C) == '\n')
+
 getop(s, lim, fp)
 char *s;
 FILE *fp;
@@ -39,57 +43,61 @@ FILE *fp;
     extern int ch();
     extern void unch();
 
-    int c, neg = 0, err;
-    char exp[lim];
-    char *aux = s, *e = exp;
+    static char exp[MAXOP];
 
-    while ((c = ch(fp)) == ' ' || c == '\t' || c == '\n');
+    int c, neg = 0, trunc;
+    char *aux = s, *e = exp;
     
-    if (c != '.' && c != ',' && (c != 'e' || c != 'E') && (c < '0' || c > '9'))
-        return (c);
-    *aux++ = c;
-    while ((c = getc(fp)) >= '0' && c <= '9')
+    /* Jump spaces. */
+    for (c = ch(fp); IS_SPACE(c); c = ch(fp));
+    /* If not a number, return. */
+    if (!EXPRESSION_IS_DEC_SEP(c) && (c < '0' || c > '9'))
+        return c;
+    /* s gets the floating point number. */
+    for (; c >= '0' && c <= '9'; c = ch(fp))
         if (aux-s < lim)
             *aux++ = c;
-    if (aux-s == 1 && *s == 'e')
-        return (c);
-    if (c == '.' || c == ',') {
-        if (aux-s < lim)
-            *aux++ = c;
-        while ((c=getc(fp)) >= '0' && c <= '9')
+
+    if (EXPRESSION_IS_DEC_SEP(c))
+        do {
             if (aux-s < lim)
                 *aux++ = c;
-    }
-    
-    if (c == 'e' || c == 'E') {
-        c = getc(fp);
+            c = ch(fp);
+        } while (c >= '0' && c <= '9');
+
+    if (c == 'e' || c == 'E') { /* if have a exponent. */
+        c = ch(fp);
         if (c == '-' || c == '+') {
-            neg = (c=='-') ? 1 : 0;
-            while ((c = getc(fp)) >= '0' && c <= '9')
-                   *e++ = c;
-        } else
-            do
+            neg = c == '-';
+            c = getc(fp);
+        }
+        if (c < '0' || c > '9')
+            return c;
+
+        do {
+            if (e-exp < MAXOP)
                 *e++ = c;
-            while ((c = getc(fp)) >= '0' && c <= '9');
+            c = ch(fp);
+        } while (c >= '0' && c <= '9');
         *aux = *e = '\0';
         
+        /* Number needs to fit in lim. */
         if (neg)
-            err = torfnum_ftoa(atof(s) / mathfn_powi(10, atoi(exp)), exp, lim);
+            trunc = strfromd(exp, lim, "%f", atof(s) / mathfn_powi(10, atoi(exp)));
         else
-            err = torfnum_ftoa(atof(s) * mathfn_powi(10, atoi(exp)), exp, lim);
-        if (!err) {
+            trunc = strfromd(exp, lim, "%f", atof(s) * mathfn_powi(10, atoi(exp)));
+        if (!trunc) {
             strcpy(s, exp);
-            return(NUMBER);
+            return NUMBER;
         }
-    /* número montado */
-    } else if (aux-s < lim) { 
+    } else if (aux-s < lim) { /* Number fits. */
         unch(c);
         *aux = '\0';
         return NUMBER;
     }
-
-    /* muito grande */
-    while (c != '\n' && c != EOF)
+    
+    /* Number too big or with error */
+    while (!IS_SPACE(c) && c != EOF)
         c = getc(fp);
     s[lim-1] = '\0';
     return TOOBIG;
