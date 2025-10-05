@@ -1,10 +1,11 @@
 /*
-    contingency_table - v1.0.3
+    contingency_table - v2.0.0
     Contingency table implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
-        v1.0.3  strsave() declaration.
+        v2.0.0  Translate into english
+        v1.0.3  strsave() declaration
         v1.0.2  Changes in avltree_create
         v1.0.1  Changes in ARRAYTYPED_APPEND_TO_IDX_PTR
         v1.0.0  First version
@@ -228,7 +229,7 @@ avltree_tree *ts, *tf;
     arraytyped_allocate(int, total, 2);
     arraytyped_allocate(str, header, 2);
 
-    printf(FORMAT, "Categoria");
+    printf(FORMAT, "Rank");
     theader(tf->root, &header, &total, &n);
     for (i=0; i<header.nmemb; i++)
         printf(FORMAT, header.base[i]);

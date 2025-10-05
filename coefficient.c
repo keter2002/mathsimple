@@ -1,8 +1,12 @@
 /*
-    coefficient - v1.0.0
+    coefficient - v2.0.0
     Computes the Pearson's correlation coefficient (r) and fits a line by
     linear regression.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
+    
+    History:
+        v2.0.0  Translate to english
+        v1.0.0  First version
 
     coefficient is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free
@@ -129,16 +133,16 @@ arraytyped_array_point *v;
 
     r = fabs(r);
     if (r == .0)
-        correlation = "nula";
+        correlation = "null";
     else if (r < .3)
-        correlation = "fraca";
+        correlation = "weak";
     else if (r < .6)
         correlation = "regular";
     else if (r < .9)
-        correlation = "forte";
+        correlation = "strong";
     else if (r < 1.0)
-        correlation = "muito forte";
+        correlation = "very strong";
     else if (r == 1.0)
-        correlation = "perfeita (plena)";
-    printf("A correlação é %s.", correlation);
+        correlation = "perfect";
+    printf("The correlation is %s.", correlation);
 }

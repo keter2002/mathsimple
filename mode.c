@@ -1,9 +1,10 @@
 /*
-    mode - v1.0.5
+    mode - v2.0.0
     Implementation of central tendency measures in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.0  Translate into english
         v1.0.5  Remove torfnum.h
         v1.0.4  atof() replaces torfnum_atof()
         v1.0.3  torfnum_atof macro
@@ -100,7 +101,7 @@ char *argv[];
     else
         while (--argc > 0)
             if ((fp = fopen(*++argv, "r")) == NULL) {
-                fprintf(stderr, "mode: arquivo não encontrado: %s\n", *argv);
+                fprintf(stderr, "mode: file not found: %s\n", *argv);
                 exit(1);
             } else {
                 read_nums(fp);
@@ -181,22 +182,22 @@ int size;
     extern double mathfn_roundd();
     double *aux;
     
-    printf("Valores: ");
+    printf("Values: ");
     for (aux=v; aux < v+size; aux++) {
         printf("%.2lf%c", *aux, (aux==v+size-1)? '\n' : ' ');
         avg += *aux;
     }
-    printf("Média aritmética: %.2lf\n", avg=mathfn_roundd(avg/=size));
+    printf("Mean: %.2lf\n", avg=mathfn_roundd(avg/=size));
     for (aux=v; aux < v+size; aux++)
         dev += mathfn_roundd(mathfn_powd(*aux-avg, 2));
-    printf("Desvio padrão: %.2lf\n", dev=mathfn_roundd(sqrt(mathfn_roundd(dev/(size-1)))));
-    printf("Amplitude total: %.2lf\n", mathfn_roundd(v[size-1]-v[0]));
-    printf("Variância: %.2lf\n", mathfn_roundd(mathfn_powd(dev, 2)));
-    printf("Coeficiente de variação: %.2lf%%\n", mathfn_roundd(dev*100/avg));
-    printf("Mediana: %.2lf\n", (size%2==0)? mathfn_roundd((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
-    printf("Primeiro quartil: %.2lf\n", q1 = size%4==0? mathfn_roundd((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
-    printf("Terceiro quartil: %.2lf\n", q3 = size*3%4==0? mathfn_roundd((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
-    printf("Desvio interquartílico da distribuição: %.2lf\n", q3-q1);
+    printf("SD: %.2lf\n", dev=mathfn_roundd(sqrt(mathfn_roundd(dev/(size-1)))));
+    printf("Range: %.2lf\n", mathfn_roundd(v[size-1]-v[0]));
+    printf("Variance: %.2lf\n", mathfn_roundd(mathfn_powd(dev, 2)));
+    printf("CV: %.2lf%%\n", mathfn_roundd(dev*100/avg));
+    printf("Median: %.2lf\n", (size%2==0)? mathfn_roundd((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
+    printf("Q1: %.2lf\n", q1 = size%4==0? mathfn_roundd((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
+    printf("Q3: %.2lf\n", q3 = size*3%4==0? mathfn_roundd((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
+    printf("IQR: %.2lf\n", q3-q1);
 }
 
 void dsc_print(h)

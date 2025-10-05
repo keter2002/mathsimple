@@ -1,12 +1,12 @@
-Valores: 4.70 4.80 5.20 5.40 5.50 5.70 6.00 6.10 6.20 6.40 6.70 6.90
-Média aritmética: 5.80
-Desvio padrão: 0.71
-Amplitude total: 2.20
-Variância: 0.50
-Coeficiente de variação: 12.24%
-Mediana: 5.85
-Primeiro quartil: 5.30
-Terceiro quartil: 6.30
-Desvio interquartílico da distribuição: 1.00
+Values: 4.70 4.80 5.20 5.40 5.50 5.70 6.00 6.10 6.20 6.40 6.70 6.90
+Mean: 5.80
+SD: 0.71
+Range: 2.20
+Variance: 0.50
+CV: 12.24%
+Median: 5.85
+Q1: 5.30
+Q3: 6.30
+IQR: 1.00
 Amodal
 

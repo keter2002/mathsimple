@@ -1,12 +1,12 @@
-Valores: 5.00 6.00 7.00 8.00 8.00 9.00 10.00 10.00 10.00
-Média aritmética: 8.11
-Desvio padrão: 1.83
-Amplitude total: 5.00
-Variância: 3.35
-Coeficiente de variação: 22.56%
-Mediana: 8.00
-Primeiro quartil: 7.00
-Terceiro quartil: 10.00
-Desvio interquartílico da distribuição: 3.00
+Values: 5.00 6.00 7.00 8.00 8.00 9.00 10.00 10.00 10.00
+Mean: 8.11
+SD: 1.83
+Range: 5.00
+Variance: 3.35
+CV: 22.56%
+Median: 8.00
+Q1: 7.00
+Q3: 10.00
+IQR: 3.00
    3 10.000000
 
