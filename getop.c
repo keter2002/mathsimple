@@ -1,9 +1,10 @@
 /*
-    getop.c - v2.0.0
+    getop.c - v2.0.1
     Parse an operator of a mathematical expression in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.1  Uses getc() and ungetc() instead of ch() and unch()
         v2.0.0  Remove torfnum.h and refactor the code
         v1.0.2  Use atof() to replace torfnum_atof() and atoi() to replace
                 torfnum_atoi()
@@ -40,21 +41,18 @@ getop(s, lim, fp)
 char *s;
 FILE *fp;
 {
-    extern int ch();
-    extern void unch();
-
     static char exp[MAXOP];
 
     int c, neg = 0, trunc;
     char *aux = s, *e = exp;
     
     /* Jump spaces. */
-    for (c = ch(fp); IS_SPACE(c); c = ch(fp));
+    for (c = getc(fp); IS_SPACE(c); c = getc(fp));
     /* If not a number, return. */
     if (!EXPRESSION_IS_DEC_SEP(c) && (c < '0' || c > '9'))
         return c;
     /* s gets the floating point number. */
-    for (; c >= '0' && c <= '9'; c = ch(fp))
+    for (; c >= '0' && c <= '9'; c = getc(fp))
         if (aux-s < lim)
             *aux++ = c;
 
@@ -62,11 +60,11 @@ FILE *fp;
         do {
             if (aux-s < lim)
                 *aux++ = c;
-            c = ch(fp);
+            c = getc(fp);
         } while (c >= '0' && c <= '9');
 
     if (c == 'e' || c == 'E') { /* if have a exponent. */
-        c = ch(fp);
+        c = getc(fp);
         if (c == '-' || c == '+') {
             neg = c == '-';
             c = getc(fp);
@@ -77,7 +75,7 @@ FILE *fp;
         do {
             if (e-exp < MAXOP)
                 *e++ = c;
-            c = ch(fp);
+            c = getc(fp);
         } while (c >= '0' && c <= '9');
         *aux = *e = '\0';
         
@@ -91,7 +89,7 @@ FILE *fp;
             return NUMBER;
         }
     } else if (aux-s < lim) { /* Number fits. */
-        unch(c);
+        ungetc(c, fp);
         *aux = '\0';
         return NUMBER;
     }

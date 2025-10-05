@@ -26,7 +26,7 @@ GMP_BINS := $(gmp_dependent:%=$(BUILD_DIR)/%)
 all: $(mathfn_lib) $(torfnum_lib) $(expression_lib) $(la_lib) $(SIMPLE_BINS)\
 	 $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS) $(GMP_BINS)
 
-$(BUILD_DIR)/contingency_table: contingency_table.c getch.c
+$(BUILD_DIR)/contingency_table: contingency_table.c string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ $(WARNINGS)
 
@@ -38,7 +38,7 @@ $(torfnum_lib): torfnum.c
 	mkdir -p $(BUILD_DIR)/lib
 	$(CC) -c $< -o $@ $(WARNINGS)
 
-$(BUILD_DIR)/coefficient: coefficient.c getch.c $(mathfn_lib)
+$(BUILD_DIR)/coefficient: coefficient.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/bhaskara: bhaskara.c $(mathfn_lib)
@@ -47,7 +47,7 @@ $(BUILD_DIR)/bhaskara: bhaskara.c $(mathfn_lib)
 $(BUILD_DIR)/find_know_number: find_know_number.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
-$(BUILD_DIR)/mode: mode.c getch.c $(mathfn_lib)
+$(BUILD_DIR)/mode: mode.c $(mathfn_lib)
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/logarithm: logarithm.c $(mathfn_lib)

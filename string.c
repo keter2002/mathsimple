@@ -1,9 +1,10 @@
 /*
-    string.c - v1.1.0
+    string.c - v1.2.0
     Auxiliar string standard lib functions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v1.2.0  strsave()
         v1.1.0  Move torfnum_reverse() to here
         v1.0.0  First version
 
@@ -45,4 +46,14 @@ int (*check)();
         dest[i] = *src++;
     if (i < n) dest[i] = '\0';
     return dest;
+}
+
+char *strsave(s)
+char *s;
+{
+    char *p;
+    
+    if ((p = (char *) malloc(strlen(s)+1)) != NULL)
+        strcpy(p, s);
+    return p;
 }

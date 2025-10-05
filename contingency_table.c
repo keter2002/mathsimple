@@ -1,9 +1,10 @@
 /*
-    contingency_table - v1.0.2
+    contingency_table - v1.0.3
     Contingency table implementation in C.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v1.0.3  strsave() declaration.
         v1.0.2  Changes in avltree_create
         v1.0.1  Changes in ARRAYTYPED_APPEND_TO_IDX_PTR
         v1.0.0  First version
@@ -123,6 +124,7 @@ void read_attr(fp, arr)
 FILE *fp;
 array_relations_unode *arr;
 {
+    extern char *strsave();
     void insert_tuple(), make_table(), insert(), intersect();
     char s[MAXLEN];
     int type, side = LEFT;

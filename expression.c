@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.2.4
+    expression.c - v4.2.5
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.5  strsave() instead of strdup()
         v4.2.4  EXPRESSION_IS_DEC_SEP
         v4.2.3  Use atof() to replace torfnum_atof() and strtod() to
                 replace torfnum_strtod()
@@ -56,6 +57,7 @@ double f;
 double (*fn)();
 char name[];
 {
+    extern char *strsave();
     avltree_node *saved;
     double *new;
     char *newname;
@@ -77,7 +79,7 @@ char name[];
             new = saved->value;
         } else {
             new = malloc(sizeof(double));
-            newname = strdup(name);
+            newname = strsave(name);
             avltree_insert(&expr->vars, newname, new);
             avltree_insert(&expr->vars_rev, new, newname);
         }
