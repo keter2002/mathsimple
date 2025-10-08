@@ -1,9 +1,10 @@
 /*
-    contingency_table - v2.0.0
-    Contingency table implementation in C.
+    contingency_table - v3.0.0
+    Prints a contingency table.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.0.0  Other format for printing
         v2.0.0  Translate into english
         v1.0.3  strsave() declaration
         v1.0.2  Changes in avltree_create
@@ -23,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 
 #include "external/avltree/avltree.c"
 #include "external/arrays/array_typed.c"
@@ -34,6 +36,9 @@
 #define LEFT 0
 #define RIGHT 1
 #define DELIMITER ';'
+#define ROW_L (15+1)
+#define FORMAT "%-15.15s"
+#define SEPARATOR '|'
 
 int columns = FALSE;
 
@@ -74,25 +79,39 @@ ARRAYTYPED_GENERATE(unode_tuple, 2, 0)
 
 typedef arraytyped_array_unode_tuple array_relations_unode;
 
-/*polir o funcionamento e os nomes da trow*/
-/*fazer o resumo do funcionamento de cada funcao*/
-
 main(argc, argv)
 char *argv[];
 {
     void read_attr();
     FILE *fp;
     array_relations_unode U;
-    
+
+    struct option long_opts[] = {
+        {"help", no_argument, NULL, 'h'},
+        {"column", no_argument, NULL, 'c'},
+        { 0 },
+    };
+    int opt;
+
+    switch ((opt = getopt_long(argc, argv, "c", long_opts, NULL))) {
+    case '?':
+        fputs("Try 'contingency_table --help' for more information.\n",
+              stderr);
+        return 2;
+    case 'c':
+        columns = TRUE; 
+        argc--;
+        argv++;
+        break;
+    case 'h':
+        fputs("Usage: contingency_table [OPTION] [FILE]...\n"
+              "Prints a contingency table.\n\n"
+              "With no FILE read standard input.\n\n"
+              "  -c, --column    a column is a tuple\n",
+              stderr);
+        return 0;
+    }
     arraytyped_allocate(unode_tuple, U, 1);
-    if (argc >= 2)
-        if (argv[1][0] == '-') {
-            argc--;
-            if ((*++argv)[1] == 'c')
-                columns = TRUE;
-            else
-                fprintf(stderr, "contingency_table: invalid argument (%c)\n", argv[1][1]);
-        }
     if (argc <= 1)
         read_attr(stdin, &U);
     else
@@ -104,6 +123,7 @@ char *argv[];
             read_attr(fp, &U);
             fclose(fp);
         }
+    return 0;
 }
 
 compar_f(x, y)
@@ -167,7 +187,7 @@ array_relations_unode *arr;
         } else if (type == DELIMITER && columns)
             side = RIGHT;
     intersect(&ts, arr);
-    make_table(&ts, &tf);
+    make_table(stdout, &ts, &tf);
 }
 
 void insert_tuple(x, arr, side)
@@ -213,10 +233,8 @@ typedef char *str;
 
 ARRAYTYPED_GENERATE(str, 2, 0)
 
-#define ROW_L 15
-#define FORMAT "|%-15.15s|"
-
-void make_table(ts, tf)
+void make_table(fp, ts, tf)
+FILE *fp;
 avltree_tree *ts, *tf;
 {
     void theader(), trow();
@@ -229,21 +247,19 @@ avltree_tree *ts, *tf;
     arraytyped_allocate(int, total, 2);
     arraytyped_allocate(str, header, 2);
 
-    printf(FORMAT, "Rank");
+    fprintf(fp, FORMAT, "Rank"); putc(SEPARATOR, fp);
     theader(tf->root, &header, &total, &n);
-    for (i=0; i<header.nmemb; i++)
-        printf(FORMAT, header.base[i]);
-    printf(FORMAT, "Total");
-    putchar('\n');
-    trow(ts->root, &row, &header, cell);
-    printf(FORMAT, "Total");
+    for (i=0; i<header.nmemb; i++) {
+        fprintf(fp, FORMAT, header.base[i]); putc(SEPARATOR, fp);
+    }
+    fprintf(fp, "Total\n");
+    trow(fp, ts->root, &row, &header, cell);
+    fprintf(fp, FORMAT, "Total"); putc(SEPARATOR, fp);
     for (i=0; i<total.nmemb; i++) {
         sprintf(cell, "%d (%.1f%%)", total.base[i], ((float)total.base[i]*100)/n);
-        printf(FORMAT, cell);
+        fprintf(fp, FORMAT, cell); putc(SEPARATOR, fp);
     }
-    sprintf(cell, "%d (100,0%%)", n);
-    printf(FORMAT, cell);
-    putchar('\n');
+    fprintf(fp, "%d (100,0%%)\n", n);
 
     free(row.base);
     free(total.base);
@@ -268,7 +284,8 @@ int *acc;
     }
 }
 
-void trow(r, e, h, ce)
+void trow(fp, r, e, h, ce)
+FILE *fp;
 avltree_node *r;
 arraytyped_array_int *e;
 arraytyped_array_str *h;
@@ -277,8 +294,8 @@ char *ce;
     int i, j, n;
 
     if (r) {
-        trow(r->child[0], e, h, ce);
-        printf(FORMAT, ((unode*)r->key)->sword.fword.word);
+        trow(fp, r->child[0], e, h, ce);
+        fprintf(fp, FORMAT, ((unode*)r->key)->sword.fword.word);
         for (i=j=e->nmemb=n=0; j < h->nmemb; j++) {
             if (strcmp(((unode*)r->key)->sword.vattr->base[i].freqp->word, h->base[j])) {
                 e->base[e->nmemb++] = 0;
@@ -289,13 +306,12 @@ char *ce;
             n += e->base[e->nmemb++];
             arraytyped_expand_int(e);
         }
+        putc(SEPARATOR, fp);
         for (i=0; i < e->nmemb; i++) {
             sprintf(ce, "%d (%.1f%%)", e->base[i], ((float)e->base[i]*100)/n);
-            printf(FORMAT, ce);
+            fprintf(fp, FORMAT, ce); putc(SEPARATOR, fp);
         }
-        sprintf(ce, "%d (100.0%%)", n);
-        printf(FORMAT, ce);
-        putchar('\n');
-        trow(r->child[1], e, h, ce);
+        fprintf(fp, "%d (100.0%%)\n", n);
+        trow(fp, r->child[1], e, h, ce);
     }
 }

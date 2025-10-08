@@ -1,9 +1,10 @@
 /*
-    find_know_number - v2.0.1
+    find_know_number - v2.0.2
     Return the symbolic representation of a floating point number.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.2  Return 0 in main if help arg
         v2.0.1  Use atof() to replace torfnum_atof() and atoi() to replace
                 torfnum_atoi()
         v2.0.0  Search for know mathematical constants and parameters of search
@@ -101,7 +102,7 @@ help:
                   "      --know_constant_range    Range that the fractions will go for the\n"
                   "                               constants.\n",
                   stderr);
-            return 2;
+            return opt == 'h'? 0 : 2;
         }
 
     return 0;

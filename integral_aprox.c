@@ -1,11 +1,12 @@
 /*
-    integral_aprox - v3.0.3
+    integral_aprox - v3.0.4
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
-        v3.0.3  remove torfnum.h
+        v3.0.4  Return 0 in main if help arg
+        v3.0.3  Remove torfnum.h
         v3.0.2  atof() replaces torfnum_atof()
         v3.0.1  torfnum_atof macro
         v3.0.0  Change order of args
@@ -63,7 +64,7 @@ char *argv[];
               "'n' is the number of iterations to approximate the result.\n"
               "x is the variable with respect to the derivative.\n",
               stderr);
-        return 2;
+        return opt == 'h'? 0 : 2;
     }
     a = atof(argv[1]); b = atof(argv[2]); n = atof(argv[3]);
 

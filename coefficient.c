@@ -1,10 +1,11 @@
 /*
-    coefficient - v2.0.0
+    coefficient - v2.0.1
     Computes the Pearson's correlation coefficient (r) and fits a line by
     linear regression.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
     
     History:
+        v2.0.1  Help arg
         v2.0.0  Translate to english
         v1.0.0  First version
 
@@ -21,6 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <getopt.h>
+
 #include "getop.c"
 #include "external/arrays/array_typed.c"
 
@@ -44,16 +47,33 @@ char *argv[];
     void read_nums();
     FILE *fp;
     arraytyped_array_point points;
+
+    struct option long_opts[] = {
+        {"help", no_argument, NULL, 'h'},
+        {"column", no_argument, NULL, 'c'},
+        { 0 },
+    };
+    int opt;
     
+    switch ((opt = getopt_long(argc, argv, "c", long_opts, NULL))) {
+    case '?':
+        fputs("Try 'coefficient --help' for more information.\n", stderr);
+        return 2;
+    case 'c':
+        columns = TRUE; 
+        argc--;
+        argv++;
+        break;
+    case 'h':
+        fputs("Usage: coefficient [OPTION] [FILE]...\n"
+              "Computes the Pearson's correlation coefficient (r) and fits a line by linear\n"
+              "regression.\n\n"
+              "With no FILE read standard input.\n\n"
+              "  -c, --column    a column is a coordinate\n",
+              stderr);
+        return 0;
+    }
     arraytyped_allocate(point, points, 1);
-    if (argc >= 2)
-        if (argv[1][0] == '-') {
-            argc--;
-            if ((*++argv)[1] == 'c')
-                columns = TRUE;
-            else
-                fprintf(stderr, "coefficient: invalid parameter (%c)\n", argv[1][1]);
-        }
     if (argc <= 1)
         read_nums(stdin, &points);
     else
@@ -65,6 +85,7 @@ char *argv[];
             read_nums(fp, &points);
             fclose(fp);
         }
+    return 0;
 }
 
 static first;
