@@ -1,9 +1,10 @@
 /*
-    contingency_table - v3.0.0
+    contingency_table - v4.0.0
     Prints a contingency table.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.0.0  Concatenates the readed files
         v3.0.0  Other format for printing
         v2.0.0  Translate into english
         v1.0.3  strsave() declaration
@@ -39,8 +40,6 @@
 #define ROW_L (15+1)
 #define FORMAT "%-15.15s"
 #define SEPARATOR '|'
-
-int columns = FALSE;
 
 typedef struct {
     char *word;
@@ -79,10 +78,28 @@ ARRAYTYPED_GENERATE(unode_tuple, 2, 0)
 
 typedef arraytyped_array_unode_tuple array_relations_unode;
 
+compar_f(x, y)
+void *x, *y;
+{
+    return strcmp(((unode *)x)->fword.word, ((unode *)y)->fword.word);
+}
+
+compar_s(x, y)
+void *x, *y;
+{
+    return strcmp(((unode *)x)->sword.fword.word,
+                  ((unode *)y)->sword.fword.word);
+}
+
+int columns = FALSE;
+
+/* tf is a histogram of values and ts is a histogram of keys */
+avltree_tree tf, ts;
+
 main(argc, argv)
 char *argv[];
 {
-    void read_attr();
+    void read_attr(), make_table(), intersect(), free_intersect();
     FILE *fp;
     array_relations_unode U;
 
@@ -111,7 +128,12 @@ char *argv[];
               stderr);
         return 0;
     }
+
     arraytyped_allocate(unode_tuple, U, 1);
+    U.nmemb = 0;
+    avltree_create(tf, 1, compar_f, NULL, NULL);
+    avltree_create(ts, 1, compar_s, NULL, NULL);
+
     if (argc <= 1)
         read_attr(stdin, &U);
     else
@@ -123,20 +145,15 @@ char *argv[];
             read_attr(fp, &U);
             fclose(fp);
         }
+
+    intersect(&ts, &U);
+    make_table(stdout, &ts, &tf);
+
+    /* releases memory */
+    free_intersect(ts.root);
+    avltree_destroy(tf);
+    avltree_destroy(ts);
     return 0;
-}
-
-compar_f(x, y)
-void *x, *y;
-{
-    return strcmp(((unode *)x)->fword.word, ((unode *)y)->fword.word);
-}
-
-compar_s(x, y)
-void *x, *y;
-{
-    return strcmp(((unode *)x)->sword.fword.word,
-                  ((unode *)y)->sword.fword.word);
 }
 
 int first;
@@ -149,13 +166,9 @@ array_relations_unode *arr;
     void insert_tuple(), make_table(), insert(), intersect();
     char s[MAXLEN];
     int type, side = LEFT;
-    avltree_tree tf, ts;
     avltree_node *ret;
     unode key, *new;
     
-    avltree_create(tf, 1, compar_f, NULL, NULL);
-    avltree_create(ts, 1, compar_s, NULL, NULL);
-    arr->nmemb = 0;
     first = FALSE;
     while ((type = getword(s, MAXLEN, fp)) != EOF)
         if (type == LETTER) {
@@ -186,8 +199,6 @@ array_relations_unode *arr;
                 side = !side;
         } else if (type == DELIMITER && columns)
             side = RIGHT;
-    intersect(&ts, arr);
-    make_table(stdout, &ts, &tf);
 }
 
 void insert_tuple(x, arr, side)
@@ -204,6 +215,8 @@ array_relations_unode *arr;
         arr->nmemb++;
 }
 
+/* Creates a histogram with all values that some key have and stores in vattr
+ * of that key. */
 void intersect(t, arr)
 avltree_tree *t;
 array_relations_unode *arr;
@@ -225,6 +238,15 @@ array_relations_unode *arr;
             ARRAYTYPED_AT_PTR((*vec), idx)->count++;
     }
     free(arr->base);
+}
+
+void free_intersect(r)
+avltree_node *r;
+{
+    if (!r) return;
+    free_intersect(r->child[0]);
+    free_intersect(r->child[1]);
+    free(((unode*)(r->key))->sword.vattr);
 }
 
 ARRAYTYPED_GENERATE(int, 2, 0)
@@ -266,6 +288,8 @@ avltree_tree *ts, *tf;
     free(header.base);
 }
 
+/* acc gets the total of tuples, header gets all types of values sorted and
+ * total gets the histogram of values in an array. */
 void theader(r, header, total, acc)
 avltree_node *r;
 arraytyped_array_str *header;
@@ -284,6 +308,7 @@ int *acc;
     }
 }
 
+/* Prints the histogram of each key with their values and the fractions. */
 void trow(fp, r, e, h, ce)
 FILE *fp;
 avltree_node *r;
@@ -297,12 +322,17 @@ char *ce;
         trow(fp, r->child[0], e, h, ce);
         fprintf(fp, FORMAT, ((unode*)r->key)->sword.fword.word);
         for (i=j=e->nmemb=n=0; j < h->nmemb; j++) {
-            if (strcmp(((unode*)r->key)->sword.vattr->base[i].freqp->word, h->base[j])) {
+            /* If the values are different, the key doesn't have any tuple with
+             * that value, so gets 0. If the vattr ended, then all other values
+             * get 0. */
+            if (i == ((unode*)r->key)->sword.vattr->nmemb ||
+                strcmp(((unode*)r->key)->sword.vattr->base[i].freqp->word, h->base[j])) {
                 e->base[e->nmemb++] = 0;
                 arraytyped_expand_int(e);
                 continue;
             }
             e->base[e->nmemb] = ((unode*)r->key)->sword.vattr->base[i++].count;
+            /* n gets the total of tuples with that key. */
             n += e->base[e->nmemb++];
             arraytyped_expand_int(e);
         }

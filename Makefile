@@ -123,11 +123,11 @@ install:
 	ln -rsf $(SIMPLE_BINS) $(MATHFN_BINS) $(EXPRESSION_BINS) $(LA_BINS) $(HOME)/.local/bin
 
 test:
-	cat tests/mode/t01.in | ./build/mode | diff - tests/mode/t01.out
-	cat tests/mode/t02.in | ./build/mode | diff - tests/mode/t02.out
-	cat tests/mode/t03.in | ./build/mode | diff - tests/mode/t03.out
+	cat tests/mode/t01.in | ./build/mode -v | diff - tests/mode/t01.out
+	./build/mode -v tests/mode/t02.in | diff - tests/mode/t02.out
+	./build/mode -v tests/mode/t03b.in tests/mode/t03a.in | diff - tests/mode/t03.out
 	
-	./build/contingency_table tests/contingency_table/t01.in | diff - tests/contingency_table/t01.out
+	./build/contingency_table tests/contingency_table/t01a.in tests/contingency_table/t01b.in | diff - tests/contingency_table/t01.out
 	./build/contingency_table tests/contingency_table/t02.in | diff - tests/contingency_table/t02.out
 	
 	xargs -a tests/logarithm/t01.in ./build/logarithm | diff - tests/logarithm/t01.out 

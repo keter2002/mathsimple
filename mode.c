@@ -1,9 +1,11 @@
 /*
-    mode - v2.0.0
-    Implementation of central tendency measures in C.
+    mode - v3.0.0
+    Prints central tendency measures.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.0.0  Concatenates all input files readed and flag for printing
+                values
         v2.0.0  Translate into english
         v1.0.5  Remove torfnum.h
         v1.0.4  atof() replaces torfnum_atof()
@@ -25,6 +27,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <getopt.h>
 #include <math.h>
 
 #include "external/avltree/avltree.c"
@@ -41,6 +44,7 @@
 ARRAYTYPED_GENERATE(double, 2, 0)
 
 arraytyped_array_double v;
+avltree_tree tree;
 
 typedef struct {
     double value;
@@ -58,16 +62,11 @@ MINMAXH_GENERATE(frequencie, compar_frequencie)
 void read_nums(fp)
 FILE *fp;
 {
-    minmaxh_heap_frequencie *construct_heap();
-    void estatistics(), dsc_print();
     char s[MAXOP];
     int type, *count;
     double *x;
-    avltree_tree tree;
     avltree_node *found;
 
-    avltree_create(tree, 1, mathfn_compar_double, NULL, NULL);
-    v.nmemb = 0;
     while ((type = getop(s, MAXOP, fp)) != EOF)
         if (type == NUMBER) {
             x = malloc(sizeof(double));
@@ -81,33 +80,65 @@ FILE *fp;
             }
             arraytyped_append_to_end(double, v, x);
         }
-    arraytyped_qsort(double, v, mathfn_compar_double);
-    estatistics(v.base, v.nmemb);
-
-    dsc_print(construct_heap(&tree));
-    avltree_destroy(tree);
-    putchar('\n');
 }
+
+int print_values = 0;
 
 int main(argc, argv)
 int argc;
 char *argv[];
 {
-    arraytyped_allocate(double, v, 1);
+    minmaxh_heap_frequencie *construct_heap();
+    void estatistics(), dsc_print();
     FILE *fp;
 
-    if (argc == 1)
+    struct option long_opts[] = {
+        {"help", no_argument, NULL, 'h'},
+        {"values", no_argument, NULL, 'v'},
+        { 0 },
+    };
+    int opt;
+    
+    switch ((opt = getopt_long(argc, argv, "v", long_opts, NULL))) {
+    case 'v':
+        print_values = TRUE;
+        argc--;
+        argv++;
+        break;
+    case '?':
+        fputs("Try 'mode --help' for more information.\n", stderr);
+        return 2;
+    case 'h':
+        fputs("Usage: mode [OPTION] [FILE]...\n"
+              "Prints central tendency measures.\n\n"
+              "With no FILE read standard input.\n\n"
+              "  -v, --values    prints all values readed\n",
+              stderr);
+        return 0;
+    }
+
+    arraytyped_allocate(double, v, 1);
+    avltree_create(tree, 1, mathfn_compar_double, NULL, NULL);
+    v.nmemb = 0;
+
+    if (argc <= 1)
         read_nums(stdin);
     else
         while (--argc > 0)
             if ((fp = fopen(*++argv, "r")) == NULL) {
                 fprintf(stderr, "mode: file not found: %s\n", *argv);
-                exit(1);
+                return EXIT_FAILURE;
             } else {
                 read_nums(fp);
                 fclose(fp);
             }
-    exit(0);
+
+    arraytyped_qsort(double, v, mathfn_compar_double);
+    estatistics(stdout, v.base, v.nmemb);
+
+    dsc_print(stdout, construct_heap(&tree));
+    avltree_destroy(tree);
+    return 0;
 }
 
 struct qnode {
@@ -174,7 +205,8 @@ avltree_tree *p;
     return h;
 }
 
-void estatistics(v, size)
+void estatistics(stream, v, size)
+FILE *stream;
 double *v;
 int size;
 {
@@ -182,25 +214,27 @@ int size;
     extern double mathfn_roundd();
     double *aux;
     
-    printf("Values: ");
+    if (print_values) fprintf(stream, "Values: ");
     for (aux=v; aux < v+size; aux++) {
-        printf("%.2lf%c", *aux, (aux==v+size-1)? '\n' : ' ');
+        if (print_values)
+            fprintf(stream, "%.2lf%c", *aux, (aux==v+size-1)? '\n' : ' ');
         avg += *aux;
     }
-    printf("Mean: %.2lf\n", avg=mathfn_roundd(avg/=size));
+    fprintf(stream, "Mean: %.2lf\n", avg=mathfn_roundd(avg/=size));
     for (aux=v; aux < v+size; aux++)
         dev += mathfn_roundd(mathfn_powd(*aux-avg, 2));
-    printf("SD: %.2lf\n", dev=mathfn_roundd(sqrt(mathfn_roundd(dev/(size-1)))));
-    printf("Range: %.2lf\n", mathfn_roundd(v[size-1]-v[0]));
-    printf("Variance: %.2lf\n", mathfn_roundd(mathfn_powd(dev, 2)));
-    printf("CV: %.2lf%%\n", mathfn_roundd(dev*100/avg));
-    printf("Median: %.2lf\n", (size%2==0)? mathfn_roundd((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
-    printf("Q1: %.2lf\n", q1 = size%4==0? mathfn_roundd((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
-    printf("Q3: %.2lf\n", q3 = size*3%4==0? mathfn_roundd((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
-    printf("IQR: %.2lf\n", q3-q1);
+    fprintf(stream, "SD: %.2lf\n", dev=mathfn_roundd(sqrt(mathfn_roundd(dev/(size-1)))));
+    fprintf(stream, "Range: %.2lf\n", mathfn_roundd(v[size-1]-v[0]));
+    fprintf(stream, "Variance: %.2lf\n", mathfn_roundd(mathfn_powd(dev, 2)));
+    fprintf(stream, "CV: %.2lf%%\n", mathfn_roundd(dev*100/avg));
+    fprintf(stream, "Median: %.2lf\n", (size%2==0)? mathfn_roundd((v[((size-1)>>1)+1]+v[(size-1)>>1])/2) : v[size>>1]);
+    fprintf(stream, "Q1: %.2lf\n", q1 = size%4==0? mathfn_roundd((v[((size-1)>>2)+1]+v[(size-1)>>2])/2) : v[(int)ceil((size-1)>>2)]);
+    fprintf(stream, "Q3: %.2lf\n", q3 = size*3%4==0? mathfn_roundd((v[(size*3>>2)-1]+v[(size*3>>2)])/2) : v[(int)ceil(size*3>>2)]);
+    fprintf(stream, "IQR: %.2lf\n", q3-q1);
 }
 
-void dsc_print(h)
+void dsc_print(stream, h)
+FILE *stream;
 minmaxh_heap_frequencie *h;
 {
     frequencie p;
@@ -211,7 +245,7 @@ minmaxh_heap_frequencie *h;
     /*minmaxh_remove_min_frequencie(h, &p);*/
     while (p.count > 1) {
         amodal = FALSE; 
-        printf("%4d %lf\n", p.count, p.value);
+        fprintf(stream, "%4d %lf\n", p.count, p.value);
         last = p.count;
         minmaxh_remove_max_frequencie(h, &p);
         /*minmaxh_remove_min_frequencie(h, &p);*/
@@ -219,7 +253,7 @@ minmaxh_heap_frequencie *h;
             break;
     }
     if (amodal)
-        puts("Amodal");
+        fputs("Amodal\n", stream);
     free(h->base);
     free(h);
 }
