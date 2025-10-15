@@ -130,6 +130,9 @@ test:
 	xargs -a tests/bhaskara/t01.in ./build/bhaskara | diff - tests/bhaskara/t01.out
 	
 	cat tests/determinant/t01.in | ./build/determinant | diff - tests/determinant/t01.out
+	cat tests/determinant/t02.in | ./build/determinant | diff - tests/determinant/t02.out
+	cat tests/determinant/t03.in | ./build/determinant | diff - tests/determinant/t03.out
+	cat tests/determinant/t04.in | xargs -a tests/determinant/t04.args ./build/determinant | diff - tests/determinant/t04.out
 	
 	cat tests/linear_solver/t01.in | ./build/linear_solver | diff - tests/linear_solver/t01.out
 	cat tests/linear_solver/t02.in | ./build/linear_solver | diff - tests/linear_solver/t02.out
