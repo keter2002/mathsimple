@@ -1,0 +1,13 @@
+.mypy_cache
+python/build
+build
+*.so
+TODO.txt
+cemiterio
+generate_header
+fibo.c
+summation_n_k.c
+la_print_know_constant.h
+know_constants.data
+DESIGN.txt
+others

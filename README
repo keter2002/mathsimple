@@ -1,0 +1,13 @@
+MathSimple - Tiny CLI programs to do math
+=========================================
+
+This is a collection of mathematical programs. These programs are like short bc
+scripts, but in C with a defined command-line interface (CLI). They do depend
+on C standard library, some in cblas and others in GMP.
+
+MathSimple is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License.
+
+These programs are distributed in the hope that they will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.
