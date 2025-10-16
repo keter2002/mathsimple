@@ -4,6 +4,7 @@
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.0.0  verbose, not values argument
         v3.1.1  help in stdout
         v3.1.0  Printing precision argument
         v3.0.0  Concatenates all input files readed and flag for printing
@@ -85,7 +86,7 @@ FILE *fp;
         }
 }
 
-int print_values = 0;
+int arg_verbose = 0;
 int arg_precision = 2;
 
 int main(argc, argv)
@@ -98,7 +99,7 @@ char *argv[];
 
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
-        {"values", no_argument, NULL, 'v'},
+        {"verbose", no_argument, NULL, 'v'},
         {"precision", required_argument, NULL, 'p'},
         { 0 },
     };
@@ -110,7 +111,7 @@ char *argv[];
             arg_precision = atoi(optarg);
             break;
         case 'v':
-            print_values = TRUE;
+            arg_verbose = TRUE;
             break;
         case '?':
             fputs("Try 'mode --help' for more information.\n", stderr);
@@ -119,7 +120,7 @@ char *argv[];
             fputs("Usage: mode [OPTION]... [FILE]...\n"
                   "Prints central tendency measures.\n\n"
                   "With no FILE read standard input.\n\n"
-                  "  -v, --values       prints all values readed\n"
+                  "  -v, --verbose      prints all values readed\n"
                   "  -p, --precision    printing precision of floating-point numbers, default is 2\n",
                   stdout);
             return 0;
@@ -224,10 +225,10 @@ double *v;
     extern double mathfn_roundd();
     double *aux;
     
-    if (print_values)
+    if (arg_verbose)
         fprintf(stream, "Values:%c", nmemb? ' ' : '\n');
     for (aux=v; aux < v+nmemb; aux++) {
-        if (print_values)
+        if (arg_verbose)
             fprintf(stream, "%.*lf%c", arg_precision, *aux, (aux==v+nmemb-1)?
                     '\n' : ' ');
         avg += *aux;
