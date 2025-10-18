@@ -1,9 +1,10 @@
 /*
-    kruskal_wallis - v2.1.0
+    kruskal_wallis - v2.1.1
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.1.1  Wrong argument order when calling rank in H_test
         v2.1.0  Delimiter argument
         v2.0.0  Support to samples with different sizes, doubly precision and
                 command-line arguments
@@ -75,7 +76,7 @@ double *ranks;
         sample = groups[i];
         r = sample->nmemb;
         for (j=0; j < r; j++)
-            sum += rank(ranks, sample->base[j], N);
+            sum += rank(ranks, N, sample->base[j]);
         rank_sum += sum*sum/r;
     }
     H *= rank_sum;
