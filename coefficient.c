@@ -1,10 +1,11 @@
 /*
-    coefficient - v3.0.0
+    coefficient - v3.1.0
     Computes the Pearson's correlation coefficient (r) and fits a line by
     linear regression.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.1.0  Delimiter argument
         v3.0.0  Printing precision argument
         v2.0.1  Help arg
         v2.0.0  Translate to english
@@ -32,7 +33,6 @@
 #define FALSE 0
 #define LEFT 0
 #define RIGHT 1
-#define DELIMITER ';'
 #define STEP 2
 
 typedef double point[2];
@@ -41,6 +41,7 @@ ARRAYTYPED_GENERATE(point, STEP, 0)
 
 int arg_columns = FALSE;
 int arg_precision = 4;
+char arg_delimiter = ';';
 
 int main(argc, argv)
 int argc;
@@ -53,6 +54,7 @@ char *argv[];
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
         {"column", no_argument, NULL, 'c'},
+        {"delimiter", required_argument, NULL, 'd'},
         {"precision", required_argument, NULL, 'p'},
         { 0 },
     };
@@ -66,6 +68,9 @@ char *argv[];
         case 'c':
             arg_columns = TRUE; 
             break;
+        case 'd':
+            arg_delimiter = *optarg;
+            break;
         case 'p':
             arg_precision = atoi(optarg);
             break;
@@ -74,8 +79,11 @@ char *argv[];
                   "Computes the Pearson's correlation coefficient (r) and fits a line by linear\n"
                   "regression.\n\n"
                   "With no FILE read standard input.\n\n"
-                  "  -c, --column    a column is a coordinate\n"
-                  "  -p, --precision    printing precision of floating-point numbers, default is 4\n",
+                  "  -c, --column            a column is a coordinate\n"
+                  "  -d, --delimiter=DELIM   use DELIM instead of semicolon for line delimiter, it\n"
+                  "                          can't be a space character\n"
+                  "  -p, --precision=NUM     printing precision of floating-point numbers, default\n"
+                  "                          is 4\n",
                   stdout);
             return 0;
         }
@@ -115,7 +123,7 @@ arraytyped_array_point *arr;
             insert_tuple(atof(s), arr, side);
             if (arg_columns == FALSE)
                 side = !side;
-        } else if (type == DELIMITER && arg_columns)
+        } else if (type == arg_delimiter && arg_columns)
             side = RIGHT;
     estatistics(arr);
     putchar('\n');

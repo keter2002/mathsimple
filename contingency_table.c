@@ -1,9 +1,10 @@
 /*
-    contingency_table - v4.1.1
+    contingency_table - v4.2.0
     Prints a contingency table.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.0  Delimiter argument
         v4.1.1  Doubly precision in printf
         v4.1.0  Printing precision argument
         v4.0.0  Concatenates the readed files
@@ -39,7 +40,6 @@
 #define FALSE 0
 #define LEFT 0
 #define RIGHT 1
-#define DELIMITER ';'
 #define ROW_L (15+1)
 #define FORMAT "%-15.15s"
 #define SEPARATOR '|'
@@ -96,6 +96,7 @@ void *x, *y;
 
 int arg_columns = FALSE;
 int arg_precision = 1;
+char arg_delimiter = ';';
 
 /* tf is a histogram of values and ts is a histogram of keys */
 avltree_tree tf, ts;
@@ -110,6 +111,7 @@ char *argv[];
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
         {"column", no_argument, NULL, 'c'},
+        {"delimiter", required_argument, NULL, 'd'},
         {"precision", required_argument, NULL, 'p'},
         { 0 },
     };
@@ -124,6 +126,9 @@ char *argv[];
         case 'c':
             arg_columns = TRUE; 
             break;
+        case 'd':
+            arg_delimiter = *optarg;
+            break;
         case 'p':
             arg_precision = atoi(optarg);
             break;
@@ -131,8 +136,11 @@ char *argv[];
             fputs("Usage: contingency_table [OPTION] [FILE]...\n"
                   "Prints a contingency table.\n\n"
                   "With no FILE read standard input.\n\n"
-                  "  -c, --column    a column is a tuple\n"
-                  "  -p, --precision    printing precision of floating-point numbers, default is 1\n",
+                  "  -c, --column            a column is a tuple\n"
+                  "  -d, --delimiter=DELIM   use DELIM instead of semicolon for line delimiter, it\n"
+                  "                          can't be a space character\n"
+                  "  -p, --precision=NUM     printing precision of floating-point numbers, default\n"
+                  "                          is 1\n",
                   stdout);
             return 0;
         }
@@ -205,7 +213,7 @@ array_relations_unode *arr;
             insert_tuple(ret, arr, side);
             if (arg_columns == FALSE)
                 side = !side;
-        } else if (type == DELIMITER && arg_columns)
+        } else if (type == arg_delimiter && arg_columns)
             side = RIGHT;
 }
 

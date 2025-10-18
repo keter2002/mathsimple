@@ -1,9 +1,10 @@
 /*
-    kruskal_wallis - v2.0.0
+    kruskal_wallis - v2.1.0
     Make the Kruskal-Wallis test. 
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.1.0  Delimiter argument
         v2.0.0  Support to samples with different sizes, doubly precision and
                 command-line arguments
         v1.0.3  remove torfnum.h
@@ -32,8 +33,6 @@
 #include "mathfn.h"
 
 
-#define DELIMITER ' '
-
 ARRAYTYPED_GENERATE(double, 2, 0)
 
 typedef arraytyped_array_double* group;
@@ -41,10 +40,9 @@ typedef arraytyped_array_double* group;
 ARRAYTYPED_GENERATE(group, 2, 0)
 
 arraytyped_array_double ranks;
-int N;
 
 /* Pode ser usada uma busca binária para acelerar a pesquisa. */
-double rank(ranks, v)
+double rank(ranks, N, v)
 double *ranks, v;
 {
     int i, j;
@@ -61,7 +59,7 @@ double *ranks, v;
 }
 
 /* Assumes that the number of observations in each sample is equal. */
-double H_test(groups, c, ranks)
+double H_test(groups, c, ranks, N)
 group *groups;
 double *ranks;
 {
@@ -77,37 +75,40 @@ double *ranks;
         sample = groups[i];
         r = sample->nmemb;
         for (j=0; j < r; j++)
-            sum += rank(ranks, sample->base[j]);
+            sum += rank(ranks, sample->base[j], N);
         rank_sum += sum*sum/r;
     }
     H *= rank_sum;
     return H-(3*N+3);
 }
 
+int arg_delimiter = ' ';
+int arg_precision = 3;
+
 main(argc, argv)
 char *argv[];
 {
     extern void la_show_matrix_d();
-    char *line, *p, *c;
-    size_t size;
-    int obs, i, j;
+    void read_samples(), print_groups();
+    int obs, i;
 
-    double tmp;
-    group tmp_group;
     arraytyped_array_group groups;
 
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
-        {"verbose", no_argument, NULL, 'v'},
+        {"delimiter", required_argument, NULL, 'd'},
         {"precision", required_argument, NULL, 'p'},
+        {"verbose", no_argument, NULL, 'v'},
         { 0 },
     };
     int opt;
-    int arg_precision = 3;
     int arg_verbose = 0;
 
     for (; (opt = getopt_long(argc, argv, "p:v", long_opts, NULL)) != -1;)
         switch (opt) {
+        case 'd':
+            arg_delimiter = *optarg;
+            break;
         case 'p':
             arg_precision = atoi(optarg);
             break;
@@ -120,63 +121,25 @@ char *argv[];
         case 'h':
             fputs("Usage: kruskal_wallis [OPTION]...\n"
                   "Make the Kruskal-Wallis test.\n\n"
-                  "  -v, --verbose      prints the samples\n"
-                  "  -p, --precision    printing precision of floating-point numbers, default is 1\n",
+                  "  -d, --delimiter=DELIM   use DELIM instead of space for sample delimiter\n"
+                  "  -p, --precision=NUM     printing precision of floating-point numbers, default\n"
+                  "                          is 3\n"
+                  "  -v, --verbose           prints the samples\n",
                   stdout);
             return 0;
         }
 
     arraytyped_allocate(group, groups, 2); 
     arraytyped_allocate(double, ranks, 10);
-    obs = size = 0;
-    line = NULL;
-    while (getline(&line, &size, stdin) != EOF) {
-        j = 0;
-        /* Like strtok but doesn't jump more than one delimiter at a time. */
-        for (p=line, c=memchr(line, DELIMITER, size); c;
-              c=memchr(c, DELIMITER, size-(c-line))) {
-            if (j == groups.nmemb) {
-                tmp_group = malloc(sizeof(arraytyped_array_double));
-                arraytyped_append_to_end(group, groups, &tmp_group);
-                arraytyped_allocate_ptr(group, tmp_group, 2);
-            }
-            *c='\0';
-            if (*p) {
-                tmp = atof(p);
-                arraytyped_append_to_end(double, ranks, &tmp);
-                arraytyped_append_to_end_ptr(double, groups.base[j], &tmp);
-            }
-            p = ++c;
-            j++;
-        }
-        if (j == groups.nmemb) {
-            tmp_group = malloc(sizeof(arraytyped_array_double));
-            arraytyped_append_to_end(group, groups, &tmp_group);
-            arraytyped_allocate_ptr(group, tmp_group, 2);
-        }
-        line[size-1] = '\0';
-        if (*p) {
-            tmp = atof(p);
-            arraytyped_append_to_end(double, ranks, &tmp);
-            arraytyped_append_to_end_ptr(double, groups.base[j], &tmp);
-        }
-        obs++;
-    }
-    N = ranks.nmemb;
 
-    if (arg_verbose) {
-        puts("Groups:");
-        for (i=0; i < obs; i++, putchar('\n'))
-            for (j=0; j < groups.nmemb; j++) {
-                if (j) putchar(' ');
-                if (i < groups.base[j]->nmemb)
-                    printf("%.*lf", arg_precision, groups.base[j]->base[i]);
-                else
-                    printf("-");
-            }
-    }
-    qsort(ranks.base, N, sizeof(double), mathfn_compar_double);
-    printf("%.*lf\n", arg_precision, H_test(groups.base, groups.nmemb, ranks.base));
+    read_samples(stdin, &groups, &obs);
+
+    if (arg_verbose)
+        print_groups(stdout, &groups, obs);
+
+    qsort(ranks.base, ranks.nmemb, sizeof(double), mathfn_compar_double);
+    printf("%.*lf\n", arg_precision, H_test(groups.base, groups.nmemb,
+                                            ranks.base, ranks.nmemb));
 
     free(ranks.base);
     for (i=0; i < groups.nmemb; i++)
@@ -184,4 +147,68 @@ char *argv[];
     free(groups.base);
 
     return 0;
+}
+
+void read_samples(stream, groups, obs)
+FILE *stream;
+arraytyped_array_group *groups;
+int *obs;
+{
+    group tmp_group;
+    char *line, *p, *c;
+    size_t size;
+    int j;
+    double tmp;
+
+    *obs = size = 0;
+    line = NULL;
+    while (getline(&line, &size, stream) != EOF) {
+        j = 0;
+        /* Like strtok but doesn't jump more than one delimiter at a time. */
+        for (p=line, c=memchr(line, arg_delimiter, size); c;
+              c=memchr(c, arg_delimiter, size-(c-line))) {
+            if (j == groups->nmemb) {
+                tmp_group = malloc(sizeof(arraytyped_array_double));
+                arraytyped_append_to_end_ptr(group, groups, &tmp_group);
+                arraytyped_allocate_ptr(group, tmp_group, 2);
+            }
+            *c='\0';
+            if (*p) {
+                tmp = atof(p);
+                arraytyped_append_to_end(double, ranks, &tmp);
+                arraytyped_append_to_end_ptr(double, groups->base[j], &tmp);
+            }
+            p = ++c;
+            j++;
+        }
+        if (j == groups->nmemb) {
+            tmp_group = malloc(sizeof(arraytyped_array_double));
+            arraytyped_append_to_end_ptr(group, groups, &tmp_group);
+            arraytyped_allocate_ptr(group, tmp_group, 2);
+        }
+        line[size-1] = '\0';
+        if (*p) {
+            tmp = atof(p);
+            arraytyped_append_to_end(double, ranks, &tmp);
+            arraytyped_append_to_end_ptr(double, groups->base[j], &tmp);
+        }
+        ++*obs;
+    }
+}
+
+void print_groups(fp, groups, obs)
+FILE *fp;
+arraytyped_array_group *groups;
+{
+    int i,j;
+
+    fputs("Groups:\n", fp);
+    for (i=0; i < obs; i++, putchar('\n'))
+        for (j=0; j < groups->nmemb; j++) {
+            if (j) putchar(' ');
+            if (i < groups->base[j]->nmemb)
+                printf("%.*lf", arg_precision, groups->base[j]->base[i]);
+            else
+                printf("-");
+        }
 }
