@@ -1,9 +1,10 @@
 /*
-    contingency_table - v4.2.0
+    contingency_table - v4.3.0
     Prints a contingency table.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.3.0  Max and min argument for column width
         v4.2.0  Delimiter argument
         v4.1.1  Doubly precision in printf
         v4.1.0  Printing precision argument
@@ -40,8 +41,8 @@
 #define FALSE 0
 #define LEFT 0
 #define RIGHT 1
-#define ROW_L (15+1)
-#define FORMAT "%-15.15s"
+#define MAX_ROWL (128+1)
+#define FORMAT "%*.*s"
 #define SEPARATOR '|'
 
 typedef struct {
@@ -95,8 +96,10 @@ void *x, *y;
 }
 
 int arg_columns = FALSE;
-int arg_precision = 1;
 char arg_delimiter = ';';
+int arg_precision = 1;
+int format_max_width = 15;
+int format_min_width = -15;
 
 /* tf is a histogram of values and ts is a histogram of keys */
 avltree_tree tf, ts;
@@ -113,11 +116,13 @@ char *argv[];
         {"column", no_argument, NULL, 'c'},
         {"delimiter", required_argument, NULL, 'd'},
         {"precision", required_argument, NULL, 'p'},
+        {"format_width", required_argument, NULL, 'w'},
         { 0 },
     };
     int opt;
+    char *c;
 
-    for (; (opt = getopt_long(argc, argv, "cp:", long_opts, NULL)) != -1;)
+    for (; (opt = getopt_long(argc, argv, "cp:w:", long_opts, NULL)) != -1;)
         switch (opt) {
         case '?':
             fputs("Try 'contingency_table --help' for more information.\n",
@@ -132,6 +137,22 @@ char *argv[];
         case 'p':
             arg_precision = atoi(optarg);
             break;
+        case 'w':
+            c = strtok(optarg, ",");
+            format_min_width = atoi(c);
+            if ((c = strtok(NULL, ","))) {
+                format_max_width = atoi(c);
+                if (format_max_width < 0) {
+                    fputs("contingency_table: maximum width of columns is < 0\n", stderr);
+                    return 2;
+                }
+                if (format_max_width >= MAX_ROWL) {
+                    fprintf(stderr, "contingency_table: maximum width of columns is too much, needs to be <= %d\n",
+                            MAX_ROWL-1);
+                    return 2;
+                }
+            }
+            break;
         case 'h':
             fputs("Usage: contingency_table [OPTION] [FILE]...\n"
                   "Prints a contingency table.\n\n"
@@ -140,7 +161,8 @@ char *argv[];
                   "  -d, --delimiter=DELIM   use DELIM instead of semicolon for line delimiter, it\n"
                   "                          can't be a space character\n"
                   "  -p, --precision=NUM     printing precision of floating-point numbers, default\n"
-                  "                          is 1\n",
+                  "                          is 1\n"
+                  "  -w, --format_width=[-]MIN,MAX   Width of columns\n",
                   stdout);
             return 0;
         }
@@ -179,7 +201,7 @@ FILE *fp;
 array_relations_unode *arr;
 {
     extern char *strsave();
-    void insert_tuple(), make_table(), insert(), intersect();
+    void insert_tuple();
     char s[MAXLEN];
     int type, side = LEFT;
     avltree_node *ret;
@@ -278,27 +300,38 @@ avltree_tree *ts, *tf;
     void theader(), trow();
     arraytyped_array_int row, total;
     arraytyped_array_str header;
-    char cell[ROW_L];
+    char cell[MAX_ROWL];
     int i, n = 0;
     
     arraytyped_allocate(int, row, 2);
     arraytyped_allocate(int, total, 2);
     arraytyped_allocate(str, header, 2);
 
-    fprintf(fp, FORMAT, "Rank"); putc(SEPARATOR, fp);
+    fprintf(fp, FORMAT, format_min_width, format_max_width, "Rank");
+    putc(SEPARATOR, fp);
     theader(tf->root, &header, &total, &n);
     for (i=0; i<header.nmemb; i++) {
-        fprintf(fp, FORMAT, header.base[i]); putc(SEPARATOR, fp);
+        fprintf(fp, FORMAT, format_min_width, format_max_width,
+                header.base[i]);
+        putc(SEPARATOR, fp);
     }
-    fprintf(fp, "Total\n");
+    sprintf(cell, FORMAT, format_min_width, format_max_width, "Total");
+    fputs(cell, fp);
+    putc('\n', fp);
+
     trow(fp, ts->root, &row, &header, cell);
-    fprintf(fp, FORMAT, "Total"); putc(SEPARATOR, fp);
+    fprintf(fp, FORMAT, format_min_width, format_max_width, "Total");
+    putc(SEPARATOR, fp);
     for (i=0; i<total.nmemb; i++) {
         sprintf(cell, "%d (%.*lf%%)", total.base[i], arg_precision,
                 ((double)total.base[i]*100)/n);
-        fprintf(fp, FORMAT, cell); putc(SEPARATOR, fp);
+        fprintf(fp, FORMAT, format_min_width, format_max_width, cell);
+        putc(SEPARATOR, fp);
     }
-    fprintf(fp, "%d (%.*lf%%)\n", n, arg_precision, 100.);
+
+    sprintf(cell, "%d (%.*lf%%)", n, arg_precision, 100.);
+    fprintf(fp, FORMAT, format_min_width, format_max_width, cell);
+    putc('\n', fp);
 
     free(row.base);
     free(total.base);
@@ -326,18 +359,19 @@ int *acc;
 }
 
 /* Prints the histogram of each key with their values and the fractions. */
-void trow(fp, r, e, h, ce)
+void trow(fp, r, e, h, cell)
 FILE *fp;
 avltree_node *r;
 arraytyped_array_int *e;
 arraytyped_array_str *h;
-char *ce;
+char *cell;
 {
     int i, j, n;
 
     if (r) {
-        trow(fp, r->child[0], e, h, ce);
-        fprintf(fp, FORMAT, ((unode*)r->key)->sword.fword.word);
+        trow(fp, r->child[0], e, h, cell);
+        fprintf(fp, FORMAT, format_min_width, format_max_width,
+                ((unode*)r->key)->sword.fword.word);
         for (i=j=e->nmemb=n=0; j < h->nmemb; j++) {
             /* If the values are different, the key doesn't have any tuple with
              * that value, so gets 0. If the vattr ended, then all other values
@@ -355,11 +389,14 @@ char *ce;
         }
         putc(SEPARATOR, fp);
         for (i=0; i < e->nmemb; i++) {
-            sprintf(ce, "%d (%.*lf%%)", e->base[i], arg_precision,
+            sprintf(cell, "%d (%.*lf%%)", e->base[i], arg_precision,
                     ((double)e->base[i]*100)/n);
-            fprintf(fp, FORMAT, ce); putc(SEPARATOR, fp);
+            fprintf(fp, FORMAT, format_min_width, format_max_width, cell);
+            putc(SEPARATOR, fp);
         }
-        fprintf(fp, "%d (%.*lf%%)\n", n, arg_precision, 100.);
-        trow(fp, r->child[1], e, h, ce);
+        sprintf(cell, "%d (%.*lf%%)", n, arg_precision, 100.);
+        fprintf(fp, FORMAT, format_min_width, format_max_width, cell);
+        putc('\n', fp);
+        trow(fp, r->child[1], e, h, cell);
     }
 }
