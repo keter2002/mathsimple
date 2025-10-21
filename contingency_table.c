@@ -315,8 +315,7 @@ avltree_tree *ts, *tf;
                 header.base[i]);
         putc(SEPARATOR, fp);
     }
-    sprintf(cell, FORMAT, format_min_width, format_max_width, "Total");
-    fputs(cell, fp);
+    fprintf(fp, FORMAT, format_min_width, format_max_width, "Total");
     putc('\n', fp);
 
     trow(fp, ts->root, &row, &header, cell);
