@@ -1,9 +1,10 @@
 /*
-    getop.c - v2.0.2
-    Parse an operator of a mathematical expression in C.
+    getop.c - v2.0.3
+    strtod like function definition.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.3  Read optional signal of the number
         v2.0.2  Catch EOF while reading spaces
         v2.0.1  Uses getc() and ungetc() instead of ch() and unch()
         v2.0.0  Remove torfnum.h and refactor the code
@@ -50,10 +51,12 @@ FILE *fp;
     /* Jump spaces. */
     for (c = getc(fp); c != EOF && IS_SPACE(c); c = getc(fp));
     /* If not a number, return. */
-    if (!EXPRESSION_IS_DEC_SEP(c) && (c < '0' || c > '9'))
+    if (!EXPRESSION_IS_DEC_SEP(c) && (c < '0' || c > '9') && c != '+' && c != '-')
         return c;
+    /* [+-0-9\.,] */
+    *aux++ = c;
     /* s gets the floating point number. */
-    for (; c >= '0' && c <= '9'; c = getc(fp))
+    for (c = getc(fp); c >= '0' && c <= '9'; c = getc(fp))
         if (aux-s < lim)
             *aux++ = c;
 
