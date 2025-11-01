@@ -1,9 +1,11 @@
 /*
-    expression.c - v4.2.6
+    expression.c - v5.0.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v5.0.0  Add other common logarithm functions and change output string
+                of natural logarithm
         v4.2.6  fix a bug when calling functions in expression_evaluate()
         v4.2.5  strsave() instead of strdup()
         v4.2.4  EXPRESSION_IS_DEC_SEP
@@ -148,6 +150,15 @@ char *str;
             } else if (!strcmp(buffer, "ln")) {
                 ptr+=2;
                 fn = log;
+            } else if (!strcmp(buffer, "log")) {
+                ptr+=3;
+                fn = log10;
+            } else if (!strcmp(buffer, "log10")) {
+                ptr+=5;
+                fn = log10;
+            } else if (!strcmp(buffer, "log2")) {
+                ptr+=4;
+                fn = log2;
             } else { /* Read a variable. */
 read_var:
                 expression_insert(expr, 0, 0, 0, buffer,
@@ -286,7 +297,11 @@ expression_expr *expr;
             } else if (fn == tan) {
                 fprintf(stream, "|tan|");
             } else if (fn == log) {
+                fprintf(stream, "|ln|");
+            } else if (fn == log10) {
                 fprintf(stream, "|log|");
+            } else if (fn == log2) {
+                fprintf(stream, "|log2|");
             } else {
                 fprintf(stream, "|FN|");
             }
