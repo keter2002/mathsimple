@@ -1,9 +1,10 @@
 /*
-    print_series - v2.1.0
+    print_series - v2.2.0
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.2.0  Step size argument
         v2.1.0  Printing precision argument
         v2.0.3  atoi() replaces torfnum_atoi()
         v2.0.2  Change order of parameters in read_vars
@@ -41,16 +42,21 @@ char *argv[];
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
         {"precision", required_argument, NULL, 'p'},
+        {"step", required_argument, NULL, 's'},
         { 0 },
     };
     char *args[] = {"start", "n", "expression"};
     int opt;
     int arg_precision = 5;
+    int arg_step = 1;
 
-    for (; (opt = getopt_long(argc, argv, "p:", long_opts, NULL)) != -1;)
+    for (; (opt = getopt_long(argc, argv, "p:s:", long_opts, NULL)) != -1;)
         switch (opt) {
         case 'p':
             arg_precision = atoi(optarg);
+            break;
+        case 's':
+            arg_step = atoi(optarg);
             break;
         case '?':
             fputs("Try 'print_series --help' for more information.\n", stderr);
@@ -81,10 +87,10 @@ char *argv[];
     n = atoi(argv[optind+1]);
 
     expression_show_expr(stdout, &expr);
-    for (end=start+n; i < end; i++) {
+    for (end=start+n; i < end; i+=arg_step) {
         *(double*)x->value = i;
         printf("%.*f%c", arg_precision, expression_evaluate(&expr.exp),
-               i < end-1?  ' ' : '\n');
+               i < end-arg_step?  ' ' : '\n');
     }
     expression_destroy(expr);
 
