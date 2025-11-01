@@ -1,9 +1,10 @@
 /*
-    expression.c - v4.2.5
+    expression.c - v4.2.6
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v4.2.6  fix a bug when calling functions in expression_evaluate()
         v4.2.5  strsave() instead of strdup()
         v4.2.4  EXPRESSION_IS_DEC_SEP
         v4.2.3  Use atof() to replace torfnum_atof() and strtod() to
@@ -246,7 +247,6 @@ array_dynamic *fullexp;
         case EXPRESSION_OP_TYPE_FN:
             op1 = ARRAY_AT(stack, stack.nmemb-1);
             *op1 = next->symb.fnval(*op1);
-            stack.nmemb--;
             break;
         case EXPRESSION_OP_TYPE_NAME:
             *(double*)ARRAY_LAST_SPACE(stack) = *next->symb.nameval;
