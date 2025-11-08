@@ -1,9 +1,10 @@
 /*
-    expression.h - v4.0.2
+    expression.h - v5.0.0
     Mathematical expression parser declarations.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v5.0.0  Precision argument to expression_show_expr
         v4.0.2  EXPRESSION_IS_DEC_SEP macro
         v4.0.1  EXPRESSION_MAX_NAME_LEN definition
         v4.0.0  Change order of parameters in read_vars
@@ -70,7 +71,7 @@ void expression_infix_posfix(expression_expr *expr, char *str);
 
 double expression_evaluate(array_dynamic *fullexp);
 
-void expression_show_expr(FILE *stream, expression_expr *expr);
+void expression_show_expr(FILE *stream, expression_expr *expr, int precision);
 void read_vars(expression_expr *expr, avltree_tree *controled, int argc,
                char *argv[]);
 

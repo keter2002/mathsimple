@@ -1,9 +1,10 @@
 /*
-    expression.c - v5.0.0
+    expression.c - v6.0.0
     Mathematical expression parser definitions.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v6.0.0  Precision argument to expression_show_expr
         v5.0.0  Add other common logarithm functions and change output string
                 of natural logarithm
         v4.2.6  fix a bug when calling functions in expression_evaluate()
@@ -270,7 +271,7 @@ array_dynamic *fullexp;
     return res;
 }
 
-void expression_show_expr(stream, expr)
+void expression_show_expr(stream, expr, precision)
 FILE *stream;
 expression_expr *expr;
 {
@@ -286,7 +287,7 @@ expression_expr *expr;
             putc(next->symb.opval, stream);
             break;
         case EXPRESSION_OP_TYPE_F:
-            fprintf(stream, "|%lf|", next->symb.fval);
+            fprintf(stream, "|%.*lf|", precision, next->symb.fval);
             break;
         case EXPRESSION_OP_TYPE_FN:
             fn = next->symb.fnval;

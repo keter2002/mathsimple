@@ -1,9 +1,10 @@
 /*
-    print_series - v2.2.0
+    print_series - v2.2.1
     Prints the terms of a sequence.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.2.1  Precision of expression_show_expr() and update help text
         v2.2.0  Step size argument
         v2.1.0  Printing precision argument
         v2.0.3  atoi() replaces torfnum_atoi()
@@ -64,9 +65,10 @@ char *argv[];
         case 'h':
             fputs("Usage: print_series [OPTION] start n expression [a=5] [...]\n"
                   "Prints the terms of a sequence.\n\n"
-                  "The variable x is special here, it starts with start and is incremented n times\n"
-                  "to print the terms.\n\n"
-                  "  -p, --precision    printing precision of floating-point numbers, default is 5\n",
+                  "The variable x is special here, it starts with start and is incremented up to\n"
+                  "start+n to print the terms.\n\n"
+                  "  -p, --precision    printing precision of floating-point numbers, default is 5\n"
+                  "  -s, --step         increment of x\n",
                   stdout);
             return 0;
         }
@@ -86,7 +88,7 @@ char *argv[];
     i = start = atoi(argv[optind]);
     n = atoi(argv[optind+1]);
 
-    expression_show_expr(stdout, &expr);
+    expression_show_expr(stdout, &expr, arg_precision);
     for (end=start+n; i < end; i+=arg_step) {
         *(double*)x->value = i;
         printf("%.*f%c", arg_precision, expression_evaluate(&expr.exp),

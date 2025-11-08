@@ -1,9 +1,10 @@
 /*
-    series_convergence - v2.0.1
+    series_convergence - v2.0.3
     Sum the terms of an infinite summation.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v2.0.3  Precision of expression_show_expr()
         v2.0.2  Change order of parameters in read_vars
         v2.0.1  Checks missing variables in expression
         v2.0.0  Changes in expression syntax and support to variables
@@ -52,7 +53,7 @@ char *argv[];
     avltree_insert_key(controled, "x");
     read_vars(&expr, &controled, argc-2, &argv[2]);
 
-    expression_show_expr(stdout, &expr);
+    expression_show_expr(stdout, &expr, 6);
     for (i=1,sum=0, next=1; i <= 10000000; i++) {
         *(double*)x->value = i;
         sum += expression_evaluate(&expr.exp);

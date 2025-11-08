@@ -86,7 +86,7 @@ FILE *fp;
         }
 }
 
-int arg_verbose = 0;
+unsigned char arg_verbose = 0;
 int arg_precision = 2;
 
 int main(argc, argv)
@@ -99,8 +99,8 @@ char *argv[];
 
     struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
-        {"verbose", no_argument, NULL, 'v'},
         {"precision", required_argument, NULL, 'p'},
+        {"verbose", no_argument, NULL, 'v'},
         { 0 },
     };
     int opt;

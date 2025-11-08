@@ -12,7 +12,7 @@ mathfn_dependent := find_know_number mode logarithm  binomial_series bhaskara\
 MATHFN_BINS := $(mathfn_dependent:%=$(BUILD_DIR)/%)
 
 expression_lib := $(BUILD_DIR)/lib/expression.o
-expression_dependent := series_convergence print_series integral_aprox
+expression_dependent := series_convergence print_series integral_aprox evaluate
 EXPRESSION_BINS := $(expression_dependent:%=$(BUILD_DIR)/%)
 
 la_lib := $(BUILD_DIR)/lib/linear_algebra.o
@@ -67,6 +67,9 @@ $(BUILD_DIR)/print_series: print_series.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 $(BUILD_DIR)/integral_aprox: integral_aprox.c $(expression_lib) string.c
+	mkdir -p $(BUILD_DIR)
+	$(CC) $^ -o $@ -lm $(WARNINGS)
+$(BUILD_DIR)/evaluate: evaluate.c $(expression_lib) string.c
 	mkdir -p $(BUILD_DIR)
 	$(CC) $^ -o $@ -lm $(WARNINGS)
 

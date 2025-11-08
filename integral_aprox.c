@@ -1,10 +1,11 @@
 /*
-    integral_aprox - v3.1.0
+    integral_aprox - v3.1.1
     Computes a definite integral by right, left, middle, trapezoid and Simpson
     methods.
     Copyright (C) 2025  João Manica  <joaoedisonmanica@gmail.com>
 
     History:
+        v3.1.1  Precision of expression_show_expr()
         v3.1.0  Printing precision argument
         v3.0.4  Return 0 in main if help arg
         v3.0.3  Remove torfnum.h
@@ -97,7 +98,7 @@ char *argv[];
     read_vars(&expr, &controled, argc - optind - args_arg_len(args),
               &argv[optind + args_arg_len(args)]);
 
-    expression_show_expr(stdout, &expr);
+    expression_show_expr(stdout, &expr, arg_precision);
     inc = (b-a)/n;
     printf("%2$.*1$lf %3$.*1$lf %4$.*1$lf %5$.*1$lf\n",
            arg_precision, a, b, n, inc);
